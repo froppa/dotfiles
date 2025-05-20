@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+
+{{- $paths := list }}
+{{- $homeDir := .chezmoi.homeDir }}
+{{- range $_, $relPath := list "bin" "go/bin" ".cargo/bin" ".local/bin" }}
+{{    $path := joinPath $homeDir $relPath }}
+{{-   if stat $path }}
+{{-     $paths = mustAppend $paths $path }}
+{{-   end }}
+{{- end }}
+{{- if $paths }}
+export PATH={{ toStrings $paths | join ":" }}:$PATH
+{{- end }}
+
+export ZSH=$HOME/.oh-my-zsh
+ZSH_THEME="simple"
+ZSH_DISABLE_COMPFIX=true
+
+plugins=(
+{{- range .zsh.plugins }}
+  {{ . }}
+{{- end }}
+)
+
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/
+autoload -U compinit && compinit
+source $ZSH/oh-my-zsh.sh
+
+# =======================================
+# Base / User configuration
+# =======================================
+export LANG={{ .lang | quote}}
+export LC_ALL={{ .lc_all | quote }}
+export SSH_KEY_PATH='$HOME/.ssh'
+export TERM=xterm-256color
+export EDITOR='vim'
+export VISUAL='vim'
+export LESS="--tabs=2 --no-init --LONG-PROMPT --ignore-case --quit-if-one-screen --RAW-CONTROL-CHARS"
+export GOBIN=$HOME/.local/bin
+export GOPATH=$HOME
+export GO111MODULE=on
+
+CASE_SENSITIVE="true"
+HIST_STAMPS="yyyy-mm-dd"
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=100000
+HISTCONTROL='ignoreboth'
+SAVEHIST=100000
+
+PROMPT="%{$fg[white]%}%n@%{$fg[green]%}%m%{$reset_color%} ${PROMPT}"
+
+setopt autocd
+setopt rm_star_silent
+setopt histignorespace
+setopt append_history
+setopt extended_history
+setopt share_history
+setopt hist_expire_dups_first
+setopt hist_find_no_dups
+setopt hist_ignore_dups
+setopt hist_ignore_all_dups
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt pushd_ignore_dups
+setopt pushd_minus
+
+alias g=git
+alias gnp="git --no-pager"
+{{- if lookPath "bat" }}
+alias cat=bat
+{{- end }}
+{{- if lookPath "fdfind" }}
+alias fd=fdfind
+{{- end }}
+{{- if lookPath "eza" }}
+alias ls=eza
+{{- end }}
+
+{{ if eq .chezmoi.os "darwin" -}}
+  #/usr/bin/ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+  alias run_agents='() { $(whence -p keychain) --quiet --eval --inherit any-once --agents ssh,gpg $ssh_keys ${(f)gpg_keys} }'
+{{ else }}
+  eval "$(ssh-agent -s || true)"
+  #ssh-add ~/.ssh/id_ed25519
+{{ end }}
+
+alias gpgkeys=$(gpg -K --with-colons 2>/dev/null | awk -F : '$1 == "sec" { print $5 }')
+
+# =======================================
+# Key Bindings
+# =======================================
+bindkey "^a" beginning-of-line
+bindkey "^e" end-of-line
+bindkey "^f" forward-word
+bindkey "^b" backward-word
+bindkey "^k" kill-line
+bindkey "^d" delete-char
+bindkey "^y" accept-and-hold
+bindkey "^w" backward-kill-word
+bindkey "^u" backward-kill-line
+bindkey "^R" history-incremental-pattern-search-backward
+bindkey "^F" history-incremental-pattern-search-forward
+bindkey "^i" expand-or-complete-prefix
+# Fixes for alt-backspace and arrow keys
+bindkey '^[^?' backward-kill-word
+bindkey "^[[1;5C" forward-word
+
+# =======================================
+# Completions
+# =======================================
+zstyle ":completion:*" list-colors "\${(s.:.)LS_COLORS}"
+zstyle ':completion:*' rehash true
+zstyle ":completion:*" matcher-list \
+  "m:{a-zA-Z}={A-Za-z}" \
+  "r:|[._-]=* r:|=*" \
+  "l:|=* r:|=*"
+
+[[ -f $HOME/.zsh_completions ]] && source $HOME/.zsh_completions
+
+{{ if stat (joinPath .chezmoi.homeDir ".nvm") }}
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+{{ end }}
+
+
+# =======================================
+# Source local customizations
+# =======================================
+[[ -f $HOME/.exports ]] && source $HOME/.exports
+[[ -f $HOME/.aliases ]] && source $HOME/.aliases
+[[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
+[[ -f $HOME/.functions ]] && source $HOME/.functions
+
+eval "$(starship init zsh)"

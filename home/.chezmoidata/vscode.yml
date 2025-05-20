@@ -1,0 +1,51 @@
+---
+extensions:
+  - bazelbuild.vscode-bazel
+  - bmalehorn.shell-syntax
+  - davidanson.vscode-markdownlint
+  - dbaeumer.vscode-eslint
+  - docker.docker
+  - donjayamanne.githistory
+  - dskwrk.vscode-generate-getter-setter
+  - dunstontc.viml
+  - eamodio.gitlens
+  - editorconfig.editorconfig
+  - EditorConfig.EditorConfig
+  - esbenp.prettier-vscode
+  - foxundermoon.shell-format
+  - gamunu.opentofu
+  - github.copilot
+  - github.copilot-chat
+  - github.github-vscode-theme
+  - github.vscode-github-actions
+  - golang.go
+  - jinliming2.vscode-go-template
+  - kevinrose.vsc-python-indent
+  - mikestead.dotenv
+  - ms-python.python
+  - ms-vscode.cmake-tools
+  - ms-vscode.makefile-tools
+  - openai.chatgpt
+  - pbkit.vscode-pbkit
+  - pkief.material-icon-theme
+  - pmneo.tsimporter
+  - redhat.ansible
+  - redhat.vscode-yaml
+  - romantomjak.go-template
+  - rust-lang.rust-analyzer
+  - sidneys1.gitconfig
+  - streetsidesoftware.code-spell-checker
+  - tamasfe.even-better-toml
+  - timonwong.shellcheck
+  - twxs.cmake
+  - tyriar.sort-lines
+  - Tyriar.sort-lines
+  - voidei.vscode-vimrc
+  - vscode-icons-team.vscode-icons
+  - wholroyd.jinja
+  - xaver.clang-format
+  - yoavbls.pretty-ts-errors
+  - yzhang.markdown-all-in-one
+  - zainchen.json
+  # - jasonnutter.search-node-modules
+  # - tomoki1207.pdf

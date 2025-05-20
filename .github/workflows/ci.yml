@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |-
+          sudo apt update
+          sudo apt install -y shellcheck curl gnupg
+        shell: bash
+
+      - uses: actions/cache@v4
+        id: cache-chezmoi
+        with:
+          path: ~/.local/bin/chezmoi
+          key: chezmoi-bin-v2
+      - run: |-
+          mkdir -p ~/.local/bin
+          sh -c "$(curl -fsSL get.chezmoi.io)" -- -b ~/.local/bin
+        shell: bash
+        if: steps.cache-chezmoi.outputs.cache-hit != 'true'
+
+      - run: |-
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          chmod +x ./test.sh
+        shell: bash
+
+      - name: Shellcheck and dryrun chezmoi --apply
+        run: ./test.sh
+        shell: bash
+      - run: echo "All tests passed!"
+        shell: bash

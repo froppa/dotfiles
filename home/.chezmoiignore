@@ -1,0 +1,11 @@
+# shellcheck disable=all
+.gnupg
+.gnupg/**
+.inputrc
+.oh-my-zsh
+.oh-my-zsh/**
+.ssh/id_rsa
+.ssh/id_rsa.pub
+.ssh/config
+.gitconfig
+.aliases.local

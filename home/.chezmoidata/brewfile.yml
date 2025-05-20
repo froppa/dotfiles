@@ -1,0 +1,101 @@
+---
+tap:
+  - bramstein/webfonttools
+  - browsers-software/tap
+  - cloudflare/cloudflare
+  - gcenx/wine
+  - kegworks-app/kegworks
+  - homebrew/bundle
+  - homebrew/services
+
+brew:
+  - coreutils
+  - findutils
+  - gnu-sed
+  - grep
+  - moreutils
+  - tree
+
+  # Shell & terminal
+  - zsh
+  - starship
+  - tmux
+  - fzf
+  - z
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+
+  # Networking & security
+  - gnupg
+  - openssh
+  - nmap
+  - pinentry-mac
+  - libusb
+  - libftdi
+
+  # CLI tools
+  - bat
+  - jq
+  - yq
+  - htop
+  - gh
+  - git
+  - pipx
+  - awscli@1
+  - eslint
+  - eza
+
+  # Programming
+  - python@3.13
+  - postgresql@14
+  - go
+  - ruby@3.0
+  - ruby@3.2
+  - node
+  - nvm
+  - yarn
+  - pnpm
+  - pyenv
+  - vim
+
+  # Build tools
+  - cmake
+  - m4
+  - autoconf
+  - automake
+  - libtool
+  - boost
+  - pkgconf
+  - xcode-build-server
+
+  # DevOps & container tools
+  - terraform
+  - opentofu
+  - terraformer
+  - docker
+  - podman
+  - podman-compose
+  - kubectl
+  - kubernetes-cli
+  - k9s
+  - chezmoi
+  - shellcheck
+
+  # Filesystem & serial
+  - e2fsprogs
+  - minicom
+cask:
+  - alt-tab
+  - alfred
+  - betterdisplay
+  - coteditor
+  - discord
+  - font-powerline-symbols
+  - hammerspoon
+  - latest
+  - loop
+  - maccy
+  - meetingbar
+  - rectangle
+  - scroll-reverser
+  - visual-studio-code

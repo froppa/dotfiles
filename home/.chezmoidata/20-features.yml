@@ -1,0 +1,9 @@
+---
+features:
+  iterm2: true
+  ssh: true
+  gpg: false
+  vscode: true
+  psql: true
+  awsCli: false
+  starship: true

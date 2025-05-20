@@ -1,0 +1,155 @@
+[user]
+  name = {{- .name | quote }}
+  email = {{ .email | quote }}
+  {{/* signingkey = {{ .signingKey | quote }} */}}
+
+[advice]
+  addEmptyPathspec = false
+  pushNonFastForward = false
+  statusHints = false
+
+[alias]
+  a = add
+  ap = add -p
+  ignore = update-index --assume-unchanged
+  unignore = update-index --no-assume-unchanged
+  ignored = !git ls-files -v | grep "^[[:lower:]]"
+
+  cf = commit --fixup
+  cm = commit --message
+  ca = commit --amend -C HEAD --no-edit
+  cane = commit --amend --no-edit
+  caa = commit -a --amend -C HEAD
+  amend = commit --amend
+  ss = commit --message 'chore: snapshot' --no-gpg-sign
+
+  b = branch
+  bm = branch --merged
+  bnm = branch --no-merged
+  branch-name = !git rev-parse --abbrev-ref HEAD
+
+  co = checkout
+  cob = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
+  com = checkout master
+
+  # Diff
+  d = !"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
+  dc = diff --cached
+  wd = diff --patience --word-diff
+  dom = diff origin/master
+  # Fetch / Pull / Push
+  fo = fetch origin
+  fop = !"$(git fo) && git pull origin $(git branch-name)"
+  p = push
+  po = !git push origin $(git branch-name)
+  pf = push --force-with-lease
+  pof = !git push --force origin $(git branch-name)
+  prb = pull --rebase
+
+  # Rebase
+  rc = rebase --continue
+  ra = rebase --abort
+  ri = rebase --interactive
+  riom = rebase --interactive origin/master
+  reb = "!r() { git rebase -i HEAD~$1; }; r"
+  # Cherry-pick
+  cp = cherry-pick
+  # Log
+  l = log --oneline
+  ls = log --pretty=oneline -n 20 --graph --abbrev-commit
+
+  # Status
+  s = status -sb --show-stash --no-renames
+
+  # Grep
+  g = grep --line-number
+
+  whoami = config.user.email
+  lstag = !git ls-remote --tags origin
+
+  sh = "!git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git show"
+  fu = "!git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup"
+
+  # New Github PR
+  npr = "!f() { open https://github.com/$(git remote get-url origin | awk -F'[:]' '{print $2}' | awk -F'.git' '{print $1}')/compare/master...$(git remote get-url --push origin | awk -F'[:/]' '{print $2}'):$(git rev-parse --abbrev-ref HEAD)?expand=1 >/dev/null 2>&1; }; f"
+
+[pager]
+  branch = false
+  grep = false
+
+[apply]
+  whitespace = fix
+[branch]
+  # Show most recently changed branches first.
+  sort = -committerdate
+[push]
+  default = simple
+  followTags = true
+[core]
+  editor = vim
+  excludesfile = ~/.config/git/ignore
+  whitespace = "fix,-indent-with-non-tab,trailing-space,cr-at-eol"
+[rerere]
+  enabled = 1
+  autoupdate = 1
+[pull]
+  rebase = true
+[rebase]
+  autoSquash = true
+  autoStash = true
+  updateRefs = true
+[push]
+  autoSetupRemote = true
+  default = current
+[fetch]
+  all = true
+  prune = true
+[status]
+  submoduleSummary = true
+[tag]
+  sort = version:refname
+
+[diff]
+  renames = copies
+  algorithm = histogram
+  colorMoved = plain
+  renames = true
+[diff "bin"]
+  textconv = hexdump -v -C
+
+[url "git@github.com:"]
+  insteadOf = "gh:"
+  pushInsteadOf = "github:"
+  pushInsteadOf = "git://github.com/"
+
+[url "git://github.com/"]
+  insteadOf = "github:"
+
+{{- $ghPath := lookPath "gh" }}
+{{- if $ghPath }}
+[credential "https://github.com"]
+  helper = !{{ $ghPath }} auth git-credential
+[credential "https://gist.github.com"]
+  helper = !{{ $ghPath }} auth git-credential
+{{- end }}
+
+[init]
+  defaultBranch = master
+
+[color]
+  ui = true
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold # line info
+  old = red # deletions
+  new = green # additions
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan

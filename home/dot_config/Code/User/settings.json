@@ -1,0 +1,84 @@
+{
+  // VSCode Settings
+  "telemetry.telemetryLevel": "off",
+  "workbench.startupEditor": "newUntitledFile",
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "workbench.list.openMode": "doubleClick",
+
+  // UI
+  "breadcrumbs.enabled": true,
+  "editor.fontSize": 12,
+  "window.titleBarStyle": "native",
+  "window.zoomLevel": 0,
+  "search.showLineNumbers": true,
+  "workbench.activityBar.location": "hidden",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.tips.enabled": false,
+  "workbench.editor.enablePreview": false,
+
+  // Editor
+  "editor.bracketPairColorization.enabled": true,
+  "editor.detectIndentation": false,
+  "editor.renderWhitespace": "boundary",
+  "editor.minimap.enabled": false,
+  "editor.wordBasedSuggestions": "off",
+  "editor.formatOnSave": true,
+  "editor.indentSize": "tabSize",
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+
+  // "editor.quickSuggestions": null,
+
+  // Extensions
+  //
+  // - Go
+  //"go.autocompleteUnimportedPackages": true,
+  "go.formatTool": "goimports",
+  "go.formatFlags": [],
+  "go.useLanguageServer": true,
+  "go.editorContextMenuCommands": {
+    "toggleTestFile": true,
+    "addTags": true,
+    "removeTags": false,
+    "fillStruct": false,
+    "testAtCursor": true,
+    "testFile": false,
+    "testPackage": false,
+    "generateTestForFunction": true,
+    "generateTestForFile": false,
+    "generateTestForPackage": false,
+    "addImport": true,
+    "testCoverage": true,
+    "playground": true,
+    "debugTestAtCursor": true,
+    "benchmarkAtCursor": false
+  },
+  // Configure settings to be overridden for the go language.
+  "[go]": {
+    "editor.insertSpaces": false,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  },
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.autoIndent": "keep",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    }
+  },
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "vsicons.dontShowNewVersionMessage": true,
+  "git.openRepositoryInParentFolders": "always"
+}

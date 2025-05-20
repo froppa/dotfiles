@@ -1,0 +1,11 @@
+---
+macos:
+  darkMode: true
+  accentColor: "green"
+  autoHideDock: true
+  dockSize: 36
+  showHiddenFiles: true
+  enableHotCorners: false
+  keyboard:
+    keyRepeat: 1
+    delayUntilRepeat: 15

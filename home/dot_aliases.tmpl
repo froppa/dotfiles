@@ -1,0 +1,74 @@
+{{ if eq .chezmoi.os "linux" }}
+colorflag="--color"
+export LS_COLORS='no=00:fi=00:di=01;31:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
+{{ end }}
+{{ if eq .chezmoi.os "darwin" }}
+colorflag="-G"
+export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
+{{ end }}
+
+# =======================================
+# Base Aliases
+# =======================================
+alias grep='command grep --color=auto'
+alias egrep='command egrep --color=auto'
+alias ccat='highlight -O ansi'
+alias rm='rm -v'
+alias cls='clear'
+alias la='ls -a ${colorflag:-}'
+alias ll='ls -lahH ${colorflag:-}'
+alias d='dirs -v'
+alias vi='vim'
+alias nano='vim'
+alias g='git'
+
+alias gitalias='git config --global --get-regexp "^alias\."'
+
+# ZSH Config Helpers
+alias reloadzsh='source ~/.zshrc'
+alias confzsh='chezmoi edit --apply ~/.zshrc'
+alias confalias='chezmoi edit --apply ~/.aliases'
+alias confaliasl='~/.aliases.local'
+alias conftmux='chezmoi edit --apply ~/.tmux.conf'
+
+# Quick Nav
+alias gocode='cd ~/code'
+
+# Stack Navigation
+alias pu='() { pushd "$1" &> /dev/null; dirs -v; }'
+alias po='() { popd &> /dev/null; dirs -v; }'
+for i in {1..9}; do alias $i="pu -$i"; done
+
+# Tooling / Starters
+alias dc='docker compose'
+alias py='python3'
+
+# Temporal / Infra
+alias ttcl='docker exec temporal-admin-tools tctl'
+alias starttemporal='temporal server start-dev --db-filename ~/temporal.db &> /dev/null & disown'
+alias startjaeger='~/Downloads/jaeger-1.23.0-darwin-amd64/jaeger-all-in-one &'
+alias dbsql='cockroach sql --insecure'
+
+# IP addresses
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias localip="ipconfig getifaddr en0"
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+# Show active network interfaces
+alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
+
+# Flush Directory Service cache
+alias flush="dscacheutil -flushcache && killall -HUP mDNSResponder"
+
+{{ if eq .chezmoi.os "darwin" }}
+# Clean up LaunchServices to remove duplicates in the “Open With” menu
+alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+
+# Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
+alias brewup='brew update && brew upgrade && brew cleanup'
+alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g'
+alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+{{ end }}
+
+[[ -f $HOME/.aliases.local ]] && source $HOME/.aliases.local

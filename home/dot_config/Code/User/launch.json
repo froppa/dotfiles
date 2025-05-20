@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "presentation": {
+                "hidden": false,
+                "group": "services",
+                "order": 1
+            },
+            "name": "Service: xxx",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/service/xxx",
+            "cwd": "${workspaceFolder}",
+            "buildFlags": "-ldflags '-X pkg/meta.Name=serviceName'",
+            "args": ["serve"],
+            "env": {
+                "TEMPORAL_DEBUG": "1",
+                "GODEBUG": "execerrdot=0"
+            }
+        }
+    ]
+}

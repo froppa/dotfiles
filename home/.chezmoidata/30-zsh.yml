@@ -1,0 +1,8 @@
+---
+zsh:
+  plugins:
+    - git
+    - z
+    - fzf
+    - fzf-tab
+    - zsh-syntax-highlighting

@@ -1,0 +1,34 @@
+{{- $name := ""}}
+{{- $computerName := ""}}
+{{- $email := ""}}
+{{- $signingKey := "" }}
+
+{{ if eq .chezmoi.os "darwin"}}
+{{- $computerName := (output "scutil" "--get" "ComputerName" | trim) -}}
+{{ end }}
+{{- $ci := or (and (hasKey . "ci") (.ci | default false)) (eq (env "CHEZMOI_CI") "true") -}}
+[data]
+ci = {{ $ci }}
+work = false
+personal = true
+computerName = {{ $computerName | quote }}
+hostname = {{ $computerName | quote }}
+
+{{ if not $ci }}
+  {{ $name = promptStringOnce . "name" "Git name" }}
+  {{ $email = promptStringOnce . "email" "Git email" }}
+  {{/* {{ $signingKey = promptStringOnce . "signingKey" "Git SigningKey" }} */}}
+{{ end }}
+
+name = {{ $name | quote }}
+email = {{ $email | quote }}
+# signingKey = {{ $signingKey | quote }}
+
+[github]
+refreshPeriod = "12h"
+
+[template]
+options = ["missingkey=zero"]
+
+[hooks.read-source-state.pre]
+#  command = ".local/share/chezmoi/.install-password-manager.sh"

@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+
+dotcode() {
+  code "$(chezmoi source-path)"
+}
+
+# Create a new directory and cd into it
+mkd() {
+  mkdir -p "$@" && cd "$_"
+}
+
+# Create a symlink, removing existing file/dir/link if needed
+symlink() {
+  local target="$1"
+  local link_name="$2"
+  local overwritten=""
+
+  if [[ -e "$link_name" || -L "$link_name" ]]; then
+    overwritten="(Overwritten)"
+    rm -rf "$link_name"
+  fi
+  echo "$link_name -> $target $overwritten"
+  ln -s "$target" "$link_name"
+}
+
+# Extract archives based on extension
+extract() {
+  case "$1" in
+  *.tar.gz) tar -xzf "$1" ;;
+  *.zip) unzip "$1" ;;
+  *) echo "extract: Unknown archive format: $1" >&2 ;;
+  esac
+}
+
+# Change to the top-most Finder window location (macOS only)
+cdf() {
+  cd "$(osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)')"
+}
+
+# Create a .tar archive and compress it using best available compressor
+targz() {
+  local tmpFile="${@%/}.tar"
+
+  tar -cvf "${tmpFile}" --exclude=".DS_Store" "$@" || return 1
+
+  local size
+  if size=$(stat -f"%z" "${tmpFile}" 2>/dev/null); then :; else
+    size=$(stat -c"%s" "${tmpFile}" 2>/dev/null)
+  fi
+
+  local cmd=""
+  if ((size < 52428800)) && command -v zopfli >/dev/null 2>&1; then
+    cmd="zopfli"
+  elif command -v pigz >/dev/null 2>&1; then
+    cmd="pigz"
+  else
+    cmd="gzip"
+  fi
+
+  echo "Compressing .tar ($((size / 1000)) kB) using \`${cmd}\`…"
+  "${cmd}" -v "${tmpFile}" || return 1
+  [[ -f "${tmpFile}" ]] && rm -f "${tmpFile}"
+
+  local zippedSize
+  if zippedSize=$(stat -f"%z" "${tmpFile}.gz" 2>/dev/null); then :; else
+    zippedSize=$(stat -c"%s" "${tmpFile}.gz" 2>/dev/null)
+  fi
+
+  echo "${tmpFile}.gz ($((zippedSize / 1000)) kB) created successfully."
+}
+
+# Show size of file or directory, human-readable
+fs() {
+  local arg="-sh"
+  if du -b /dev/null >/dev/null 2>&1; then
+    arg="-sbh"
+  fi
+
+  if [[ $# -gt 0 ]]; then
+    du $arg -- "$@"
+  else
+    du $arg .[^.]* ./*
+  fi
+}
+
+# Override diff with git diff --no-index if git is available
+if command -v git >/dev/null 2>&1; then
+  diff() {
+    git diff --no-index --color-words "$@"
+  }
+fi
+
+# Create a data URL from a file
+dataurl() {
+  local file="$1"
+  local mimeType
+  mimeType=$(file -b --mime-type "$file")
+  if [[ $mimeType == text/* ]]; then
+    mimeType="${mimeType};charset=utf-8"
+  fi
+  echo "data:${mimeType};base64,$(openssl base64 -in "$file" | tr -d '\n')"
+}
+
+# Compare original and gzipped file size
+gz() {
+  local origsize gzipsize ratio
+  origsize=$(wc -c <"$1")
+  gzipsize=$(gzip -c "$1" | wc -c)
+  ratio=$(awk "BEGIN {printf \"%.2f\", ($gzipsize / $origsize) * 100}")
+  printf "orig: %d bytes\n" "$origsize"
+  printf "gzip: %d bytes (%.2f%%)\n" "$gzipsize" "$ratio"
+}
+
+# Run dig with simplified output
+digga() {
+  dig +nocmd "$1" any +multiline +noall +answer
+}
+
+# Extract CNs and SANs from SSL certificate
+getcertnames() {
+  local domain="$1"
+  if [[ -z "$domain" ]]; then
+    echo "ERROR: No domain specified." >&2
+    return 1
+  fi
+  echo "Testing ${domain}…"
+  local tmp
+  tmp=$(echo -e "GET / HTTP/1.0\nEOT" | openssl s_client -connect "${domain}:443" -servername "${domain}" 2>&1)
+
+  if [[ "$tmp" == *"-----BEGIN CERTIFICATE-----"* ]]; then
+    local certText
+    certText=$(echo "$tmp" | openssl x509 -text -certopt no_aux,no_header,no_issuer,no_pubkey,no_serial,no_sigdump,no_signame,no_validity,no_version)
+    echo "Common Name:"
+    echo "$certText" | grep "Subject:" | sed -n 's/^.*CN=\([^\/]*\).*/\1/p'
+    echo ""
+    echo "Subject Alternative Name(s):"
+    echo "$certText" | awk '/Subject Alternative Name:/ {getline; print}' | sed -e 's/DNS://g' -e 's/ //g' | tr ',' '\n'
+  else
+    echo "ERROR: Certificate not found." >&2
+    return 1
+  fi
+}
+
+# Cross-platform open alias
+if [[ "$(uname -s)" != "Darwin" ]]; then
+  if grep -q Microsoft /proc/version 2>/dev/null; then
+    alias open='explorer.exe'
+  else
+    alias open='xdg-open'
+  fi
+fi
+
+# Open current dir or given path
+o() {
+  if [[ $# -eq 0 ]]; then
+    open .
+  else
+    open "$@"
+  fi
+}
+
+# Tree with hidden files, color, ignoring .git and node_modules
+tre() {
+  tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX
+}
+
+# Python temp virtual env
+pytmpenv() {
+  local tmpvenv
+  tmpvenv=$(mktemp -d -t tmpvenv.XXXXXX)
+  export PYTHON_TMP_ENV="$tmpvenv"
+  python3 -m venv "$tmpvenv"
+  source "$tmpvenv/bin/activate"
+}
+
+pytmpenv_delete() {
+  deactivate
+  rm -rf "$PYTHON_TMP_ENV"
+}

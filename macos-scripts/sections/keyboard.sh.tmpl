@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+source "$(dirname "$0")/lib.sh"
+
+# Keyboard repeat
+set_or_audit "NSGlobalDomain" "KeyRepeat" -int {{ .macos.keyboard.keyRepeat }}
+set_or_audit "NSGlobalDomain" "InitialKeyRepeat" -int {{ .macos.keyboard.delayUntilRepeat }}
+
+# Keyboard / Input -------------------------------------------------------------
+set_or_audit NSGlobalDomain AppleKeyboardUIMode int 3
+set_or_audit NSGlobalDomain ApplePressAndHoldEnabled bool false
+set_or_audit NSGlobalDomain InitialKeyRepeat int 10
+set_or_audit NSGlobalDomain KeyRepeat int 1
+set_or_audit NSGlobalDomain NSAutomaticCapitalizationEnabled bool false
+set_or_audit NSGlobalDomain NSAutomaticDashSubstitutionEnabled bool false
+set_or_audit NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled bool false
+set_or_audit NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled bool false
+set_or_audit NSGlobalDomain NSAutomaticSpellingCorrectionEnabled bool false
+set_or_audit com.apple.menuextra.battery ShowPercent string "YES"
