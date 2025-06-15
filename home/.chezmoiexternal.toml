@@ -2,15 +2,38 @@
 type = "file"
 url = "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 refreshPeriod = "168h"
+
 [".oh-my-zsh"]
 type = "archive"
 url = "https://github.com/ohmyzsh/ohmyzsh/archive/master.tar.gz"
 exact = true
 stripComponents = 1
 refreshPeriod = "168h"
+
 [".oh-my-zsh/custom/plugins/fzf-tab"]
 type = "archive"
 url = "https://github.com/Aloxaf/fzf-tab/archive/refs/heads/master.zip"
+exact = true
+stripComponents = 1
+refreshPeriod = "168h"
+
+[".oh-my-zsh/custom/plugins/autodotenv"]
+type = "archive"
+url = "https://github.com/nocttuam/autodotenv/archive/refs/heads/master.zip"
+exact = true
+stripComponents = 1
+refreshPeriod = "168h"
+
+[".oh-my-zsh/custom/plugins/chezmoi"]
+type = "archive"
+url = "https://github.com/mass8326/zsh-chezmoi/archive/refs/heads/main.zip"
+exact = true
+stripComponents = 1
+refreshPeriod = "168h"
+
+[".oh-my-zsh/custom/plugins/yarn-autocompletions"]
+type = "archive"
+url = "https://github.com/g-plane/zsh-yarn-autocompletions/archive/refs/heads/master.zip"
 exact = true
 stripComponents = 1
 refreshPeriod = "168h"

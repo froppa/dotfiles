@@ -15,6 +15,7 @@ brew:
   - grep
   - moreutils
   - tree
+  - font-hack-nerd-font
 
   # Shell & terminal
   - zsh
