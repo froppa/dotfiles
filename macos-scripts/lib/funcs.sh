@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-autoload -Uz colors && colors
-
 function log() { print -P "%F{green}[INFO]%f $*"; }
 function warn() { print -P "%F{yellow}[WARN]%f $*"; }
 function err() { print -P "%F{red}[ERROR]%f $*"; }

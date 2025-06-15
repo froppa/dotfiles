@@ -3,9 +3,8 @@ set -euo pipefail
 
 [[ "${OSTYPE}" != "darwin"* ]] && exit 0
 
-SOURCE_PATH=$(chezmoi source-path) || true
 # shellcheck disable=SC1091
-source "${SOURCE_PATH}/.chezmoiscripts/macos/macos-defaults/funcs.sh"
+source "./lib/funcs.sh"
 
 AUDIT_MODE=${AUDIT_MODE:-false}
 SKIP_UPDATE=false
