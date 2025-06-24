@@ -9,19 +9,11 @@ Minimal, modular dotfiles for macOS automated with chezmoi and Homebrew.
 
 ## Quickstart
 
-1. Install chezmoi:
-
 ```bash
-brew install chezmoi
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply $GITHUB_USERNAME
 ```
 
-2. Bootstrap your system (if public, GH username):
-
-```bash
-$GITHUB_USERNAME=froppa chezmoi init --apply $GITHUB_USERNAME
-```
-
-3. (Optional) Run full setup:
+(Optional) Run full setup:
 
 ```bash
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
