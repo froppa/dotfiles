@@ -1,7 +1,8 @@
 #!/bin/bash
 set -eou
 
-vscode_cfg="${HOME}/code/dotfiles/home/.chezmoidata/vscode.yml"
+# TODO: fix hardcoded path
+vscode_cfg="~/.local/share/chezmoi/home/.chezmoidata/vscode.yml"
 extensions=$(yq '.extensions[]' "${vscode_cfg}")
 installed=$(code --list-extensions)
 
