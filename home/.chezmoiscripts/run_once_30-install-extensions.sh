@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou
 
-vscode_cfg="${HOME}/code/dotfiles/home//.chezmoidata/vscode.yml"
+vscode_cfg="${HOME}/code/dotfiles/home/.chezmoidata/vscode.yml"
 extensions=$(yq '.extensions[]' "${vscode_cfg}")
 installed=$(code --list-extensions)
 
