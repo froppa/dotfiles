@@ -1,21 +1,22 @@
----
 brew:
-{{- if eq .chezmoi.os "darwin" -}}
+{{ if eq .chezmoi.os "darwin" -}}
   - pinentry-mac
-{{- end -}}
-{{- if .personal -}}
+{{ end -}}
+
+{{ if .personal -}}
   - opentofu
   - minicom
   - pipx
   - libusb
   - libftdi
-{{- end -}}
-{{- if .work -}}
+{{ end -}}
+
+{{ if .work -}}
   - kubectl
-  - kubernetes-cli
   - k9s
-  - awscli@1
-{{- end -}}
+  - awscli
+{{ end -}}
+
   - autoconf
   - automake
   - bat
@@ -26,7 +27,7 @@ brew:
   - eslint
   - eza
   - findutils
-  - font-hack-nerd-font
+  - font-hack-nerd-font   # Powerline symbols included, no need for font-powerline-symbols
   - fzf
   - gh
   - git
@@ -40,13 +41,12 @@ brew:
   - m4
   - moreutils
   - nmap
-  - node
   - nvm
   - openssh
   - pkgconf
   - postgresql@14
   - pyenv
-  - python@3.13
+  - python@3.12
   - shellcheck
   - starship
   - terraform
@@ -60,18 +60,17 @@ brew:
   - zsh-syntax-highlighting
 
 cask:
-{{- if .personal -}}
+{{ if .personal -}}
   - discord
-  - latest
   - scroll-reverser
-{{- end -}}
+{{ end -}}
+
   - alt-tab
   - alfred
   - betterdisplay
   - coteditor
-  - font-powerline-symbols
   - hammerspoon
-  - loop
+  - latest          # Assumes specific use; fine if intentional
   - maccy
   - meetingbar
   - rectangle

@@ -1,26 +1,7 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-function log() { print -P "%F{green}[INFO]%f $*"; }
-function warn() { print -P "%F{yellow}[WARN]%f $*"; }
-function err() { print -P "%F{red}[ERROR]%f $*"; }
-function diff() { print -P "%F{blue}[DIFF]%f $*"; }
-
-function audit_all() {
-  for section in "./sections/"*.sh; do
-    audit_section "$(basename "${section}" .sh)"
-    bash "${section}"
-  done
-}
-
-function audit_section() {
-  local section="$1"
-  log "--- Auditing: $section"
-  # Load expected values from config.yml (use yq or grep)
-  # Compare with `defaults read`
-  # Print diff nicely
-}
-
-function keep_sudo_alive() {
+keep_sudo_alive() {
   sudo -v
   while true; do
     sudo -n true
@@ -29,6 +10,30 @@ function keep_sudo_alive() {
   done 2>/dev/null &
 }
 
-function check_command() {
-  command -v "$1" >/dev/null 2>&1
+defaults_write() {
+  local domain=$1
+  local key=$2
+  local type=$3
+  local value=$4
+
+  if [[ "${AUDIT_MODE:-false}" == "true" ]]; then
+    local current
+    current=$(defaults read "$domain" "$key" 2>/dev/null || echo "<not set>")
+    if [[ "$current" == "$value" ]]; then
+      echo "✔ $domain $key is set to $value"
+    else
+      echo "✘ $domain $key is $current, expected $value"
+    fi
+  else
+    case "$type" in
+      bool) defaults write "$domain" "$key" -bool "$value" ;;
+      int) defaults write "$domain" "$key" -int "$value" ;;
+      float) defaults write "$domain" "$key" -float "$value" ;;
+      string) defaults write "$domain" "$key" -string "$value" ;;
+      *)
+        echo "Unknown type '$type' for $domain $key"
+        return 1
+        ;;
+    esac
+  fi
 }
