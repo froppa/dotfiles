@@ -5,7 +5,14 @@
 .oh-my-zsh
 .oh-my-zsh/**
 .ssh/id_rsa
+.ssh/id*
+.ssh/id_ed25519
 .ssh/id_rsa.pub
 .ssh/config
 .gitconfig
 .aliases.local
+.zshrc
+.exports
+.functions
+.zprofile
+.vimrc

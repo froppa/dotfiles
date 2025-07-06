@@ -1,17 +1,16 @@
-local toggleApp = function(appName)
+function ToggleApplicationActive(appName)
   local app = hs.application.get(appName)
-  if app then
-    if app:isFrontmost() then
-      app:hide()
-    else
-      app:activate()
-      app:unhide()
-    end
+  if not app then
+    return hs.application.launchOrFocus(appName .. '.app')
+  end
+
+  if app:isHidden() then
+    app:activate()
   else
-    hs.application.launchOrFocus(appName)
+    app:hide()
   end
 end
 
 hs.hotkey.bind({ "rightalt" }, "´", function()
-  toggleApp("iTerm2")
+  ToggleApplicationActive("iTerm")
 end)

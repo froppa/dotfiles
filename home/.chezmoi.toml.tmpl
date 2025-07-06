@@ -1,28 +1,33 @@
+encryption = "age"
+[age]
+identity = "~/key.txt"
+recipient = "age1x8xj89ps3n8j2cy6guv2n9l788q0ud39yq0pw72lxehgdl2fdv8qqa0lfw"
+
 {{- $name := ""}}
 {{- $computerName := ""}}
 {{- $email := ""}}
-{{- $signingKey := "" }}
+{{- $ci := (eq (env "CHEZMOI_CI") "true") -}}
 
 {{ if eq .chezmoi.os "darwin"}}
-{{- $computerName := (output "scutil" "--get" "ComputerName" | trim) -}}
+  {{- $computerName := (output "scutil" "--get" "ComputerName" | trim) -}}
 {{ end }}
-{{- $ci := or (and (hasKey . "ci") (.ci | default false)) (eq (env "CHEZMOI_CI") "true") -}}
-[data]
+
 {{ if not $ci }}
   {{ $computerName = promptStringOnce . "computerName" "Computer Name" }}
   {{ $name = promptStringOnce . "name" "Git name" }}
   {{ $email = promptStringOnce . "email" "Git email" }}
-  {{/* {{ $signingKey = promptStringOnce . "signingKey" "Git SigningKey" }} */}}
 {{ end }}
+
+[data]
 work = false
 personal = true
 computerName = {{ $computerName | quote }}
 hostname = {{ $computerName | quote }}
 
-
+# Git
 name = {{ $name | quote }}
 email = {{ $email | quote }}
-# signingKey = {{ $signingKey | quote }}
+# signingKey = ""
 
 [github]
 refreshPeriod = "12h"
