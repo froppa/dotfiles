@@ -29,12 +29,9 @@
   "editor.insertSpaces": true,
   "editor.tabSize": 4,
 
-  // "editor.quickSuggestions": null,
-
   // Extensions
   //
   // - Go
-  //"go.autocompleteUnimportedPackages": true,
   "go.formatTool": "goimports",
   "go.formatFlags": [],
   "go.useLanguageServer": true,
@@ -42,7 +39,7 @@
     "toggleTestFile": true,
     "addTags": true,
     "removeTags": false,
-    "fillStruct": false,
+    "fillStruct": true,
     "testAtCursor": true,
     "testFile": false,
     "testPackage": false,

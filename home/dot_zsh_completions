@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # shellcheck disable=all
 
+zstyle ":completion:*" list-colors "\${(s.:.)LS_COLORS}"
+zstyle ':completion:*' rehash true
+zstyle ":completion:*" matcher-list \
+  "m:{a-zA-Z}={A-Za-z}" \
+  "r:|[._-]=* r:|=*" \
+  "l:|=* r:|=*"
+
 # disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
 # set descriptions format to enable group support
@@ -15,7 +22,7 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
 zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
 # To make fzf-tab follow FZF_DEFAULT_OPTS.
-zstyle ':fzf-tab:*' use-fzf-default-opts yes
+#zstyle ':fzf-tab:*' use-fzf-default-opts yes
 # switch group using `<` and `>`
 zstyle ':fzf-tab:*' switch-group '<' '>'
 

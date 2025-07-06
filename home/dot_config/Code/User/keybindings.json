@@ -40,16 +40,6 @@
     "when": "textInputFocus && !editorReadonly"
   },
   {
-    "key": "cmd+shift+d",
-    "command": "editor.action.deleteLines",
-    "when": "textInputFocus && !editorReadonly"
-  },
-  {
-    "key": "ctrl+shift+d",
-    "command": "editor.action.deleteLines",
-    "when": "textInputFocus && !editorReadonly"
-  },
-  {
     "key": "alt+right",
     "command": "cursorWordEndRight",
     "when": "textInputFocus"
@@ -128,13 +118,5 @@
     "key": "shift+end",
     "command": "cursorEndSelect",
     "when": "textInputFocus"
-  },
-  {
-    "key": "alt+shift+d",
-    "command": "workbench.view.debug"
-  },
-  {
-    "key": "alt+shift+e",
-    "command": "workbench.view.explorer"
   }
 ]

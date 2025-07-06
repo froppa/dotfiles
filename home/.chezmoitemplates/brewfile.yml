@@ -1,10 +1,21 @@
 ---
 brew:
+{{- if eq .chezmoi.os "darwin" -}}
   - pinentry-mac
+{{- end -}}
+{{- if .personal -}}
+  - opentofu
   - minicom
   - pipx
   - libusb
   - libftdi
+{{- end -}}
+{{- if .work -}}
+  - kubectl
+  - kubernetes-cli
+  - k9s
+  - awscli@1
+{{- end -}}
   - autoconf
   - automake
   - bat
@@ -49,9 +60,11 @@ brew:
   - zsh-syntax-highlighting
 
 cask:
+{{- if .personal -}}
   - discord
   - latest
   - scroll-reverser
+{{- end -}}
   - alt-tab
   - alfred
   - betterdisplay

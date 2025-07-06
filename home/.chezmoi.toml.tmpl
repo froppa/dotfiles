@@ -8,17 +8,17 @@
 {{ end }}
 {{- $ci := or (and (hasKey . "ci") (.ci | default false)) (eq (env "CHEZMOI_CI") "true") -}}
 [data]
-ci = {{ $ci }}
+{{ if not $ci }}
+  {{ $computerName = promptStringOnce . "computerName" "Computer Name" }}
+  {{ $name = promptStringOnce . "name" "Git name" }}
+  {{ $email = promptStringOnce . "email" "Git email" }}
+  {{/* {{ $signingKey = promptStringOnce . "signingKey" "Git SigningKey" }} */}}
+{{ end }}
 work = false
 personal = true
 computerName = {{ $computerName | quote }}
 hostname = {{ $computerName | quote }}
 
-{{ if not $ci }}
-  {{ $name = promptStringOnce . "name" "Git name" }}
-  {{ $email = promptStringOnce . "email" "Git email" }}
-  {{/* {{ $signingKey = promptStringOnce . "signingKey" "Git SigningKey" }} */}}
-{{ end }}
 
 name = {{ $name | quote }}
 email = {{ $email | quote }}

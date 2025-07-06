@@ -1,29 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=> Disabling analytics..."
-brew analytics off
+brewfile="$HOME/.local/share/chezmoi/.chezmoidata/brewfile.yml"
+[[ -f "$brewfile" ]] || exit 0
 
-brew update
-brew upgrade
+echo "=> Installing packages from $brewfile..."
 
-brewfile="${HOME}/code/dotfiles/.chezmoidata/brewfile.yml"
-[[ -f "${brewfile}" ]] || exit 0
+temp_brewfile=$(mktemp --suffix=.Brewfile)
+trap 'rm -f "$temp_brewfile"' EXIT
 
-echo "=> Installing packages from .chezmoidata/brewfile.yml..."
+yq -r '.brew[]  | "brew \\"" + . + "\\"" ' "$brewfile" >> "$temp_brewfile"
+yq -r '.cask[]  | "cask \\"" + . + "\\"" ' "$brewfile" >> "$temp_brewfile"
 
-# Generate Brewfile format from YAML
-generate_brewfile() {
-  yq -r '.tap[]   | "tap \"" + . + "\""' "${brewfile}"
-  yq -r '.brew[]  | "brew \"" + . + "\""' "${brewfile}"
-  yq -r '.cask[]  | "cask \"" + . + "\""' "${brewfile}"
-}
-
-temp_brewfile="$(mktemp)"
-generate_brewfile >"${temp_brewfile}"
-brew bundle --file="${temp_brewfile}"
-
-echo "=> Cleaning up..."
+brew bundle --file="$temp_brewfile"
 brew cleanup
-
-rm "${temp_brewfile}"

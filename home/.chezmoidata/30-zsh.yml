@@ -1,11 +1,9 @@
 ---
 zsh:
   plugins:
-    - autodotenv
     - chezmoi
     - fzf
     - fzf-tab
     - git
-    - yarn-autocompletions
     - z
     - zsh-syntax-highlighting
