@@ -2,6 +2,8 @@
 set -euo pipefail
 
 run_macos=false
+profile="personal"
+
 usage() {
   cat <<EOF
 Usage: $0 [--macos] [--profile=name]
@@ -16,12 +18,21 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --macos) run_macos=true ;;
-  # --profile=*) profile="${1#*=}" ;;
+  --profile=*) profile="${1#*=}" ;;
   -h | --help) usage ;;
   *) usage ;;
   esac
   shift
 done
+
+# Set environment variables based on profile
+if [[ "$profile" == "work" ]]; then
+  export WORK=true
+  echo "🏢 Profile: Work"
+else
+  export PERSONAL=true
+  echo "👤 Profile: Personal"
+fi
 
 echo "🔧 Starting dotfiles install..."
 if ! command -v chezmoi &>/dev/null; then

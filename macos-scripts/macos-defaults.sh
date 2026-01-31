@@ -1,14 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 [[ "${OSTYPE}" != darwin* ]] && exit 0
 
 # shellcheck disable=SC1091
-source "./lib/funcs.sh"
+source "${DIR}/lib/funcs.sh"
 
 AUDIT_MODE=${AUDIT_MODE:-false}
 SKIP_UPDATE=false
 SKIP_XCODE=false
+
+# Default variables for sections
+COMPUTER_NAME="${COMPUTER_NAME:-froppa-mac}"
+LANGUAGES=("${LANGUAGES[@]:-"en"}")
+LOCALE="${LOCALE:-en_US}"
+MEASUREMENT_UNITS="${MEASUREMENT_UNITS:-Centimeters}"
 
 usage() {
   cat <<EOF
@@ -74,13 +82,10 @@ if [[ "$AUDIT_MODE" == "true" ]]; then
 fi
 
 echo "=> Applying macOS defaults"
-bash "./sections/general.sh"
-bash "./sections/finder.sh"
-#bash "./sections/dock.sh"
-
-# for section in ./sections/*.sh; do
-#   echo "=== Auditing section: $section ==="
-#   bash "${section}"
-# done
+# shellcheck disable=SC1090,SC1091
+source "${DIR}/sections/general.sh"
+# shellcheck disable=SC1090,SC1091
+source "${DIR}/sections/finder.sh"
+# source "${DIR}/sections/dock.sh"
 
 killall Finder SystemUIServer &>/dev/null || true
