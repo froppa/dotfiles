@@ -54,8 +54,9 @@ hi Normal guibg=NONE ctermbg=NONE
 " === Mappings ===
 " ========================
 let mapleader = ","
-nmap <leader>w :w!<CR>
-nmap <leader>x :wq!<CR>
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>wq :wq<CR>
 command! W execute 'silent! write !sudo tee % > /dev/null' | edit
 
 nnoremap <leader><space> :nohlsearch<CR>
@@ -64,14 +65,20 @@ nnoremap j gj
 nnoremap k gk
 nnoremap <F4> :NERDTreeToggle<CR>
 nnoremap <F3> :NERDTreeFocus<CR>
+nnoremap <leader>e :NERDTreeToggle<CR>
+nnoremap <leader>r :NERDTreeFind<CR>
 nnoremap <leader>z :FZF<CR>
 nnoremap <leader>u :GundoToggle<CR>
 nnoremap <leader>a :Ag
 nnoremap < :tabprevious<CR>
 nnoremap > :tabnext<CR>
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-map <leader>q :e ~/buffer<cr>
-map <leader>x :e ~/buffer.md<cr>
+nnoremap <leader>bb :e ~/buffer<CR>
+nnoremap <leader>bm :e ~/buffer.md<CR>
 
 " ========================
 " === Plugin Configs ===

@@ -1,74 +1,105 @@
 brew:
-{{ if eq .chezmoi.os "darwin"}}
+  - coreutils
+  - findutils
+  - gnu-sed
+  - grep
+  - moreutils
+  - tree
+  - font-hack-nerd-font
+  - gcc
+  - make
+  - ripgrep
+
+  # Shell & terminal
+  - zsh
+  - starship
+  - tmux
+  - fzf
+  - z
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - direnv
+  - neovim
+  - ncdu
+
+  # Networking & security
+  - gnupg
+  - openssh
+  - openssl
+  - nmap
+{{ if eq .chezmoi.os "darwin" }}
   - pinentry-mac
 {{ end }}
 {{ if .personal }}
-  - opentofu
-  - minicom
-  - pipx
   - libusb
   - libftdi
 {{ end }}
 
+  # CLI tools
+  - bat
+  - jq
+  - yq
+  - htop
+  - gh
+  - git
+  - git-lfs
+  - pipx
+  - eslint
+  - eza
+  - httpie
+
+  # Programming
+  - python@3.12
+  - postgresql@14
+  - go
+  - ruby
+  - node
+  - nvm
+  - yarn
+  - pnpm
+  - pyenv
+  - vim
+
+  # Build tools
+  - cmake
+  - m4
+  - autoconf
+  - automake
+  - libtool
+  - boost
+  - pkgconf
+  - xcode-build-server
+
+  # DevOps & container tools
+  - terraform
+  - docker
+  - chezmoi
+  - shellcheck
+{{ if .personal }}
+  - opentofu
+  - terraformer
+  - minicom
+{{ end }}
 {{ if .work }}
   - kubectl
   - k9s
   - awscli
 {{ end }}
-  - autoconf
-  - automake
-  - bat
-  - chezmoi
-  - cmake
-  - coreutils
-  - docker
-  - eslint
-  - eza
-  - findutils
-  - font-hack-nerd-font   # Powerline symbols included, no need for font-powerline-symbols
-  - fzf
-  - gh
-  - git
-  - gnu-sed
-  - gnupg
-  - go
-  - grep
-  - htop
-  - jq
-  - libtool
-  - m4
-  - moreutils
-  - nmap
-  - nvm
-  - openssh
-  - pkgconf
-  - postgresql@14
-  - pyenv
-  - python@3.12
-  - shellcheck
-  - starship
-  - terraform
-  - tree
-  - vim
-  - yarn
-  - yq
-  - z
-  - zsh
-  - zsh-autosuggestions
-  - zsh-syntax-highlighting
+
+  # Filesystem & serial
+  - e2fsprogs
 
 cask:
 {{ if .personal }}
   - discord
   - scroll-reverser
 {{ end }}
-
   - alt-tab
   - alfred
   - betterdisplay
   - coteditor
   - hammerspoon
-  - latest          # Assumes specific use; fine if intentional
+  - latest
   - maccy
   - meetingbar
   - rectangle
