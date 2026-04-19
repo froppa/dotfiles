@@ -119,9 +119,12 @@ export NVM_DIR="$HOME/.nvm"
 # Source local customizations
 # =======================================
 [[ -f $HOME/.zsh_completions ]] && source $HOME/.zsh_completions
+[[ -f $HOME/.zsh_completions.local ]] && source $HOME/.zsh_completions.local
 [[ -f $HOME/.exports ]] && source $HOME/.exports
+[[ -f $HOME/.exports.local ]] && source $HOME/.exports.local
 [[ -f $HOME/.aliases ]] && source $HOME/.aliases
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 [[ -f $HOME/.functions ]] && source $HOME/.functions
+[[ -f $HOME/.functions.local ]] && source $HOME/.functions.local
 
 eval "$(starship init zsh)"

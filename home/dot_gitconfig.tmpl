@@ -3,6 +3,9 @@
   email = {{ .email | quote }}
   {{/* signingkey = {{ .signingKey | quote }} */}}
 
+[include]
+  path = ~/.gitconfig.local
+
 [advice]
   addEmptyPathspec = false
   pushNonFastForward = false

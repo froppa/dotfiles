@@ -9,10 +9,10 @@
 .ssh/id_ed25519
 .ssh/id_rsa.pub
 .ssh/config
-.gitconfig
 .aliases.local
-.zshrc
-.exports
-.functions
-.zprofile
-.vimrc
+.exports.local
+.functions.local
+.gitconfig.local
+.zprofile.local
+.zsh_completions.local
+.zshrc.local
