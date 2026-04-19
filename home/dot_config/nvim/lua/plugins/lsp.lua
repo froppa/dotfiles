@@ -29,15 +29,21 @@ return {
     },
     config = function()
       local lsp = require("config.lsp")
-      local lspconfig = require("lspconfig")
       local capabilities = lsp.capabilities()
 
       lsp.setup()
 
       for server, server_opts in pairs(lsp.servers) do
-        server_opts.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server_opts.capabilities or {})
+        server_opts.capabilities = vim.tbl_deep_extend(
+          "force",
+          {},
+          capabilities,
+          server_opts.capabilities or {}
+        )
         server_opts.on_attach = lsp.on_attach
-        lspconfig[server].setup(server_opts)
+
+        vim.lsp.config(server, server_opts)
+        vim.lsp.enable(server)
       end
     end,
   },

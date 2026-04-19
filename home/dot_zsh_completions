@@ -1,42 +1,57 @@
-#!/usr/bin/env bash
-# shellcheck disable=all
+# ~/.zsh_completions
+# Managed by chezmoi
+# Sourced from .zshrc
 
-zstyle ":completion:*" list-colors "\${(s.:.)LS_COLORS}"
+# Completion behavior
 zstyle ':completion:*' rehash true
-zstyle ":completion:*" matcher-list \
-  "m:{a-zA-Z}={A-Za-z}" \
-  "r:|[._-]=* r:|=*" \
-  "l:|=* r:|=*"
-
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set descriptions format to enable group support
-# NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
-zstyle ':completion:*:descriptions' format '[%d]'
-# set list-colors to enable filename colorizing
-# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-# preview directory's content with eza when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-# custom fzf flags
-# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=up:up,down:down
-# To make fzf-tab follow FZF_DEFAULT_OPTS.
-#zstyle ':fzf-tab:*' use-fzf-default-opts yes
-# switch group using `<` and `>`
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' matcher-list \
+  'm:{a-zA-Z}={A-Za-z}' \
+  'r:|[._-]=* r:|=*' \
+  'l:|=* r:|=*'
+
+# Keep git branch completion order stable for checkout/switch
+zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:*:git-switch:*' sort false
+
+# Colors for completion lists
+if [[ -n "${LS_COLORS:-}" ]]; then
+  zstyle ':completion:*' list-colors "\${(s.:.)LS_COLORS}"
+fi
+
+# fzf-tab
+if (( $+commands[fzf] )); then
+  source <(fzf --zsh)
+fi
+
+# Try common plugin locations instead of assuming OMZ custom only
+for fzf_tab_plugin in \
+  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.plugin.zsh" \
+  "/opt/homebrew/share/fzf-tab/fzf-tab.plugin.zsh" \
+  "/usr/local/share/fzf-tab/fzf-tab.plugin.zsh" \
+  "/usr/share/fzf-tab/fzf-tab.plugin.zsh"
+do
+  if [[ -f "$fzf_tab_plugin" ]]; then
+    source "$fzf_tab_plugin"
+    break
+  fi
+done
+
+# fzf-tab options
 zstyle ':fzf-tab:*' switch-group '<' '>'
+zstyle ':fzf-tab:*' fzf-flags --bind=up:up,down:down
 
-if command -v kubectl &>/dev/null; then
-  # shellcheck disable=SC1090
-  source <(kubectl completion zsh || true)
+if (( $+commands[eza] )); then
+  zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+elif (( $+commands[ls] )); then
+  zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -la $realpath'
 fi
 
-if command -v gh &>/dev/null; then
-  # shellcheck disable=SC1090
-  source <(gh completion -s zsh || true)
+if (( $+commands[kubectl] )); then
+  source <(kubectl completion zsh 2>/dev/null)
 fi
 
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
-
-source "${HOME}/.oh-my-zsh/custom/plugins/fzf-tab/fzf-tab.plugin.zsh"
+if (( $+commands[gh] )); then
+  source <(gh completion -s zsh 2>/dev/null)
+fi

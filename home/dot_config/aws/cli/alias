@@ -1,103 +1,270 @@
 [toplevel]
+id      = sts get-caller-identity
+region  = configure get region
+regions = ec2 describe-regions --query 'sort_by(Regions, &RegionName)[].RegionName' --output text
 
-cfn     = cloudformation
-conf    = configure
-regions = ec2 describe-regions --query 'Regions[].RegionName[]' --output text
-whoami  = sts get-caller-identity
+cw      = cloudwatch
+logs    = logs
+ecs     = ecs
+sqs     = sqs
+sns     = sns
+s3      = s3
 
 [command alias]
-ls = !cat ~/.config/aws/cli/alias | grep '^\\S' | grep '=' | sort
+ls = !grep '^[^[:space:]#].*=' "${HOME}/.config/aws/cli/alias" | sort
 
+[command logs]
+groups = describe-log-groups --query 'logGroups[].logGroupName'
+groups-short = describe-log-groups --query 'logGroups[].logGroupName' --output text
 
-[command cloudformation]
+streams = describe-log-streams --log-group-name
+streams-recent = describe-log-streams --log-group-name --order-by LastEventTime --descending
 
-ls = describe-stacks --query 'Stacks[].[StackName,StackStatus]'
+tail = tail --follow --log-group-name
+tail-since = tail --follow --since 30m --log-group-name
+tail-short = tail --since 30m --log-group-name
 
-rm = delete-stack --stack-name
+filter = filter-log-events --log-group-name
+errors = filter-log-events \
+  --log-group-name \
+  --filter-pattern '?ERROR ?Error ?error ?FATAL ?Fatal ?panic ?PANIC ?exception'
 
-head = describe-stack-events \
-  --max-items 10 \
-  --query 'StackEvents[].[
-    Timestamp,
-    ResourceType,
-    ResourceStatus
-  ]' \
-  --stack-name
+start = start-query --log-group-name
+query = get-query-results --query-id
 
-
-[command configure]
-
-ls = list-profiles
-
-
-[command ec2]
-
-keys = describe-key-pairs --query 'KeyPairs[].[KeyName,KeyPairId,KeyType,KeyFingerprint]'
-
-find = !f() {
-    instance=${1:?expected instance type argument}
-    echo "Locating regions with ${instance}..."
-    for region in $(aws regions); do
-      aws ec2 describe-instance-types --region $region --instance-types $instance &> /dev/null
-      [[ $? -eq 0 ]] && echo $region
-    done
+# Example:
+# aws logs insights "/ecs/ch-prod-my-service" "fields @timestamp, @message | sort @timestamp desc | limit 50"
+insights = !f() {
+    group=${1:?expected log group}
+    query=${2:?expected insights query}
+    start=$(date -u -d '30 minutes ago' '+%s' 2>/dev/null || python3 - <<'PY'
+import time
+print(int(time.time()) - 1800)
+PY
+)
+    end=$(date -u '+%s' 2>/dev/null || python3 - <<'PY'
+import time
+print(int(time.time()))
+PY
+)
+    aws logs start-query \
+      --log-group-name "$group" \
+      --start-time "$start" \
+      --end-time "$end" \
+      --query-string "$query"
   }; f
 
-ls = describe-instances \
-  --query 'Reservations[].Instances[].[
-    InstanceType,
-    InstanceId,
-    Tags[?Key==`Name`]|[0].Value,
-    PublicIpAddress || `-`,
-    PrivateIpAddress,
-    NetworkInterfaces[?InterfaceType==`efa`]|[0].InterfaceType || `-`,
-    Placement.AvailabilityZone,
-    State.Name
-  ] | sort_by(@, &[0])'
+[command cloudwatch]
+alarms = describe-alarms --query 'MetricAlarms[].{Name:AlarmName,State:StateValue,Metric:MetricName,Namespace:Namespace}'
+alarms-alarm = describe-alarms --state-value ALARM --query 'MetricAlarms[].{Name:AlarmName,State:StateValue,Metric:MetricName,Namespace:Namespace}'
+alarm = describe-alarms --alarm-names
+history = describe-alarm-history --alarm-name
 
-lsefa = describe-instance-types \
-  --filters Name=network-info.efa-supported,Values=true \
-  --query 'InstanceTypes[].[
-    InstanceType,
-   [VCpuInfo.DefaultVCpus.to_string(@), `vCPUs`].join(`\u0020`,@),
-    ProcessorInfo.[
-     [SustainedClockSpeedInGhz.to_string(@), `GHz`].join(`\u0020`,@),
-      SupportedArchitectures[0]
-    ],
-   [MemoryInfo.SizeInMiB.to_string(@), `MiB`].join(`\u0020`,@),
-    FpgaInfo && `FPGA` || GpuInfo && `GPU` || InferenceAcceleratorInfo && `Inf` || `-`,
-   (FpgaInfo.Fpgas || GpuInfo.Gpus || InferenceAcceleratorInfo.Accelerators)[0].[
-      Count,
-     [Manufacturer, Name].join(`\u0020`,@),
-      MemoryInfo && [MemoryInfo.SizeInMiB.to_string(@), `MiB`].join(`\u0020`,@) || `-`
-    ] || [`-`,`-`,`-`],
-    NetworkInfo.[
-     [EfaInfo.MaximumEfaInterfaces.to_string(@), `EFA`].join(`\u0020`,@),
-      NetworkPerformance
-    ]
-  ] | map(&[], @) | sort_by(@, &[0])'
+metrics = list-metrics
+metrics-ns = list-metrics --namespace
+namespaces = list-metrics --query 'Metrics[].Namespace' --output text
 
-lsefa-global = !f() {
-    echo "Finding instance types with EFA support in all regions (this may take a while)..."
-    for region in $(aws regions); do
-      echo "${region}:"
-      aws ec2 lsefa --region $region
-      echo ""
-    done
+# Example:
+# aws cw stat AWS/ECS CPUUtilization ClusterName=my-cluster,ServiceName=my-service Average 300 3600
+stat = !f() {
+    namespace=${1:?expected namespace}
+    metric=${2:?expected metric name}
+    dimensions=${3:-}
+    stat=${4:-Average}
+    period=${5:-300}
+    window=${6:-3600}
+
+    end=$(date -u '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || python3 - <<'PY'
+from datetime import datetime, timezone
+print(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
+PY
+)
+    start=$(date -u -d "${window} seconds ago" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || python3 - <<PY
+from datetime import datetime, timedelta, timezone
+print((datetime.now(timezone.utc) - timedelta(seconds=${window})).strftime('%Y-%m-%dT%H:%M:%SZ'))
+PY
+)
+
+    if [ -n "$dimensions" ]; then
+      aws cloudwatch get-metric-statistics \
+        --namespace "$namespace" \
+        --metric-name "$metric" \
+        --dimensions "$(printf '%s' "$dimensions" | awk -F, '{
+          for (i=1; i<=NF; i++) {
+            split($i, a, "=")
+            printf "Name=%s,Value=%s%s", a[1], a[2], (i<NF ? " " : "")
+          }
+        }')" \
+        --statistics "$stat" \
+        --period "$period" \
+        --start-time "$start" \
+        --end-time "$end"
+    else
+      aws cloudwatch get-metric-statistics \
+        --namespace "$namespace" \
+        --metric-name "$metric" \
+        --statistics "$stat" \
+        --period "$period" \
+        --start-time "$start" \
+        --end-time "$end"
+    fi
   }; f
 
-lspc = describe-instances \
-  --filters 'Name=tag-key,Values=parallelcluster:version' \
-  --query 'Reservations[].Instances[].[
-    Tags[?Key==`parallelcluster:cluster-name`]|[0].Value,
-    InstanceType,
-    Tags[?Key==`parallelcluster:node-type`&&Value==`HeadNode`] && `-` || [
-      Tags[?Key==`parallelcluster:queue-name`]|[0].Value,
-      Tags[?Key==`parallelcluster:compute-resource-name`]|[0].Value
-    ].join(`:`,@),
-    PublicIpAddress || PrivateIpAddress,
-    Placement.AvailabilityZone,
-    InstanceId,
-    Tags[?Key==`parallelcluster:version`]|[0].Value,
-    State.Name
-  ] | sort_by(sort_by(@, &[1]), &[0])'
+[command ecs]
+clusters = list-clusters --query 'clusterArns[]' --output text
+services = list-services --cluster
+tasks = list-tasks --cluster
+tasks-service = list-tasks --cluster --service-name
+
+describe-cluster = describe-clusters --clusters
+describe-service = describe-services --cluster --services
+describe-task = describe-tasks --cluster --tasks
+describe-taskdef = describe-task-definition --task-definition
+
+# Quick service overview:
+# aws ecs svc my-cluster my-service
+svc = !f() {
+    cluster=${1:?expected cluster}
+    service=${2:?expected service}
+    aws ecs describe-services \
+      --cluster "$cluster" \
+      --services "$service" \
+      --query 'services[].{
+        Service:serviceName,
+        Status:status,
+        Desired:desiredCount,
+        Running:runningCount,
+        Pending:pendingCount,
+        LaunchType:launchType,
+        TaskDefinition:taskDefinition,
+        ExecEnable:enableExecuteCommand
+      }'
+  }; f
+
+# Recent running tasks for service
+svc-tasks = !f() {
+    cluster=${1:?expected cluster}
+    service=${2:?expected service}
+    aws ecs list-tasks \
+      --cluster "$cluster" \
+      --service-name "$service" \
+      --desired-status RUNNING \
+      --query 'taskArns[]' \
+      --output text
+  }; f
+
+# Stopped tasks are often what you actually need during incidents
+svc-stopped = !f() {
+    cluster=${1:?expected cluster}
+    service=${2:?expected service}
+    aws ecs list-tasks \
+      --cluster "$cluster" \
+      --service-name "$service" \
+      --desired-status STOPPED \
+      --query 'taskArns[]' \
+      --output text
+  }; f
+
+# Show stopped reason / exit codes for latest tasks
+svc-failures = !f() {
+    cluster=${1:?expected cluster}
+    service=${2:?expected service}
+    tasks=$(aws ecs list-tasks \
+      --cluster "$cluster" \
+      --service-name "$service" \
+      --desired-status STOPPED \
+      --query 'taskArns[:10]' \
+      --output text)
+    [ -z "$tasks" ] && exit 0
+    aws ecs describe-tasks \
+      --cluster "$cluster" \
+      --tasks $tasks \
+      --query 'tasks[].{
+        Task:taskArn,
+        StoppedReason:stoppedReason,
+        StopCode:stopCode,
+        Containers:containers[].{
+          Name:name,
+          ExitCode:exitCode,
+          Reason:reason,
+          LastStatus:lastStatus
+        }
+      }'
+  }; f
+
+# For Fargate service count / rollout visibility
+deployments = !f() {
+    cluster=${1:?expected cluster}
+    service=${2:?expected service}
+    aws ecs describe-services \
+      --cluster "$cluster" \
+      --services "$service" \
+      --query 'services[].deployments[].{
+        Status:status,
+        TaskDef:taskDefinition,
+        Desired:desiredCount,
+        Pending:pendingCount,
+        Running:runningCount,
+        Created:createdAt,
+        Updated:updatedAt
+      }'
+  }; f
+
+# Exec wrapper if ECS Exec is enabled
+exec = !f() {
+    cluster=${1:?expected cluster}
+    task=${2:?expected task}
+    container=${3:?expected container}
+    shift 3
+    cmd="${*:-/bin/sh}"
+    aws ecs execute-command \
+      --cluster "$cluster" \
+      --task "$task" \
+      --container "$container" \
+      --interactive \
+      --command "$cmd"
+  }; f
+
+[command sqs]
+ls = list-queues --query 'QueueUrls[]' --output text
+attrs = get-queue-attributes --attribute-names All --queue-url
+depth = get-queue-attributes \
+  --attribute-names ApproximateNumberOfMessages ApproximateNumberOfMessagesNotVisible ApproximateNumberOfMessagesDelayed \
+  --queue-url
+
+recv = receive-message \
+  --max-number-of-messages 10 \
+  --visibility-timeout 30 \
+  --wait-time-seconds 10 \
+  --attribute-names All \
+  --message-attribute-names All \
+  --queue-url
+
+send = send-message --queue-url --message-body
+purge = purge-queue --queue-url
+
+[command sns]
+topics = list-topics --query 'Topics[].TopicArn' --output text
+subs = list-subscriptions --query 'Subscriptions[].{Protocol:Protocol,Endpoint:Endpoint,TopicArn:TopicArn}'
+subs-topic = list-subscriptions-by-topic --topic-arn
+pub = publish --topic-arn --message
+
+[command s3]
+lsb = ls
+du = ls --summarize --human-readable --recursive
+cp = cp
+mv = mv
+rm = rm
+sync = sync
+
+# Show latest objects under prefix:
+# aws s3 recent s3://bucket/prefix/
+recent = !f() {
+    path=${1:?expected s3://bucket/prefix}
+    bucket=$(printf '%s' "$path" | sed -E 's#^s3://([^/]+).*$#\1#')
+    prefix=$(printf '%s' "$path" | sed -E 's#^s3://[^/]+/?(.*)$#\1#')
+    aws s3api list-objects-v2 \
+      --bucket "$bucket" \
+      ${prefix:+--prefix "$prefix"} \
+      --query 'reverse(sort_by(Contents, &LastModified))[:20].[LastModified, Size, Key]'
+  }; f

@@ -1,39 +1,25 @@
 encryption = "age"
+
 [age]
 identity = "~/key.txt"
 recipient = "age1x8xj89ps3n8j2cy6guv2n9l788q0ud39yq0pw72lxehgdl2fdv8qqa0lfw"
 
-{{- $name := ""}}
-{{- $computerName := ""}}
-{{- $email := ""}}
-{{- $ci := (eq (env "CHEZMOI_CI") "true") -}}
-
-{{ if eq .chezmoi.os "darwin"}}
-  {{- $computerName := (output "scutil" "--get" "ComputerName" | trim) -}}
-{{ end }}
-
-{{ if not $ci }}
-  {{ $computerName = promptStringOnce . "computerName" "Computer Name" }}
-  {{ $name = promptStringOnce . "name" "Git name" }}
-  {{ $email = promptStringOnce . "email" "Git email" }}
+{{ $computerName := "" }}
+{{ if eq .chezmoi.os "darwin" }}
+{{ $computerName = (output "scutil" "--get" "ComputerName" | trim) }}
+{{ else }}
+{{ $computerName = (output "hostname" | trim) }}
 {{ end }}
 
 [data]
+profile = "personal"
 work = false
 personal = true
 computerName = {{ $computerName | quote }}
 hostname = {{ $computerName | quote }}
-
-# Git
-name = {{ $name | quote }}
-email = {{ $email | quote }}
-# signingKey = ""
 
 [github]
 refreshPeriod = "12h"
 
 [template]
 options = ["missingkey=zero"]
-
-[hooks.read-source-state.pre]
-#  command = ".local/share/chezmoi/.install-password-manager.sh"
