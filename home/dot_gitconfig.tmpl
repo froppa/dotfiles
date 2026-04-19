@@ -69,6 +69,16 @@
 
   whoami = config.user.email
   lstag = !git ls-remote --tags origin
+  fup = commit --fixup
+  fup1 = commit --fixup HEAD~1
+  fup2 = commit --fixup HEAD~2
+  fup3 = commit --fixup HEAD~3
+  asom = rebase -i --autosquash origin/master
+  amend1s = "!f(){ git commit --amend --no-edit -S $(git rev-parse HEAD~1); }; f"
+  amend2s = "!f(){ git commit --amend --no-edit -S $(git rev-parse HEAD~2); }; f"
+  amend3s = "!f(){ git commit --amend --no-edit -S $(git rev-parse HEAD~3); }; f"
+  unamend = reset --mixed HEAD@{1}
+  signlast = "!f(){ n=${1:-1}; git rebase -i --rebase-merges --exec 'git commit --amend --no-edit -S' HEAD~$n; }; f"
 
   sh = "!git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git show"
   fu = "!git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup"
@@ -111,6 +121,8 @@
   submoduleSummary = true
 [tag]
   sort = version:refname
+[commit]
+  gpgsign = true
 
 [diff]
   renames = copies

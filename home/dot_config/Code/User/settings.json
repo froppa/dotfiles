@@ -1,33 +1,119 @@
 {
   // VSCode Settings
   "telemetry.telemetryLevel": "off",
+  "telemetry.feedback.enabled": false,
+  "chat.agent.enabled": false,
+  "security.workspace.trust.banner": "never",
+  "security.workspace.trust.enabled": false,
   "workbench.startupEditor": "newUntitledFile",
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,
-  "workbench.list.openMode": "doubleClick",
+  "workbench.list.openMode": "singleClick",
 
   // UI
   "breadcrumbs.enabled": true,
   "editor.fontSize": 12,
   "window.titleBarStyle": "native",
+  "window.nativeTabs": true,
   "window.zoomLevel": 0,
   "search.showLineNumbers": true,
-  "workbench.activityBar.location": "hidden",
   "workbench.iconTheme": "material-icon-theme",
-  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.preferredDarkColorTheme": "GitHub Dark Default",
   "workbench.tips.enabled": false,
   "workbench.editor.enablePreview": false,
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.showTabs": "multiple",
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.commandPalette.experimental.enableNaturalLanguageSearch": false,
+  "workbench.commandPalette.preserveInput": true,
+  "workbench.editor.autoLockGroups": {
+    "default": true,
+    "mainThreadWebview-browserPreview": false,
+    "workbench.editor.chatSession": false,
+    "workbench.editorinputs.searchEditorInput": true
+  },
+  "workbench.view.alwaysShowHeaderActions": true,
+  "workbench.view.showQuietly": {
+    "workbench.panel.output": true
+  },
+  "workbench.panel.defaultLocation": "bottom",
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "problems.visibility": true,
+  "workbench.tree.indent": 4,
 
   // Editor
   "editor.bracketPairColorization.enabled": true,
   "editor.detectIndentation": false,
   "editor.renderWhitespace": "boundary",
   "editor.minimap.enabled": false,
+  "editor.stickyScroll.enabled": true,
+  "editor.scrollBeyondLastLine": false,
   "editor.wordBasedSuggestions": "off",
+  "editor.suggest.showWords": false,
   "editor.formatOnSave": true,
   "editor.indentSize": "tabSize",
   "editor.insertSpaces": true,
   "editor.tabSize": 4,
+
+  // Explorer
+  "explorer.autoReveal": true,
+  "explorer.compactFolders": false,
+  "explorer.sortOrder": "type",
+  "explorer.sortOrderLexicographicOptions": "unicode",
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js, ${capture}.js.map, ${capture}.d.ts, ${capture}.d.ts.map",
+    "*.tsx": "${capture}.ts, ${capture}.css, ${capture}.css.map",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts, ${capture}.d.ts.map",
+    "*.jsx": "${capture}.js, ${capture}.js.map",
+    "*.test.ts": "${capture}.test.ts.snap",
+    "*.spec.ts": "${capture}.spec.ts.snap",
+    "astro.config.mjs": "tsconfig.json, tsconfig.*.json, tsconfig.*.jsonc, env.d.ts",
+    "wrangler.jsonc": "env.example, .dev.vars, .env, .env.*, _headers, _redirects",
+    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .npmrc, .nvmrc",
+    "eslint.config.js": ".eslintignore, .prettierignore, prettier.config.*",
+    "vitest.config.ts": "vitest.workspace.*, vitest.setup.*, playwright.config.*",
+    "tsconfig.json": "tsconfig.*.json, tsconfig.*.jsonc",
+    "main.tf": "variables.tf, outputs.tf, providers.tf, versions.tf, locals.tf",
+    "prod.tfvars": "*.auto.tfvars, *.auto.tfvars.enc"
+  },
+
+  // Terminal
+  "terminal.integrated.defaultLocation": "editor",
+  "terminal.integrated.tabs.enabled": true,
+  "terminal.integrated.tabs.hideCondition": "singleTerminal",
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "terminal.integrated.persistentSessionReviveProcess": "onExit",
+  "terminal.integrated.scrollback": 100000,
+  "terminal.integrated.cwd": "${workspaceFolder}",
+
+  // Performance / search
+  "js/ts.tsserver.maxMemory": 4096,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/.pnpm-store": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.astro": true,
+    "**/.wrangler": true,
+    "**/coverage": true,
+    "**/.cache": true,
+    "**/.terraform": true,
+    "**/.terraform.lock.hcl": true,
+    "**/.thumbs": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.output": true,
+    "**/.astro": true,
+    "**/coverage": true,
+    "**/.terraform": true
+  },
 
   // Extensions
   // - Go

@@ -76,12 +76,17 @@ alias fd=fdfind
 alias ls=eza
 {{- end }}
 
+if command -v gpgconf >/dev/null 2>&1; then
+  gpgconf --launch gpg-agent >/dev/null 2>&1 || true
+fi
+
 {{ if eq .chezmoi.os "darwin" -}}
   #/usr/bin/ssh-add --apple-use-keychain ~/.ssh/id_ed25519
   alias run_agents='() { $(whence -p keychain) --quiet --eval --inherit any-once --agents ssh,gpg $ssh_keys ${(f)gpg_keys} }'
 {{ else }}
-  eval "$(ssh-agent -s || true)"
-  #ssh-add ~/.ssh/id_ed25519
+  if [[ -z "${SSH_AUTH_SOCK:-}" ]]; then
+    eval "$(ssh-agent -s)" >/dev/null 2>&1
+  fi
 {{ end }}
 
 alias gpgkeys=$(gpg -K --with-colons 2>/dev/null | awk -F : '$1 == "sec" { print $5 }')
@@ -112,6 +117,9 @@ bindkey "^[[1;5C" forward-word
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+{{ else if stat "/opt/homebrew/opt/nvm/nvm.sh" }}
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 {{ end }}
 
 
@@ -126,5 +134,15 @@ export NVM_DIR="$HOME/.nvm"
 [[ -f $HOME/.zshrc.local ]] && source $HOME/.zshrc.local
 [[ -f $HOME/.functions ]] && source $HOME/.functions
 [[ -f $HOME/.functions.local ]] && source $HOME/.functions.local
+
+{{- range $_, $postgresPath := list "/opt/homebrew/opt/postgresql@15/bin" "/opt/homebrew/opt/postgresql@14/bin" "/usr/local/opt/postgresql@15/bin" "/usr/local/opt/postgresql@14/bin" }}
+{{- if stat $postgresPath }}
+export PATH="{{ $postgresPath }}:$PATH"
+{{- end }}
+{{- end }}
+
+if [[ -n "${BUN_INSTALL:-}" ]] && [[ -d "${BUN_INSTALL}/bin" ]]; then
+  export PATH="${BUN_INSTALL}/bin:$PATH"
+fi
 
 eval "$(starship init zsh)"
