@@ -47,24 +47,24 @@ cd ~/.local/share/chezmoi
 
 - VS Code remains the stable editor-of-record and is managed in `home/dot_config/Code/User/` plus `home/.chezmoidata/vscode.yml`.
 - Legacy Vim remains available through `home/dot_vimrc` and `home/.chezmoiscripts/run_once_21-install-vim.sh`.
-- Neovim is a parallel setup in `home/dot_config/nvim/` with plugins bootstrapped by `home/.chezmoiscripts/run_once_22-install-neovim.sh`.
+- Neovim is a parallel setup in `home/dot_config/nvim/`, based on the official LazyVim starter, with plugins bootstrapped by `home/.chezmoiscripts/run_once_22-install-neovim.sh`.
 
 ### Neovim quick start
 
-1. Install `nvim` plus helper tools such as `fd`, `shfmt`, and `stylua`.
-2. Apply the dotfiles as usual.
-3. Open `nvim` once to finish plugin and parser setup if the bootstrap script has not already done it.
-4. Run `:checkhealth` after first launch if something feels off.
+1. Install `nvim` plus helper tools such as `fd`, `rg`, `git`, `make`, `shfmt`, and `stylua`.
+2. Apply the dotfiles as usual with `chezmoi apply -v` or `chezmoi init --apply "$(pwd)"`.
+3. Open `nvim` once to finish Mason and tree-sitter installs. The bootstrap script syncs plugins, but the first interactive launch is still the reliable way to complete tool installation.
+4. Run `:LazyHealth` after first launch if something feels off.
 
 ### Neovim workflow defaults
 
-- `Ctrl-P` — find files
-- `<leader><leader>` — switch buffers
+- `Ctrl-P` or `<leader><space>` — find files
+- `<leader><leader>` or `<leader>,` — switch buffers
 - `<leader>/` — live grep
-- `<leader>e` or `-` — explorer-style file navigation
+- `<leader>e` — explorer-style file navigation
 - `gd`, `gr`, `K`, `<leader>rn`, `<leader>ca` — LSP navigation and actions
 - `[d`, `]d`, `<leader>cd` — diagnostics
-- `<leader>f` — format buffer
+- `<leader>cf` — format buffer
 
 The Neovim setup intentionally mirrors the current VS Code workflow for search, navigation, formatting, and diagnostics, while keeping modal editing and native Neovim ergonomics intact.
 

@@ -1,32 +1,10 @@
+vim.g.lazyvim_picker = "telescope"
+vim.g.lazyvim_prettier_needs_config = false
+
 local opt = vim.opt
 
-opt.backup = false
-opt.clipboard = "unnamedplus"
-opt.completeopt = { "menu", "menuone", "noselect" }
-opt.confirm = true
-opt.cursorline = true
 opt.expandtab = true
-opt.hidden = true
-opt.ignorecase = true
-opt.inccommand = "split"
-opt.laststatus = 3
-opt.mouse = "a"
-opt.number = true
-opt.relativenumber = true
-opt.scrolloff = 4
 opt.shiftwidth = 4
-opt.shortmess:append("c")
-opt.signcolumn = "yes"
-opt.smartcase = true
-opt.smartindent = true
-opt.sidescrolloff = 8
 opt.softtabstop = 4
-opt.splitbelow = true
-opt.splitright = true
-opt.swapfile = false
 opt.tabstop = 2
-opt.termguicolors = true
-opt.timeoutlen = 300
-opt.undofile = true
-opt.updatetime = 250
 opt.wrap = false
