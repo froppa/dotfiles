@@ -2,8 +2,6 @@
 zsh:
   plugins:
     - chezmoi
-    - fzf
-    - fzf-tab
     - git
     - z
     - zsh-syntax-highlighting

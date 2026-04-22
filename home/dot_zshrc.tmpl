@@ -115,7 +115,9 @@ fi
 
 {{- if eq .chezmoi.os "darwin" }}
 if command -v ssh-add >/dev/null 2>&1; then
-  [[ -f "$HOME/.ssh/id_ed25519" ]] && /usr/bin/ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" >/dev/null 2>&1 || true
+  if [[ -f "$HOME/.ssh/id_ed25519" ]] && ! /usr/bin/ssh-add -l >/dev/null 2>&1; then
+    /usr/bin/ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" >/dev/null 2>&1 || true
+  fi
 fi
 {{- else }}
 if [[ -z "${SSH_AUTH_SOCK:-}" ]] && command -v ssh-agent >/dev/null 2>&1; then
@@ -148,7 +150,43 @@ bindkey "^[[1;5D" backward-word
 # =======================================
 {{- if stat (joinPath .chezmoi.homeDir ".nvm") }}
 export NVM_DIR="$HOME/.nvm"
-[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+
+lazy_load_nvm() {
+  [[ -s "$NVM_DIR/nvm.sh" ]] || return 1
+
+  unset -f lazy_load_nvm nvm node npm npx yarn pnpm corepack
+  source "$NVM_DIR/nvm.sh"
+}
+
+nvm() {
+  lazy_load_nvm && nvm "$@"
+}
+
+node() {
+  lazy_load_nvm && node "$@"
+}
+
+npm() {
+  lazy_load_nvm && npm "$@"
+}
+
+npx() {
+  lazy_load_nvm && npx "$@"
+}
+
+yarn() {
+  lazy_load_nvm && yarn "$@"
+}
+
+pnpm() {
+  lazy_load_nvm && pnpm "$@"
+}
+
+corepack() {
+  lazy_load_nvm && corepack "$@"
+}
+
+[[ -f .nvmrc ]] && lazy_load_nvm >/dev/null 2>&1 || true
 {{- end }}
 
 # =======================================

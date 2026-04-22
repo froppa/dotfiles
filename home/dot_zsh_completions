@@ -20,10 +20,25 @@ if [[ -n "${LS_COLORS:-}" ]]; then
   zstyle ':completion:*' list-colors "\${(s.:.)LS_COLORS}"
 fi
 
-# fzf-tab
-if (( $+commands[fzf] )); then
-  source <(fzf --zsh)
-fi
+# fzf
+for fzf_base in \
+  "$HOME/.fzf/shell" \
+  "${XDG_DATA_HOME:-$HOME/.local/share}/fzf/shell" \
+  "/opt/homebrew/opt/fzf/shell" \
+  "/opt/homebrew/share/fzf" \
+  "/usr/local/opt/fzf/shell" \
+  "/usr/local/share/fzf" \
+  "/usr/share/fzf"
+do
+  if [[ -f "$fzf_base/completion.zsh" ]]; then
+    source "$fzf_base/completion.zsh" 2>/dev/null
+  fi
+
+  if [[ -f "$fzf_base/key-bindings.zsh" ]]; then
+    source "$fzf_base/key-bindings.zsh"
+    break
+  fi
+done
 
 # Try common plugin locations instead of assuming OMZ custom only
 for fzf_tab_plugin in \
