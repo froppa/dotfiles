@@ -115,7 +115,7 @@ fi
 
 {{- if eq .chezmoi.os "darwin" }}
 if command -v ssh-add >/dev/null 2>&1; then
-  if [[ -f "$HOME/.ssh/id_ed25519" ]] && ! /usr/bin/ssh-add -l >/dev/null 2>&1; then
+  if [[ -f "$HOME/.ssh/id_ed25519" ]] && [[ -S "$SSH_AUTH_SOCK" ]]; then
     /usr/bin/ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" >/dev/null 2>&1 || true
   fi
 fi

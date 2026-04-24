@@ -3,6 +3,7 @@ set -euo pipefail
 
 git_name="${GIT_NAME:-}"
 git_email="${GIT_EMAIL:-}"
+git_signing_key="${GIT_SIGNING_KEY:-}"
 run_macos=false
 
 usage() {
@@ -10,23 +11,37 @@ usage() {
 Usage: ./init.sh [options]
 
 Options:
-  --name="Your Name"      Git user.name for this machine
-  --email="you@example"   Git user.email for this machine
-  --macos                 Run macOS post-setup after apply
-  -h, --help              Show this help
+  --name="Your Name"       Git user.name for this machine
+  --email="you@example"    Git user.email for this machine
+  --signing-key="KEY"      Git user.signingkey (SSH key / GPG key id)
+  --macos                  Run macOS post-setup after apply
+  -h, --help               Show this help
 
 Environment:
   GIT_NAME
   GIT_EMAIL
+  GIT_SIGNING_KEY
+
+Notes:
+  Values for name/email/signing-key are stored by chezmoi in
+  ~/.config/chezmoi/chezmoi.toml the first time they're provided.
+  Omit the flags on subsequent runs to reuse the stored values;
+  chezmoi will prompt interactively if a value is still missing.
 EOF
   exit 0
 }
 
-info() { printf '\033[1;34m[INFO]\033[0m %s\n' "$1" }
+info() {
+  printf '\033[1;34m[INFO]\033[0m %s\n' "$1"
+}
 
-success() { printf '\033[1;32m[SUCCESS]\033[0m %s\n' "$1" }
+success() {
+  printf '\033[1;32m[SUCCESS]\033[0m %s\n' "$1"
+}
 
-error() { printf '\033[1;31m[ERROR]\033[0m %s\n' "$1" >&2 }
+error() {
+  printf '\033[1;31m[ERROR]\033[0m %s\n' "$1" >&2
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -36,8 +51,14 @@ while [[ $# -gt 0 ]]; do
     --email=*)
       git_email="${1#*=}"
       ;;
+    --signing-key=*)
+      git_signing_key="${1#*=}"
+      ;;
     --macos)
       run_macos=true
+      ;;
+    -h|--help)
+      usage
       ;;
     *)
       usage
@@ -71,48 +92,19 @@ ensure_chezmoi() {
   }
 }
 
-prompt_if_empty() {
-  local label="$1"
-  local value="$2"
-
-  if [[ -n "${value}" ]]; then
-    printf '%s' "${value}"
-    return
-  fi
-
-  local input=""
-  read -r -p "${label}: " input
-  printf '%s' "${input}"
-}
-
-escape_toml() {
-  local s="$1"
-  s="${s//\\/\\\\}"
-  s="${s//\"/\\\"}"
-  printf '%s' "$s"
-}
-
-write_local_chezmoi_config() {
-  local config_dir="${HOME}/.config/chezmoi"
-  local config_file="${config_dir}/chezmoi.toml"
-
-  mkdir -p "${config_dir}"
-
-  cat > "${config_file}" <<EOF
-[data]
-name = "$(escape_toml "${git_name}")"
-email = "$(escape_toml "${git_email}")"
-EOF
-}
-
 apply_dotfiles() {
   if [[ ! -d .git || ! -d home ]]; then
     error "Run this from the dotfiles repo root"
     exit 1
   fi
 
+  local args=(init --apply "${PWD}")
+  [[ -n "${git_name}"        ]] && args+=(--promptString "name=${git_name}")
+  [[ -n "${git_email}"       ]] && args+=(--promptString "email=${git_email}")
+  [[ -n "${git_signing_key}" ]] && args+=(--promptString "signingKey=${git_signing_key}")
+
   info "Applying dotfiles from local repo..."
-  chezmoi init --apply "${PWD}"
+  chezmoi "${args[@]}"
 }
 
 run_macos_post_setup() {
@@ -130,11 +122,6 @@ main() {
   info "Bootstrapping dotfiles..."
 
   ensure_chezmoi
-
-  git_name="$(prompt_if_empty "Git name" "${git_name}")"
-  git_email="$(prompt_if_empty "Git email" "${git_email}")"
-
-  write_local_chezmoi_config
   apply_dotfiles
   run_macos_post_setup
 

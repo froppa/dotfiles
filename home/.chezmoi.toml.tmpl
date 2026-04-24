@@ -11,7 +11,24 @@ recipient = "age1x8xj89ps3n8j2cy6guv2n9l788q0ud39yq0pw72lxehgdl2fdv8qqa0lfw"
 {{ $computerName = (output "hostname" | trim) }}
 {{ end }}
 
+{{- $name := "" -}}
+{{- if hasKey . "name" -}}{{- $name = .name -}}
+{{- else -}}{{- $name = promptString "name" "Git name" -}}{{- end -}}
+
+{{- $email := "" -}}
+{{- if hasKey . "email" -}}{{- $email = .email -}}
+{{- else -}}{{- $email = promptString "email" "Git email" -}}{{- end -}}
+
+{{- $signingKey := "" -}}
+{{- if hasKey . "signingKey" -}}{{- $signingKey = .signingKey -}}
+{{- else -}}{{- $signingKey = promptString "signingKey" "Git signing key (optional, leave blank to skip)" -}}{{- end -}}
+
 [data]
+name = {{ $name | quote }}
+email = {{ $email | quote }}
+{{- if $signingKey }}
+signingKey = {{ $signingKey | quote }}
+{{- end }}
 profile = "personal"
 work = false
 personal = true
