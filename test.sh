@@ -1,31 +1,73 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-echo "Running shellcheck on all shell scripts..."
-ERRORS=()
-while IFS= read -r -d '' f; do
-  if ! shellcheck "$f"; then
-    ERRORS+=("$f")
-  else
-    echo "[OK] Linted $f"
-  fi
-done < <(find . -type f -name '*.sh' -not -path './.git/*' -print0)
+export PATH="$HOME/.local/bin:$PATH"
 
-if [[ ${#ERRORS[@]} -ne 0 ]]; then
-  echo "ShellCheck found issues in: ${ERRORS[*]}"
-  exit 1
-fi
-
-echo "Testing chezmoi dry-run apply..."
-CHEZMOI_CI=true chezmoi init \
-  --source="${PWD}" \
-  --apply \
-  --dry-run \
-  --keep-going || {
-  echo "Error: chezmoi dry-run apply failed." >&2
+fail() {
+  printf '[ERROR] %s\n' "$1" >&2
   exit 1
 }
 
-export CHEZMOI_CI=false
+section() {
+  printf '\n==> %s\n' "$1"
+}
 
-echo "All tests passed."
+section "Checking required tools"
+
+command -v shellcheck >/dev/null 2>&1 || fail "shellcheck is required"
+command -v chezmoi >/dev/null 2>&1 || fail "chezmoi is required"
+
+section "Running shellcheck"
+
+mapfile -d '' shell_files < <(
+  find . \
+    -type f \
+    -name '*.sh' \
+    -not -path './.git/*' \
+    -print0
+)
+
+if [[ ${#shell_files[@]} -gt 0 ]]; then
+  shellcheck "${shell_files[@]}"
+fi
+
+section "Checking executable scripts"
+
+[[ -x ./init.sh ]] || fail "init.sh must be executable"
+[[ -x ./test.sh ]] || fail "test.sh must be executable"
+
+section "Testing chezmoi config template"
+
+rendered_config="$(mktemp "${TMPDIR:-/tmp}/chezmoi.XXXXXX.toml")"
+
+chezmoi execute-template \
+  --init \
+  --promptString 'name=CI' \
+  --promptString 'email=ci@example.invalid' \
+  --promptString 'signingKey=' \
+  < home/.chezmoi.toml.tmpl \
+  > "${rendered_config}"
+
+cat "${rendered_config}"
+
+chezmoi --config "${rendered_config}" data >/dev/null
+
+grep -q '^name = "CI"$' "${rendered_config}" || fail "generated config missing CI name"
+grep -q '^email = "ci@example.invalid"$' "${rendered_config}" || fail "generated config missing CI email"
+
+if grep -q '^signingKey =' "${rendered_config}"; then
+  fail "empty signingKey should not be rendered"
+fi
+
+section "Testing chezmoi dry-run apply"
+
+chezmoi init \
+  --source="${PWD}" \
+  --apply \
+  --dry-run \
+  --keep-going \
+  --promptString 'name=CI' \
+  --promptString 'email=ci@example.invalid' \
+  --promptString 'signingKey='
+
+section "All tests passed"

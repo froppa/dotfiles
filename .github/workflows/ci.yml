@@ -3,35 +3,59 @@ name: ci
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
+    name: shellcheck + chezmoi
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: |-
-          sudo apt update
-          sudo apt install -y shellcheck curl gnupg
-        shell: bash
+    timeout-minutes: 10
 
-      - uses: actions/cache@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install apt dependencies
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ca-certificates \
+            curl \
+            gnupg \
+            shellcheck
+
+      - name: Cache chezmoi binary
         id: cache-chezmoi
+        uses: actions/cache@v4
         with:
           path: ~/.local/bin/chezmoi
-          key: chezmoi-bin-v2
-      - run: |-
+          key: chezmoi-bin-linux-amd64-v2
+
+      - name: Install chezmoi
+        if: steps.cache-chezmoi.outputs.cache-hit != 'true'
+        run: |-
           mkdir -p ~/.local/bin
           sh -c "$(curl -fsSL get.chezmoi.io)" -- -b ~/.local/bin
-        shell: bash
-        if: steps.cache-chezmoi.outputs.cache-hit != 'true'
 
-      - run: |-
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          chmod +x ./test.sh
-        shell: bash
+      - name: Add chezmoi to PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Shellcheck and dryrun chezmoi --apply
+      - name: Show tool versions
+        run: |-
+          shellcheck --version
+          chezmoi --version
+
+      - name: Verify scripts are executable
+        run: |-
+          test -x ./init.sh
+          test -x ./test.sh
+
+      - name: Run tests
         run: ./test.sh
-        shell: bash
-      - run: echo "All tests passed!"
-        shell: bash

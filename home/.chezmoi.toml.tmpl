@@ -11,7 +11,16 @@ recipient = "age1x8xj89ps3n8j2cy6guv2n9l788q0ud39yq0pw72lxehgdl2fdv8qqa0lfw"
 {{ $computerName = (output "hostname" | trim) }}
 {{ end }}
 
+{{ $name := promptStringOnce . "name" "name" }}
+{{ $email := promptStringOnce . "email" "email" }}
+{{ $signingKey := promptStringOnce . "signingKey" "signingKey" }}
+
 [data]
+name = {{ $name | quote }}
+email = {{ $email | quote }}
+{{ if $signingKey }}
+signingKey = {{ $signingKey | quote }}
+{{ end }}
 profile = "personal"
 work = false
 personal = true
