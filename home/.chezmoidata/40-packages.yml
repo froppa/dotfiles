@@ -75,7 +75,6 @@ packages:
 
   personal:
     brews:
-      - alfred
       - opentofu
     casks:
       - discord
