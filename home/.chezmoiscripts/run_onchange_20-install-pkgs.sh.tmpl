@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+command -v brew >/dev/null 2>&1 || {
+  echo "=> brew not found, skipping package install"
+  exit 0
+}
+
+echo "=> Installing packages..."
+
+brew bundle --file=/dev/stdin <<'BREWFILE'
+{{ range .packages.brews -}}
+brew "{{ . }}"
+{{ end -}}
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.darwin.brews -}}
+brew "{{ . }}"
+{{ end -}}
+{{ range .packages.casks -}}
+cask "{{ . }}"
+{{ end -}}
+{{ end -}}
+{{ if .personal -}}
+{{ range .packages.personal.brews -}}
+brew "{{ . }}"
+{{ end -}}
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.personal.casks -}}
+cask "{{ . }}"
+{{ end -}}
+{{ end -}}
+{{ end -}}
+{{ if .work -}}
+{{ range .packages.work.brews -}}
+brew "{{ . }}"
+{{ end -}}
+{{ end -}}
+BREWFILE
+
+brew cleanup

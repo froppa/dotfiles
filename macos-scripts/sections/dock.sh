@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 set -eufo pipefail
 
-# Kill Dock after everything
-trap 'killall Dock' EXIT
+AUDIT_MODE="${AUDIT_MODE:-false}"
+
+use_dockutil=false
+if [[ "$AUDIT_MODE" != "true" ]] && command -v dockutil >/dev/null 2>&1; then
+  use_dockutil=true
+fi
+
+# Kill Dock after everything (skip when auditing)
+if [[ "$AUDIT_MODE" != "true" ]]; then
+  trap 'killall Dock' EXIT
+fi
 
 # ------------------------------------------------------------------------
 # Remove default apps from Dock
@@ -13,36 +22,32 @@ remove_labels=(
   "App Store"
 )
 
-for label in "${remove_labels[@]}"; do
-  dockutil --no-restart --remove "${label}" || true
-done
+if $use_dockutil; then
+  for label in "${remove_labels[@]}"; do
+    dockutil --no-restart --remove "${label}" || true
+  done
+fi
 
 # ------------------------------------------------------------------------
 # Dock UI / behavior settings
 # ------------------------------------------------------------------------
-dock_settings=(
-  "com.apple.dock mouse-over-hilite-stack -bool true"
-  "com.apple.dock tilesize -int 36"
-  "com.apple.dock mineffect -string scale"
-  "com.apple.dock minimize-to-application -bool true"
-  "com.apple.dock enable-spring-load-actions-on-all-items -bool true"
-  "com.apple.dock show-process-indicators -bool true"
-  "com.apple.dock launchanim -bool false"
-  "com.apple.dock expose-animation-duration -float 0.1"
-  "com.apple.dock expose-group-by-app -bool false"
-  "com.apple.dashboard mcx-disabled -bool true"
-  "com.apple.dock dashboard-in-overlay -bool true"
-  "com.apple.dock mru-spaces -bool false"
-  "com.apple.dock autohide-delay -float 0"
-  "com.apple.dock autohide-time-modifier -float 0"
-  "com.apple.dock autohide -bool true"
-  "com.apple.dock showhidden -bool true"
-  "com.apple.dock show-recents -bool false"
-)
-
-for setting in "${dock_settings[@]}"; do
-  defaults write "${setting}"
-done
+defaults write com.apple.dock mouse-over-hilite-stack -bool true
+defaults write com.apple.dock tilesize -int 36
+defaults write com.apple.dock mineffect -string scale
+defaults write com.apple.dock minimize-to-application -bool true
+defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
+defaults write com.apple.dock show-process-indicators -bool true
+defaults write com.apple.dock launchanim -bool false
+defaults write com.apple.dock expose-animation-duration -float 0.1
+defaults write com.apple.dock expose-group-by-app -bool false
+defaults write com.apple.dashboard mcx-disabled -bool true
+defaults write com.apple.dock dashboard-in-overlay -bool true
+defaults write com.apple.dock mru-spaces -bool false
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock showhidden -bool true
+defaults write com.apple.dock show-recents -bool false
 
 # ------------------------------------------------------------------------
 # Hot corners
@@ -59,18 +64,12 @@ done
 # 12: Notification Center
 # 13: Lock Screen
 # ------------------------------------------------------------------------
-hot_corners=(
-  "com.apple.dock wvous-tl-corner -int 0"
-  "com.apple.dock wvous-tl-modifier -int 0"
-  "com.apple.dock wvous-tr-corner -int 0"
-  "com.apple.dock wvous-tr-modifier -int 0"
-  "com.apple.dock wvous-bl-corner -int 11"
-  "com.apple.dock wvous-bl-modifier -int 0"
-)
-
-for corner in "${hot_corners[@]}"; do
-  defaults write "${corner}"
-done
+defaults write com.apple.dock wvous-tl-corner -int 0
+defaults write com.apple.dock wvous-tl-modifier -int 0
+defaults write com.apple.dock wvous-tr-corner -int 0
+defaults write com.apple.dock wvous-tr-modifier -int 0
+defaults write com.apple.dock wvous-bl-corner -int 11
+defaults write com.apple.dock wvous-bl-modifier -int 0
 
 # ------------------------------------------------------------------------
 # Add custom apps to Dock
@@ -82,6 +81,9 @@ wanted_dock_apps=(
   "/Applications/Spotify.app"
 )
 
-for app in "${wanted_dock_apps[@]}"; do
-  dockutil --no-restart --add "${app}"
-done
+if $use_dockutil; then
+  for app in "${wanted_dock_apps[@]}"; do
+    [[ -d "$app" ]] || continue
+    dockutil --no-restart --add "${app}"
+  done
+fi

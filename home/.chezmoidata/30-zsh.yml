@@ -1,7 +1,0 @@
----
-zsh:
-  plugins:
-    - chezmoi
-    - git
-    - z
-    - zsh-syntax-highlighting

@@ -1,14 +1,6 @@
 # shellcheck disable=all
-.gnupg
-.gnupg/**
 .inputrc
-.oh-my-zsh
-.oh-my-zsh/**
-.ssh/id_rsa
 .ssh/id*
-.ssh/id_ed25519
-.ssh/id_rsa.pub
-.ssh/config
 .aliases.local
 .exports.local
 .functions.local

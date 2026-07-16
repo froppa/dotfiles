@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------
-# Keyboard repeat rate (values come from chezmoi template vars)
+# Keyboard repeat rate
 # ---------------------------------------------------------------------------
-defaults write NSGlobalDomain KeyRepeat        -int {{ .macos.keyboard.keyRepeat }}
-defaults write NSGlobalDomain InitialKeyRepeat -int {{ .macos.keyboard.delayUntilRepeat }}
+defaults write NSGlobalDomain KeyRepeat        -int 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
 # ---------------------------------------------------------------------------
 # Keyboard / Input tweaks

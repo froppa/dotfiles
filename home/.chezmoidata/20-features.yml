@@ -1,9 +1,5 @@
 ---
 features:
-  iterm2: true
-  ssh: true
-  gpg: false
-  vscode: true
-  psql: true
-  awsCli: false
-  starship: true
+  # Gates the Homebrew env block (incl. 1Password token lookup) in dot_exports.tmpl.
+  # Requires a working `op` CLI session when enabled.
+  brew: false

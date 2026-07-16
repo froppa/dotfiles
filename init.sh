@@ -110,11 +110,11 @@ run_macos_post_setup() {
     exit 1
   fi
 
-  if [[ -x ./scripts/macos.sh ]]; then
+  if [[ -f ./macos-scripts/macos-defaults.sh ]]; then
     info "Running macOS post-setup..."
-    ./scripts/macos.sh
+    (cd macos-scripts && bash ./macos-defaults.sh)
   else
-    error "Missing executable ./scripts/macos.sh"
+    error "Missing ./macos-scripts/macos-defaults.sh"
     exit 1
   fi
 }

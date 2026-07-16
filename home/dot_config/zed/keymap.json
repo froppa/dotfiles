@@ -1,0 +1,33 @@
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-`": "terminal_panel::Toggle",
+      "cmd-j": "terminal_panel::Toggle",
+      "cmd-b": "workspace::ToggleLeftDock",
+      "cmd-r": "workspace::ToggleRightDock",
+      "cmd-shift-e": "project_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-d": "editor::SelectNext",
+      "cmd-shift-d": "editor::SelectAllMatches",
+      "cmd-shift-/": "editor::ToggleComments"
+    }
+  },
+  {
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      "cmd-right": "project_panel::ExpandSelectedEntry",
+      "cmd-left": "project_panel::CollapseAllEntries",
+      "cmd-alt-left": "project_panel::CollapseSelectedEntryAndChildren",
+      "cmd-alt-right": "project_panel::UnfoldDirectory",
+      "cmd-n": "project_panel::NewFile",
+      "cmd-alt-n": "project_panel::NewDirectory",
+      "enter": "project_panel::Open",
+      "cmd-enter": "project_panel::OpenPermanent"
+    }
+  }
+]

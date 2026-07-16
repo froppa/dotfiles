@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
+AUDIT_MODE="${AUDIT_MODE:-false}"
+COMPUTER_NAME="${COMPUTER_NAME:-$(scutil --get ComputerName)}"
+LANGUAGES=("en-DK" "en")
+LOCALE="${LOCALE:-en_DK}"
 
 # Hostname ---------------------------------------------------------------------
 if [[ "${AUDIT_MODE}" != "true" ]]; then

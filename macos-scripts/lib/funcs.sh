@@ -10,30 +10,43 @@ keep_sudo_alive() {
   done 2>/dev/null &
 }
 
-defaults_write() {
-  local domain=$1
-  local key=$2
-  local type=$3
-  local value=$4
+# Shadows the real `defaults` for this process and all section children
+# (exported below). In audit mode, `defaults write` becomes read-and-compare;
+# everything else passes through untouched.
+defaults() {
+  if [[ "${AUDIT_MODE:-false}" != "true" || "$1" != "write" ]]; then
+    command defaults "$@"
+    return
+  fi
 
-  if [[ "${AUDIT_MODE:-false}" == "true" ]]; then
-    local current
-    current=$(defaults read "$domain" "$key" 2>/dev/null || echo "<not set>")
-    if [[ "$current" == "$value" ]]; then
-      echo "✔ $domain $key is set to $value"
-    else
-      echo "✘ $domain $key is $current, expected $value"
-    fi
-  else
-    case "$type" in
-      bool) defaults write "$domain" "$key" -bool "$value" ;;
-      int) defaults write "$domain" "$key" -int "$value" ;;
-      float) defaults write "$domain" "$key" -float "$value" ;;
-      string) defaults write "$domain" "$key" -string "$value" ;;
-      *)
-        echo "Unknown type '$type' for $domain $key"
-        return 1
-        ;;
+  local domain=$2 key=$3 typeflag=$4
+  shift 4
+  local expected="$*"
+
+  # defaults read prints booleans as 1/0
+  if [[ "$typeflag" == "-bool" ]]; then
+    case "$expected" in
+      true) expected=1 ;;
+      false) expected=0 ;;
     esac
   fi
+
+  if [[ "$typeflag" == "-array" ]]; then
+    local current_arr
+    current_arr=$(command defaults read "$domain" "$key" 2>/dev/null | xargs)
+    if [[ "$current_arr" == "$expected" ]]; then
+      echo "✔ $domain $key = [$expected]"
+    else
+      echo "✘ $domain $key is [$current_arr], expected [$expected]"
+    fi
+  else
+    local current
+    current=$(command defaults read "$domain" "$key" 2>/dev/null || echo "<not set>")
+    if [[ "$current" == "$expected" ]]; then
+      echo "✔ $domain $key = $expected"
+    else
+      echo "✘ $domain $key is $current, expected $expected"
+    fi
+  fi
 }
+export -f defaults

@@ -1,26 +1,51 @@
 ---
 extensions:
+  - alefragnani.project-manager
+  - astro-build.astro-vscode
   - bmalehorn.shell-syntax
+  - bradlc.vscode-tailwindcss
+  - davidanson.vscode-markdownlint
+  - dbaeumer.vscode-eslint
   - docker.docker
   - editorconfig.editorconfig
   - esbenp.prettier-vscode
   - foxundermoon.shell-format
   - github.vscode-github-actions
+  - github.vscode-pull-request-github
   - golang.go
   - jinliming2.vscode-go-template
+  - kamikillerto.vscode-colorize
+  - mechatroner.rainbow-csv
+  - mhutchie.git-graph
   - mikestead.dotenv
+  - ms-python.debugpy
+  - ms-python.python
+  - ms-python.vscode-pylance
+  - ms-python.vscode-python-envs
+  - ms-vscode.cmake-tools
+  - ms-vscode.cpp-devtools
   - ms-vscode.makefile-tools
   - openai.chatgpt
+  - opentofu.vscode-opentofu
   - pbkit.vscode-pbkit
   - pkief.material-icon-theme
   - pmneo.tsimporter
+  - premparihar.gotestexplorer
+  - redhat.ansible
   - redhat.vscode-yaml
+  - romantomjak.go-template
+  - sidneys1.gitconfig
+  - streetsidesoftware.code-spell-checker
   - tamasfe.even-better-toml
   - timonwong.shellcheck
   - twxs.cmake
   - tyriar.sort-lines
+  - virgilsisoe.hammerspoon
+  - voidei.vscode-vimrc
+  - waderyan.gitblame
   - wholroyd.jinja
   - xaver.clang-format
   - yoavbls.pretty-ts-errors
   - yzhang.markdown-all-in-one
   - zainchen.json
+  - zhuangtongfa.material-theme

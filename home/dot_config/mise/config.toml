@@ -1,0 +1,9 @@
+# ~/.config/mise/config.toml
+# Managed by chezmoi — global default runtimes (replaces nvm/pyenv/brew runtimes)
+[tools]
+node = "lts"
+python = "3.12"
+go = "latest"
+ruby = "latest"
+pnpm = "latest"
+yarn = "latest"

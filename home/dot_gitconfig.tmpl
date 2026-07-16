@@ -96,13 +96,16 @@
 {{- $ghPath := lookPath "gh" }}
 {{- if $ghPath }}
 [credential "https://github.com"]
+  helper =
   helper = !{{ $ghPath }} auth git-credential
 
 [credential "https://gist.github.com"]
+  helper =
   helper = !{{ $ghPath }} auth git-credential
 {{- end }}
 
 [alias]
+  defaultbranch = ![ -f $(git rev-parse --git-common-dir)/refs/remotes/origin/main ] && echo -n "main" || echo -n "master"
   a = add
   ap = add -p
 
@@ -126,7 +129,7 @@
   d = !git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat
   dc = diff --cached
   wd = diff --patience --word-diff
-  dom = diff origin/master
+  dom = !git diff origin/"$(git defaultbranch)"
 
   fo = fetch origin
   fop = !git fetch origin && git pull origin "$(git branch-name)"
@@ -137,7 +140,7 @@
   rc = rebase --continue
   ra = rebase --abort
   ri = rebase -i
-  riom = !git fetch origin && git rebase -i origin/master
+  riom = !git fetch origin && git rebase -i origin/"$(git defaultbranch)"
   reb = !r() { git rebase -i "HEAD~$1"; }; r
 
   cp = cherry-pick
@@ -163,7 +166,7 @@
   amend3s = !f(){ git commit --amend --no-edit -S "$(git rev-parse HEAD~3)"; }; f
   unamend = reset --mixed HEAD@{1}
 
-  signlast = !f(){ n="${1:-1}"; git rebase -i --rebase-merges --exec "git commit --amend --no-edit -S" "HEAD~$n"; }; f
+  signlast = !~/.local/bin/git-signlast
 
   sh = !git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git show
   fu = !git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup

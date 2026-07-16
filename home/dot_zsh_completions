@@ -35,7 +35,7 @@ do
   fi
 
   if [[ -f "$fzf_base/key-bindings.zsh" ]]; then
-    source "$fzf_base/key-bindings.zsh"
+    source "$fzf_base/key-bindings.zsh" 2>/dev/null
     break
   fi
 done

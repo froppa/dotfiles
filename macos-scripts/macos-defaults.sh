@@ -31,56 +31,34 @@ for arg in "$@"; do
 done
 
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
-keep_sudo_alive
 
-$SKIP_UPDATE || {
-  echo "=> Updating macOS"
-  sudo softwareupdate -i -a
-}
+if [[ "$AUDIT_MODE" != "true" ]]; then
+  keep_sudo_alive
 
-$SKIP_XCODE || {
-  if ! xcode-select -p &>/dev/null; then
-    echo "=> Installing Xcode command line tools..."
-    xcode-select --install
-    until xcode-select -p &>/dev/null; do sleep 5; done
-  fi
-}
+  $SKIP_UPDATE || {
+    echo "=> Updating macOS"
+    sudo softwareupdate -i -a
+  }
 
-if [[ "$AUDIT_MODE" == "true" ]]; then
-  function defaults() {
-    if [[ "$1" == "write" ]]; then
-      local domain=$2 key=$3 typeflag=$4
-      shift 4
-      local current
-      current=$(command defaults read "$domain" "$key" 2>/dev/null || echo "<not set>")
-      local expected="$*"
-      if [[ "$typeflag" == "-array" ]]; then
-        local current_arr
-        current_arr=$(command defaults read "$domain" "$key" 2>/dev/null | xargs)
-        if [[ "$current_arr" == "$expected" ]]; then
-          echo "✔ $domain $key = [$expected]"
-        else
-          echo "✘ $domain $key is [$current_arr], expected [$expected]"
-        fi
-      else
-        if [[ "$current" == "$expected" ]]; then
-          echo "✔ $domain $key = $expected"
-        else
-          echo "✘ $domain $key is $current, expected $expected"
-        fi
-      fi
+  $SKIP_XCODE || {
+    if ! xcode-select -p &>/dev/null; then
+      echo "=> Installing Xcode command line tools..."
+      xcode-select --install
+      until xcode-select -p &>/dev/null; do sleep 5; done
     fi
   }
 fi
 
+# Sections run as child processes; they rely on this being exported.
+# (The audit-aware `defaults` shim is exported by lib/funcs.sh.)
+export AUDIT_MODE
+
 echo "=> Applying macOS defaults"
-bash "./sections/general.sh"
-bash "./sections/finder.sh"
-#bash "./sections/dock.sh"
+for section in ./sections/*.sh; do
+  echo "==> ${section}"
+  bash "${section}"
+done
 
-# for section in ./sections/*.sh; do
-#   echo "=== Auditing section: $section ==="
-#   bash "${section}"
-# done
-
-killall Finder SystemUIServer &>/dev/null || true
+if [[ "$AUDIT_MODE" != "true" ]]; then
+  killall Finder SystemUIServer &>/dev/null || true
+fi

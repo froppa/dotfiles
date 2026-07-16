@@ -20,12 +20,13 @@ WORK=true sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply froppa
 ```bash
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-./setup.sh
+./init.sh
 ```
 
 ### Notes
 
-- Homebrew package setup is handled by the repo's brewfile sources and `home/.chezmoiscripts/run_onchange_20-install-pkgs.sh`.
+- Homebrew packages are declared in `home/.chezmoidata/40-packages.yml` and installed by `home/.chezmoiscripts/run_onchange_20-install-pkgs.sh.tmpl` (re-runs automatically when the package data changes).
+- Language runtimes (node, python, go, ruby, pnpm, yarn) are managed by mise via `home/dot_config/mise/config.toml`.
 - VSCode extensions are declared in `home/.chezmoidata/vscode.yml`.
 - VS Code user settings live in `home/dot_config/Code/User/`.
 - Vim stays in `home/dot_vimrc`; Neovim lives in `home/dot_config/nvim/`.
@@ -37,11 +38,11 @@ cd ~/.local/share/chezmoi
 ### Structure
 
 - `home/` — chezmoi-managed home directory (dotfiles, configs, scripts)
-- `home/.chezmoidata/` — layered YAML config data (base, macOS, features, local)
+- `home/.chezmoidata/` — layered YAML config data (features, packages, vscode, local)
 - `home/.chezmoiscripts/` — setup scripts (brew, packages, zsh, vim, neovim, vscode)
 - `macos-scripts/` — macOS defaults and settings
 - `scripts/` — helper scripts
-- `setup.sh` — bootstrap entrypoint script
+- `init.sh` — bootstrap entrypoint script
 
 ## Editors
 

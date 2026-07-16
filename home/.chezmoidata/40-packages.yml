@@ -1,0 +1,89 @@
+---
+packages:
+  brews:
+    - coreutils
+    - findutils
+    - gnu-sed
+    - grep
+    - moreutils
+    - tree
+    - font-hack-nerd-font
+    - gcc
+    - make
+    - ripgrep
+
+    # Shell & terminal
+    - zsh
+    - starship
+    - tmux
+    - fzf
+    - z
+    - direnv
+    - ncdu
+
+    # Networking & security
+    - gnupg
+    - openssh
+    - openssl
+    - nmap
+
+    # CLI tools
+    - age
+    - bat
+    - fd
+    - jq
+    - yq
+    - htop
+    - gh
+    - git
+    - git-lfs
+    - lazygit
+    - pipx
+    - eza
+    - httpie
+
+    # Programming (language runtimes live in ~/.config/mise/config.toml)
+    - mise
+    - vim
+
+    # Build tools
+    - cmake
+    - m4
+    - autoconf
+    - automake
+    - libtool
+    - boost
+    - pkgconf
+    - xcode-build-server
+
+    # DevOps & container tools
+    # terraform was removed from homebrew-core (BSL license); use opentofu,
+    # or add `tap "hashicorp/tap"` + hashicorp/tap/terraform if genuinely needed
+    - docker
+    - chezmoi
+    - shellcheck
+
+  casks:
+    - hammerspoon
+    - maccy
+    - scroll-reverser
+
+  darwin:
+    brews:
+      - pinentry-mac
+      - dockutil
+
+  personal:
+    brews:
+      - alfred
+      - opentofu
+    casks:
+      - discord
+
+  work:
+    brews:
+      - kubectl
+      - k9s
+      - awscli
+    casks:
+      - meetingbar
