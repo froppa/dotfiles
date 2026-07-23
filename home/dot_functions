@@ -177,3 +177,32 @@ pytmpenv_delete() {
   deactivate
   rm -rf "$PYTHON_TMP_ENV"
 }
+
+# Enter the worktree that owns a branch.
+gw() {
+  local branch="${1:-}"
+
+  if [[ -z "$branch" ]]; then
+    git worktree list
+    return
+  fi
+
+  local path="$(
+    git worktree list --porcelain |
+      awk -v target="refs/heads/$branch" '
+        $1 == "worktree" { path = $2 }
+        $1 == "branch" && $2 == target {
+          print path
+          exit
+        }
+      '
+  )"
+
+  if [[ -z "$path" ]]; then
+    print -u2 "No worktree found for branch: $branch"
+    return 1
+  fi
+
+  cd "$path"
+}
+

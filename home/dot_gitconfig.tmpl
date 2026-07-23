@@ -1,6 +1,7 @@
 [user]
   name = {{ .name | quote }}
   email = {{ .email | quote }}
+  useConfigOnly = true
 {{- if .signingKey }}
   signingkey = {{ .signingKey | quote }}
 {{- end }}
@@ -10,26 +11,137 @@
   gpgsign = true
 {{- end }}
 
-[include]
-  path = ~/.gitconfig.local
+[alias]
+  # Helpers
+  aliases = config --get-regexp "^alias\\."
+  current = branch --show-current
+  default = "!f() { ref=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null) && { printf '%s\n' \"${ref#origin/}\"; return; }; git show-ref --verify --quiet refs/remotes/origin/main && { echo main; return; }; git show-ref --verify --quiet refs/remotes/origin/master && { echo master; return; }; git config --get init.defaultBranch; }; f"
+  root = rev-parse --show-toplevel
+  whoami = config user.email
 
-[core]
-  editor = nvim
-  excludesfile = ~/.config/git/.gitignore.global
-  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  # Status
+  s = status -sb --show-stash --no-renames
 
-[init]
-  defaultBranch = master
+  # Diff
+  d = "!git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat"
+  dc = diff --cached
+  dom = "!f() { git diff \"origin/$(git default)\"; }; f"
+  wd = diff --patience --word-diff
 
-[apply]
-  whitespace = fix
+  # Log
+  l = log --oneline
+  lg = log --graph --decorate --oneline --all
+  ls = log --graph --abbrev-commit --pretty=oneline -20
+  lstag = ls-remote --tags origin
+  recent = "for-each-ref --count=25 --sort=-committerdate --format=%(refname:short) refs/heads/"
+  sh = "!f() { commit=$(git log -16 --pretty=format:'%h %s' --no-merges | fzf | cut -d' ' -f1); test -n \"$commit\" && git show \"$commit\"; }; f"
+
+  # Add
+  a = add
+  ap = add -p
+
+  # Commit
+  amend = commit --amend
+  ca = commit --amend -C HEAD --no-edit
+  caa = commit -a --amend -C HEAD
+  cane = commit --amend --no-edit
+  cf = commit --fixup
+  cm = commit --message
+  fu = "!f() { commit=$(git log -16 --pretty=format:'%h %s' --no-merges | fzf | cut -d' ' -f1); test -n \"$commit\" && git commit --fixup \"$commit\"; }; f"
+  fup1 = commit --fixup HEAD~1
+  fup2 = commit --fixup HEAD~2
+  fup3 = commit --fixup HEAD~3
+  signlast = "!~/.local/bin/git-signlast"
+  ss = commit --message "chore: snapshot" --no-gpg-sign
+  unamend = reset --mixed HEAD@{1}
+
+  # Branch / Switch
+  b = branch
+  bm = branch --merged
+  bnm = branch --no-merged
+  sw = switch
+  swc = switch -c
+
+  # Fetch / Push
+  fo = fetch origin
+  po = push
+  pof = push --force-with-lease
+
+  # Rebase
+  ra = rebase --abort
+  rc = rebase --continue
+  reb = "!f() { test -n \"$1\" || { echo \"usage: git reb <count>\" >&2; return 2; }; git rebase -i \"HEAD~$1\"; }; f"
+  ri = rebase -i
+  riom = "!f() { git fetch origin && git rebase -i \"origin/$(git default)\"; }; f"
+
+  # Cherry-pick
+  cp = cherry-pick
+
+  # GitHub
+  npr = "!gh pr create --web"
+  opr = "!gh pr view --web"
+
+  # Index
+  ignore = update-index --assume-unchanged
+  ignored = "!git ls-files -v | grep '^[[:lower:]]'"
+  unignore = update-index --no-assume-unchanged
 
 [branch]
   sort = -committerdate
 
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  frag = magenta bold
+  meta = yellow bold
+  new = green
+  old = red
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[core]
+  editor = vim
+  excludesfile = ~/.config/git/.gitignore.global
+
+{{- $ghPath := lookPath "gh" }}
+{{- if $ghPath }}
+[credential "https://gist.github.com"]
+  helper =
+  helper = !{{ $ghPath }} auth git-credential
+
+[credential "https://github.com"]
+  helper =
+  helper = !{{ $ghPath }} auth git-credential
+{{- end }}
+
+[diff]
+  algorithm = histogram
+  colorMoved = plain
+
+[diff "bin"]
+  textconv = hexdump -v -C
+
 [fetch]
   all = true
   prune = true
+
+[grep]
+  lineNumber = true
+
+[init]
+  defaultBranch = main
+
+[interactive]
+  singleKey = true
+
+[merge]
+  conflictStyle = zdiff3
 
 [pager]
   branch = false
@@ -49,8 +161,8 @@
   updateRefs = true
 
 [rerere]
-  enabled = true
   autoupdate = true
+  enabled = true
 
 [status]
   submoduleSummary = true
@@ -58,127 +170,10 @@
 [tag]
   sort = version:refname
 
-[diff]
-  algorithm = histogram
-  colorMoved = plain
-  renames = true
-
-[diff "bin"]
-  textconv = hexdump -v -C
-
-[color]
-  ui = true
-
-[color "branch"]
-  current = yellow reverse
-  local = yellow
-  remote = green
-
-[color "diff"]
-  meta = yellow bold
-  frag = magenta bold
-  old = red
-  new = green
-
-[color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
-
 [url "git@github.com:"]
   insteadOf = gh:
-  pushInsteadOf = github:
-  pushInsteadOf = git://github.com/
-
-[url "git://github.com/"]
   insteadOf = github:
+  insteadOf = git://github.com/
 
-{{- $ghPath := lookPath "gh" }}
-{{- if $ghPath }}
-[credential "https://github.com"]
-  helper =
-  helper = !{{ $ghPath }} auth git-credential
-
-[credential "https://gist.github.com"]
-  helper =
-  helper = !{{ $ghPath }} auth git-credential
-{{- end }}
-
-[alias]
-  defaultbranch = ![ -f $(git rev-parse --git-common-dir)/refs/remotes/origin/main ] && echo -n "main" || echo -n "master"
-  a = add
-  ap = add -p
-
-  cf = commit --fixup
-  cm = commit --message
-  ca = commit --amend -C HEAD --no-edit
-  cane = commit --amend --no-edit
-  caa = commit -a --amend -C HEAD
-  amend = commit --amend
-  ss = commit --message "chore: snapshot" --no-gpg-sign
-
-  b = branch
-  bm = branch --merged
-  bnm = branch --no-merged
-  branch-name = rev-parse --abbrev-ref HEAD
-
-  co = checkout
-  cob = !f() { git checkout -b "$1" 2>/dev/null || git checkout "$1"; }; f
-  com = checkout master
-
-  d = !git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat
-  dc = diff --cached
-  wd = diff --patience --word-diff
-  dom = !git diff origin/"$(git defaultbranch)"
-
-  fo = fetch origin
-  fop = !git fetch origin && git pull origin "$(git branch-name)"
-
-  po = !git push origin "$(git branch-name)"
-  pof = !git push --force-with-lease origin "$(git branch-name)"
-
-  rc = rebase --continue
-  ra = rebase --abort
-  ri = rebase -i
-  riom = !git fetch origin && git rebase -i origin/"$(git defaultbranch)"
-  reb = !r() { git rebase -i "HEAD~$1"; }; r
-
-  cp = cherry-pick
-
-  l = log --oneline
-  ls = log --pretty=oneline -n 20 --graph --abbrev-commit
-
-  s = status -sb --show-stash --no-renames
-  g = grep --line-number
-
-  whoami = config user.email
-  lstag = !git ls-remote --tags origin
-
-  fup = commit --fixup
-  fup1 = commit --fixup HEAD~1
-  fup2 = commit --fixup HEAD~2
-  fup3 = commit --fixup HEAD~3
-
-  asom = rebase -i --autosquash origin/master
-
-  amend1s = !f(){ git commit --amend --no-edit -S "$(git rev-parse HEAD~1)"; }; f
-  amend2s = !f(){ git commit --amend --no-edit -S "$(git rev-parse HEAD~2)"; }; f
-  amend3s = !f(){ git commit --amend --no-edit -S "$(git rev-parse HEAD~3)"; }; f
-  unamend = reset --mixed HEAD@{1}
-
-  signlast = !~/.local/bin/git-signlast
-
-  sh = !git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git show
-  fu = !git log -n 16 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
-
-  npr = "!gh pr create --web"
-  opr = "!gh pr view --web"
-
-  ignore = update-index --assume-unchanged
-  unignore = update-index --no-assume-unchanged
-  ignored = !git ls-files -v | grep "^[[:lower:]]"
-
-[advice]
-  addEmptyPathspec = false
-  pushNonFastForward = false
-  statusHints = false
+[include]
+  path = ~/.gitconfig.local

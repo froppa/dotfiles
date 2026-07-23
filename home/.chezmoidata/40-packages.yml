@@ -7,7 +7,6 @@ packages:
     - grep
     - moreutils
     - tree
-    - font-hack-nerd-font
     - gcc
     - make
     - ripgrep
@@ -64,6 +63,7 @@ packages:
     - shellcheck
 
   casks:
+    - font-hack-nerd-font
     - hammerspoon
     - maccy
     - scroll-reverser
@@ -81,8 +81,6 @@ packages:
 
   work:
     brews:
-      - kubectl
-      - k9s
       - awscli
     casks:
       - meetingbar

@@ -109,13 +109,5 @@ Local-only files such as `.zshrc.local`, `.exports.local`, and `.gitconfig.local
 
 ---
 
-## To Do
-
-- [ ] Encryption: <https://www.chezmoi.io/user-guide/encryption/>
-  - SSH Keys etc `chezmoi add --encrypt ~/.ssh/id_rsa`.
-- [ ] MacOS Scripts
-
----
-
 Made for easy, repeatable environment setup with modular control.
 Fork it, tweak it, make it yours.
