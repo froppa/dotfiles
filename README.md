@@ -1,22 +1,24 @@
 # Dotfiles — macOS Setup with chezmoi
 
 [![ci](https://github.com/froppa/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/froppa/dotfiles/actions/workflows/ci.yml)
+[![managed with chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-6e4c1e)](https://www.chezmoi.io/)
+![platform](https://img.shields.io/badge/platform-macOS%20%2B%20Linux-lightgrey)
 
 Minimal, modular dotfiles for macOS, automated with chezmoi and Homebrew.
 Most shell configuration also works on Linux; package installation and
 `macos-scripts/` are macOS-only.
 
-> **Work in progress — use at your own risk.**
+> ⚠️ **Work in progress — use at your own risk.**
 > These are my personal dotfiles, shared as-is.
 
-## Prerequisites
+## 📋 Prerequisites
 
 - [chezmoi](https://www.chezmoi.io/) (installed automatically by the quickstart and `init.sh`)
-- To decrypt the age-encrypted files (SSH private key, Zed settings), the age
+- 🔑 To decrypt the age-encrypted files (SSH private key, Zed settings), the age
   identity must exist at `~/.config/sops/age/keys.txt` **before** applying.
   Without it, `chezmoi apply` fails on the encrypted entries.
 
-## Quickstart
+## 🚀 Quickstart
 
 Pick the matching profile — it selects the Homebrew package set:
 
@@ -41,7 +43,7 @@ cd ~/.local/share/chezmoi
 (stored by chezmoi on first use) and `--macos` to run `macos-scripts/` after
 applying. Run `./init.sh --help` for details.
 
-## Daily usage
+## 🔁 Daily usage
 
 ```bash
 chezmoi apply -v                  # apply changes from the source repo
@@ -58,7 +60,7 @@ machine and intentionally ignored by chezmoi: `.zshrc.local`,
 `.zprofile.local`, `.exports.local`, `.aliases.local`, `.functions.local`,
 `.zsh_completions.local`, and `.gitconfig.local`.
 
-## What's managed where
+## 📦 What's managed where
 
 - Homebrew packages — `home/.chezmoidata/40-packages.yml`, installed by
   `home/.chezmoiscripts/run_onchange_20-install-pkgs.sh.tmpl` (re-runs when
@@ -72,7 +74,7 @@ machine and intentionally ignored by chezmoi: `.zshrc.local`,
   once via Raycast → Settings → Extensions → Script Commands → Add Script
   Directory.
 
-## Structure
+## 🗂️ Structure
 
 - `home/` — chezmoi-managed home directory (dotfiles, configs, scripts)
 - `home/.chezmoidata/` — layered YAML config data (features, packages, vscode, local)
@@ -81,7 +83,7 @@ machine and intentionally ignored by chezmoi: `.zshrc.local`,
 - `scripts/` — helper scripts (ssh-keygen, iterm2 prefs export)
 - `init.sh` — bootstrap entrypoint
 
-## macOS defaults
+## 🖥️ macOS defaults
 
 ```bash
 macos-scripts/macos-defaults.sh --audit   # report drift without changing anything
@@ -89,7 +91,7 @@ macos-scripts/macos-defaults.sh           # apply all sections
 macos-scripts/macos-defaults.sh --update  # also install macOS software updates
 ```
 
-## Editors
+## 📝 Editors
 
 - VS Code is the stable editor-of-record, managed in `home/dot_config/Code/User/`
   plus `home/.chezmoidata/vscode.yml`.
@@ -102,7 +104,7 @@ macos-scripts/macos-defaults.sh --update  # also install macOS software updates
   workflow for search, navigation, formatting, and diagnostics — keybindings
   are documented in [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md).
 
-## Testing
+## ✅ Testing
 
 CI runs `./test.sh` (shellcheck, chezmoi template render, dry-run apply).
 It also runs locally; requires `shellcheck` and `chezmoi` on `PATH`.
