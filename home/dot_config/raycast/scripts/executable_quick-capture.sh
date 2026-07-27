@@ -7,37 +7,9 @@
 # @raycast.icon 📝
 # @raycast.description Capture a todo, reminder, or note from Raycast quickly.
 #
-# @raycast.argument1 {
-#   "type": "dropdown",
-#   "placeholder": "Type",
-#   "default": "todo",
-#   "data": [
-#     {
-#       "title": "Todo",
-#       "value": "todo"
-#     },
-#     {
-#       "title": "Reminder",
-#       "value": "reminder"
-#     },
-#     {
-#       "title": "Note",
-#       "value": "note"
-#     }
-#   ]
-# }
-#
-# @raycast.argument2 {
-#   "type": "text",
-#   "placeholder": "What needs to be captured?",
-#   "default": ""
-# }
-#
-# @raycast.argument3 {
-#   "type": "text",
-#   "placeholder": "Due date/time (optional for reminders, e.g. tomorrow 9am)",
-#   "optional": true
-# }
+# @raycast.argument1 { "type": "dropdown", "placeholder": "Type", "default": "todo", "data": [{"title": "Todo", "value": "todo"}, {"title": "Reminder", "value": "reminder"}, {"title": "Note", "value": "note"}] }
+# @raycast.argument2 { "type": "text", "placeholder": "What needs to be captured?" }
+# @raycast.argument3 { "type": "text", "placeholder": "Due date/time (optional for reminders, e.g. tomorrow 9am)", "optional": true }
 
 set -euo pipefail
 
