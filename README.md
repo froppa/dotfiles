@@ -2,113 +2,107 @@
 
 [![ci](https://github.com/froppa/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/froppa/dotfiles/actions/workflows/ci.yml)
 
-Minimal, modular dotfiles for macOS automated with chezmoi and Homebrew.
+Minimal, modular dotfiles for macOS, automated with chezmoi and Homebrew.
+Most shell configuration also works on Linux; package installation and
+`macos-scripts/` are macOS-only.
 
-> **Work in progress — use at your own risk.**  
-> These are my personal dotfiles, shared as-is for bootstrapping macOS and Linux setups.
+> **Work in progress — use at your own risk.**
+> These are my personal dotfiles, shared as-is.
+
+## Prerequisites
+
+- [chezmoi](https://www.chezmoi.io/) (installed automatically by the quickstart and `init.sh`)
+- To decrypt the age-encrypted files (SSH private key, Zed settings), the age
+  identity must exist at `~/.config/sops/age/keys.txt` **before** applying.
+  Without it, `chezmoi apply` fails on the encrypted entries.
 
 ## Quickstart
 
+Pick the matching profile — it selects the Homebrew package set:
+
 ```bash
+# Personal machine
 PERSONAL=true sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply froppa
 
+# Work machine
 WORK=true sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply froppa
 ```
 
-1. (Optional) Run full setup:
+For a full bootstrap (Homebrew, packages, editor plugins) clone and run
+`init.sh` instead:
 
 ```bash
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-./init.sh
+./init.sh           # add --macos to also apply macOS system defaults
 ```
 
-### Notes
+`./init.sh` accepts `--name`, `--email`, and `--signing-key` for git identity
+(stored by chezmoi on first use) and `--macos` to run `macos-scripts/` after
+applying. Run `./init.sh --help` for details.
 
-- Homebrew packages are declared in `home/.chezmoidata/40-packages.yml` and installed by `home/.chezmoiscripts/run_onchange_20-install-pkgs.sh.tmpl` (re-runs automatically when the package data changes).
-- Language runtimes (node, python, go, ruby, pnpm, yarn) are managed by mise via `home/dot_config/mise/config.toml`.
-- VSCode extensions are declared in `home/.chezmoidata/vscode.yml`.
-- VS Code user settings live in `home/dot_config/Code/User/`.
-- Vim stays in `home/dot_vimrc`; Neovim lives in `home/dot_config/nvim/`.
-- Raycast Script Commands live in `home/dot_config/raycast/scripts/` (deployed to `~/.config/raycast/scripts/`) — kept out of `~/.config/raycast/` itself since Raycast uses that folder for its own extension/AI data (`extensions/` alone runs 200+ MB). On a new machine, add `~/.config/raycast/scripts` once via Raycast → Settings → Extensions → Script Commands → Add Script Directory.
-- Core shell/git files such as `.zshrc`, `.zprofile`, `.exports`, `.functions`, `.gitconfig`, and `.vimrc` are meant to be chezmoi-managed.
-- Keep machine-specific overrides in `.zshrc.local`, `.zprofile.local`, `.exports.local`, `.aliases.local`, `.functions.local`, `.zsh_completions.local`, and `.gitconfig.local`.
-- Scripts run once on first setup.
-- CI runs `test.sh`.
-
-### Structure
-
-- `home/` — chezmoi-managed home directory (dotfiles, configs, scripts)
-- `home/.chezmoidata/` — layered YAML config data (features, packages, vscode, local)
-- `home/.chezmoiscripts/` — setup scripts (brew, packages, zsh, vim, neovim, vscode)
-- `macos-scripts/` — macOS defaults and settings
-- `scripts/` — helper scripts
-- `init.sh` — bootstrap entrypoint script
-
-## Editors
-
-- VS Code remains the stable editor-of-record and is managed in `home/dot_config/Code/User/` plus `home/.chezmoidata/vscode.yml`.
-- Legacy Vim remains available through `home/dot_vimrc` and `home/.chezmoiscripts/run_once_after_21-install-vim.sh`.
-- Neovim is a parallel setup in `home/dot_config/nvim/`, based on the official LazyVim starter, with plugins bootstrapped by `home/.chezmoiscripts/run_once_after_22-install-neovim.sh`.
-
-### Neovim quick start
-
-1. Install `nvim` plus helper tools such as `fd`, `rg`, `git`, `make`, `shfmt`, and `stylua`.
-2. Apply the dotfiles as usual with `chezmoi apply -v` or `chezmoi init --apply "$(pwd)"`.
-3. Open `nvim` once to finish Mason and tree-sitter installs. The bootstrap script syncs plugins, but the first interactive launch is still the reliable way to complete tool installation.
-4. Run `:LazyHealth` after first launch if something feels off.
-
-### Neovim workflow defaults
-
-- `Ctrl-P` or `<leader><space>` — find files
-- `<leader><leader>` or `<leader>,` — switch buffers
-- `<leader>/` — live grep
-- `<leader>e` — explorer-style file navigation
-- `gd`, `gr`, `K`, `<leader>rn`, `<leader>ca` — LSP navigation and actions
-- `[d`, `]d`, `<leader>cd` — diagnostics
-- `<leader>cf` — format buffer
-
-The Neovim setup intentionally mirrors the current VS Code workflow for search, navigation, formatting, and diagnostics, while keeping modal editing and native Neovim ergonomics intact.
-
-## Apply And Sync
-
-Apply the current repo to this machine:
+## Daily usage
 
 ```bash
-chezmoi init --apply "$(pwd)"
-```
+chezmoi apply -v                  # apply changes from the source repo
+chezmoi status && chezmoi diff    # preview what would change
+chezmoi edit --apply ~/.zshrc     # edit a managed file and apply immediately
 
-Apply changes from an already-initialized chezmoi source:
-
-```bash
-chezmoi apply -v
-```
-
-Check what will change:
-
-```bash
-chezmoi status
-chezmoi diff
-```
-
-Edit a managed file and apply it immediately:
-
-```bash
-chezmoi edit --apply ~/.zshrc
-chezmoi edit --apply ~/.aliases
-```
-
-Sync the source repo on a machine where chezmoi is already initialized:
-
-```bash
-cd "$(chezmoi source-path)"
+cd "$(chezmoi source-path)"       # sync source repo, then apply
 git pull --ff-only
 chezmoi apply -v
 ```
 
-Local-only files such as `.zshrc.local`, `.exports.local`, and `.gitconfig.local` are intentionally ignored by chezmoi and should be created directly on each machine.
+Keep machine-specific overrides in `*.local` files, created directly on each
+machine and intentionally ignored by chezmoi: `.zshrc.local`,
+`.zprofile.local`, `.exports.local`, `.aliases.local`, `.functions.local`,
+`.zsh_completions.local`, and `.gitconfig.local`.
 
----
+## What's managed where
 
-Made for easy, repeatable environment setup with modular control.
-Fork it, tweak it, make it yours.
+- Homebrew packages — `home/.chezmoidata/40-packages.yml`, installed by
+  `home/.chezmoiscripts/run_onchange_20-install-pkgs.sh.tmpl` (re-runs when
+  the data changes)
+- Language runtimes (node, python, go, ruby, pnpm, yarn) — mise via
+  `home/dot_config/mise/config.toml`
+- VS Code extensions — `home/.chezmoidata/vscode.yml`
+- Raycast Script Commands — `home/dot_config/raycast/scripts/`, deployed to
+  `~/.config/raycast/scripts/` (kept out of `~/.config/raycast/` itself, which
+  Raycast uses for its own extension data). On a new machine, add the folder
+  once via Raycast → Settings → Extensions → Script Commands → Add Script
+  Directory.
+
+## Structure
+
+- `home/` — chezmoi-managed home directory (dotfiles, configs, scripts)
+- `home/.chezmoidata/` — layered YAML config data (features, packages, vscode, local)
+- `home/.chezmoiscripts/` — setup scripts (brew, packages, vim, neovim, vscode)
+- `macos-scripts/` — macOS system defaults (see below)
+- `scripts/` — helper scripts (ssh-keygen, iterm2 prefs export)
+- `init.sh` — bootstrap entrypoint
+
+## macOS defaults
+
+```bash
+macos-scripts/macos-defaults.sh --audit   # report drift without changing anything
+macos-scripts/macos-defaults.sh           # apply all sections
+macos-scripts/macos-defaults.sh --update  # also install macOS software updates
+```
+
+## Editors
+
+- VS Code is the stable editor-of-record, managed in `home/dot_config/Code/User/`
+  plus `home/.chezmoidata/vscode.yml`.
+- Legacy Vim stays available through `home/dot_vimrc` and
+  `home/.chezmoiscripts/run_once_after_21-install-vim.sh`.
+- Neovim is a parallel LazyVim-based setup in `home/dot_config/nvim/`, with
+  plugins bootstrapped by `home/.chezmoiscripts/run_once_after_22-install-neovim.sh`.
+  Open `nvim` once after applying to finish Mason and tree-sitter installs,
+  and run `:LazyHealth` if something feels off. It mirrors the VS Code
+  workflow for search, navigation, formatting, and diagnostics — keybindings
+  are documented in [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md).
+
+## Testing
+
+CI runs `./test.sh` (shellcheck, chezmoi template render, dry-run apply).
+It also runs locally; requires `shellcheck` and `chezmoi` on `PATH`.
