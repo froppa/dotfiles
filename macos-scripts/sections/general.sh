@@ -15,8 +15,9 @@ if [[ "${AUDIT_MODE}" != "true" ]]; then
 
   sudo defaults write /Library/Preferences/com.apple.timezone.auto Active -bool true
   sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo -string "HostName"
-  # Disable boot sound
-  sudo nvram SystemAudioVolume=" "
+  # Disable boot sound (not permitted on Apple Silicon under newer macOS)
+  sudo nvram SystemAudioVolume=" " \
+    || echo "⚠️ nvram SystemAudioVolume not permitted here; skipping boot-sound tweak"
 fi
 
 # ---------------------------------------------------------------------

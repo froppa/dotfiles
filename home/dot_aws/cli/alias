@@ -10,8 +10,7 @@ sqs     = sqs
 sns     = sns
 s3      = s3
 
-[command alias]
-ls = !grep '^[^[:space:]#].*=' "${HOME}/.config/aws/cli/alias" | sort
+ls      = !grep '^[^[:space:]#].*=' "${HOME}/.aws/cli/alias" | sort
 
 [command logs]
 groups = describe-log-groups --query 'logGroups[].logGroupName'

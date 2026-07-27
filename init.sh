@@ -112,7 +112,7 @@ run_macos_post_setup() {
 
   if [[ -f ./macos-scripts/macos-defaults.sh ]]; then
     info "Running macOS post-setup..."
-    (cd macos-scripts && bash ./macos-defaults.sh)
+    bash ./macos-scripts/macos-defaults.sh
   else
     error "Missing ./macos-scripts/macos-defaults.sh"
     exit 1

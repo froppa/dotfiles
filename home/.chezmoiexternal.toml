@@ -1,47 +1,45 @@
+# Pinned to tags/SHAs: upstream changes only land after a deliberate bump here.
+# oh-my-zsh and zsh-chezmoi have no release tags, so they pin to commit SHAs.
+
 [".oh-my-zsh"]
 type = "archive"
-url = "https://github.com/ohmyzsh/ohmyzsh/archive/master.tar.gz"
+url = "https://github.com/ohmyzsh/ohmyzsh/archive/d26b91b3fe2030f1fcf9812025e4db5fd114ed29.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 [".oh-my-zsh/custom/plugins/chezmoi"]
 type = "archive"
-url = "https://github.com/mass8326/zsh-chezmoi/archive/refs/heads/main.zip"
+url = "https://github.com/mass8326/zsh-chezmoi/archive/1766f5b05d2db98cb8f1013cc5898f1d287bbf03.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 [".oh-my-zsh/custom/plugins/zsh-syntax-highlighting"]
 type = "archive"
-url = "https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz"
+url = "https://github.com/zsh-users/zsh-syntax-highlighting/archive/refs/tags/0.8.0.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 [".oh-my-zsh/custom/plugins/zsh-autosuggestions"]
 type = "archive"
-url = "https://github.com/zsh-users/zsh-autosuggestions/archive/master.tar.gz"
+url = "https://github.com/zsh-users/zsh-autosuggestions/archive/refs/tags/v0.7.1.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 [".oh-my-zsh/custom/plugins/zsh-completions"]
 type = "archive"
-url = "https://github.com/zsh-users/zsh-completions/archive/master.tar.gz"
+url = "https://github.com/zsh-users/zsh-completions/archive/refs/tags/0.36.0.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 [".oh-my-zsh/custom/plugins/fzf-tab"]
 type = "archive"
-url = "https://github.com/Aloxaf/fzf-tab/archive/master.tar.gz"
+url = "https://github.com/Aloxaf/fzf-tab/archive/refs/tags/v1.3.0.tar.gz"
 exact = true
 stripComponents = 1
-refreshPeriod = "168h"
 
 # TPM manages the other ~/.tmux/plugins/* itself (prefix+I); only tpm is bootstrapped here
 [".tmux/plugins/tpm"]
-type = "git-repo"
-url = "https://github.com/tmux-plugins/tpm.git"
-refreshPeriod = "168h"
+type = "archive"
+url = "https://github.com/tmux-plugins/tpm/archive/refs/tags/v3.1.0.tar.gz"
+exact = true
+stripComponents = 1

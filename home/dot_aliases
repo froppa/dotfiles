@@ -34,7 +34,12 @@ if command -v eza >/dev/null 2>&1; then
   alias ls='eza'
   alias la='eza -a'
   alias ll='eza -lahH'
+elif ls --color=auto -d . >/dev/null 2>&1; then
+  # GNU ls: -G means --no-group, colors come from --color
+  alias la='ls -a --color=auto'
+  alias ll='ls -lah --color=auto'
 else
+  # BSD ls: -G enables colors
   alias la='ls -aG'
   alias ll='ls -lahG'
 fi
@@ -85,7 +90,8 @@ done
 # =======================================
 # IP / network helpers
 # =======================================
-ip() {
+# Named publicip (not ip) so it never shadows the real ip(8) binary.
+publicip() {
   if command -v dig >/dev/null 2>&1; then
     dig +short myip.opendns.com @resolver1.opendns.com
   elif command -v curl >/dev/null 2>&1; then
@@ -96,10 +102,6 @@ ip() {
   fi
 }
 
-localip() {
-  ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null
-}
-
 ips() {
   if command -v ip >/dev/null 2>&1; then
     ip -o addr show | awk '{print $4}'
@@ -108,25 +110,32 @@ ips() {
   fi
 }
 
-ifactive() {
-  ifconfig | awk '
-    /^[a-z0-9]/ { iface=$1; sub(":","",iface) }
-    /status: active/ { print iface }
-  '
-}
-flush() {
-  dscacheutil -flushcache
-  killall -HUP mDNSResponder
-}
+if [[ "$OSTYPE" == darwin* ]]; then
+  localip() {
+    ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null
+  }
 
-lscleanup() {
-  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
-    -r -domain local -domain system -domain user && killall Finder
-}
+  ifactive() {
+    ifconfig | awk '
+      /^[a-z0-9]/ { iface=$1; sub(":","",iface) }
+      /status: active/ { print iface }
+    '
+  }
+  flush() {
+    dscacheutil -flushcache
+    killall -HUP mDNSResponder
+  }
+
+  lscleanup() {
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+      -r -domain local -domain system -domain user && killall Finder
+  }
+
+  alias update='sudo softwareupdate -i -a && brew update && brew upgrade && brew cleanup && npm install -g npm && npm update -g'
+  alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
+fi
 
 alias brewup='brew update && brew upgrade && brew cleanup'
-alias update='sudo softwareupdate -i -a && brew update && brew upgrade && brew cleanup && npm install -g npm && npm update -g'
 alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
-alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
 
 [[ -f "$HOME/.aliases.local" ]] && source "$HOME/.aliases.local"

@@ -17,41 +17,11 @@ zstyle ':completion:*:git-switch:*' sort false
 
 # Colors for completion lists
 if [[ -n "${LS_COLORS:-}" ]]; then
-  zstyle ':completion:*' list-colors "\${(s.:.)LS_COLORS}"
+  zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 fi
 
-# fzf
-for fzf_base in \
-  "$HOME/.fzf/shell" \
-  "${XDG_DATA_HOME:-$HOME/.local/share}/fzf/shell" \
-  "/opt/homebrew/opt/fzf/shell" \
-  "/opt/homebrew/share/fzf" \
-  "/usr/local/opt/fzf/shell" \
-  "/usr/local/share/fzf" \
-  "/usr/share/fzf"
-do
-  if [[ -f "$fzf_base/completion.zsh" ]]; then
-    source "$fzf_base/completion.zsh" 2>/dev/null
-  fi
-
-  if [[ -f "$fzf_base/key-bindings.zsh" ]]; then
-    source "$fzf_base/key-bindings.zsh" 2>/dev/null
-    break
-  fi
-done
-
-# Try common plugin locations instead of assuming OMZ custom only
-for fzf_tab_plugin in \
-  "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.plugin.zsh" \
-  "/opt/homebrew/share/fzf-tab/fzf-tab.plugin.zsh" \
-  "/usr/local/share/fzf-tab/fzf-tab.plugin.zsh" \
-  "/usr/share/fzf-tab/fzf-tab.plugin.zsh"
-do
-  if [[ -f "$fzf_tab_plugin" ]]; then
-    source "$fzf_tab_plugin"
-    break
-  fi
-done
+# fzf completion/key-bindings come from `fzf --zsh` in .zshrc; fzf-tab is
+# loaded as an oh-my-zsh plugin. Only plugin options live here.
 
 # fzf-tab options
 zstyle ':fzf-tab:*' switch-group '<' '>'

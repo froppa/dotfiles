@@ -4,7 +4,6 @@
   "telemetry.feedback.enabled": false,
   "chat.agent.enabled": false,
   "security.workspace.trust.banner": "never",
-  "security.workspace.trust.enabled": false,
   "workbench.startupEditor": "newUntitledFile",
   "explorer.confirmDragAndDrop": false,
   "explorer.confirmDelete": false,

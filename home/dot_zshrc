@@ -4,9 +4,7 @@
 # =======================================
 # Environment
 # =======================================
-export LANG="en_DK.UTF-8"
 export LC_ALL="en_US.UTF-8"
-export TERM="xterm-256color"
 export EDITOR="vim"
 export VISUAL="vim"
 export LESS="--tabs=2 --no-init --LONG-PROMPT --ignore-case --quit-if-one-screen --RAW-CONTROL-CHARS"
@@ -112,15 +110,33 @@ if command -v gpgconf >/dev/null 2>&1; then
 fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
+  # Load the keychain-backed key only when the agent is reachable but empty.
   if [[ -x /usr/bin/ssh-add ]] &&
      [[ -f "$HOME/.ssh/id_ed25519" ]] &&
-     [[ -S "$SSH_AUTH_SOCK" ]] &&
-     /usr/bin/ssh-add -l >/dev/null 2>&1; then
+     [[ -S "${SSH_AUTH_SOCK:-/dev/null}" ]] &&
+     ! /usr/bin/ssh-add -l >/dev/null 2>&1; then
     /usr/bin/ssh-add --apple-use-keychain >/dev/null 2>&1 || true
   fi
 else
+  # Reuse a persistent agent across logins instead of spawning one per shell.
   if [[ -z "${SSH_AUTH_SOCK:-}" ]] && command -v ssh-agent >/dev/null 2>&1; then
-    eval "$(ssh-agent -s)" >/dev/null 2>&1
+    agent_env="$HOME/.ssh/agent-env"
+    if [[ -f "$agent_env" ]]; then
+      source "$agent_env" >/dev/null 2>&1
+      # Drop the recorded agent when it is unreachable (exit 2); an empty
+      # but live agent (exit 1) is fine to reuse.
+      ssh-add -l >/dev/null 2>&1
+      if [[ $? -eq 2 ]]; then
+        unset SSH_AUTH_SOCK SSH_AGENT_PID
+      fi
+    fi
+    if [[ -z "${SSH_AUTH_SOCK:-}" ]]; then
+      mkdir -p "$HOME/.ssh"
+      ssh-agent -s >"$agent_env"
+      chmod 600 "$agent_env"
+      source "$agent_env" >/dev/null 2>&1
+    fi
+    unset agent_env
   fi
 fi
 
@@ -137,7 +153,6 @@ bindkey "^w" backward-kill-word
 bindkey "^u" backward-kill-line
 bindkey "^R" history-incremental-pattern-search-backward
 bindkey "^F" history-incremental-pattern-search-forward
-bindkey "^i" expand-or-complete-prefix
 
 # Alt-backspace / Ctrl-arrow compatibility
 bindkey '^[^?' backward-kill-word

@@ -155,7 +155,6 @@
   // ===== Git =====
   "git.openRepositoryInParentFolders": "always",
   // ===== Security & Telemetry =====
-  "security.workspace.trust.enabled": false,
   "security.workspace.trust.banner": "never",
   "telemetry.telemetryLevel": "off",
   "telemetry.feedback.enabled": false,

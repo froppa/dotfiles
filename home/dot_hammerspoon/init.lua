@@ -4,10 +4,10 @@ function ToggleApplicationActive(appName)
     return hs.application.launchOrFocus(appName .. '.app')
   end
 
-  if app:isHidden() then
-    app:activate()
-  else
+  if app:isFrontmost() then
     app:hide()
+  else
+    app:activate()
   end
 end
 
