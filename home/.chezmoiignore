@@ -8,3 +8,5 @@
 .zprofile.local
 .zsh_completions.local
 .zshrc.local
+.oh-my-zsh/.DS_Store
+.oh-my-zsh/cache/**
