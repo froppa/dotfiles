@@ -61,26 +61,77 @@ normalize_type() {
 }
 
 TYPE="$(normalize_type "$TYPE")"
-TIMESTAMP="$(date '+%Y-%m-%d %H:%M')"
-OBSIDIAN_CAPTURE_FILE="${OBSIDIAN_CAPTURE_FILE:-$HOME/Documents/Obsidian/Inbox.md}"
 
-append_obsidian() {
-  local line_prefix="$1"
-  mkdir -p "$(dirname "$OBSIDIAN_CAPTURE_FILE")"
-  if [[ ! -f "$OBSIDIAN_CAPTURE_FILE" ]]; then
-    : >"$OBSIDIAN_CAPTURE_FILE"
-  fi
-  printf "\n%s %s\n" "$line_prefix" "$CONTENT" >>"$OBSIDIAN_CAPTURE_FILE"
+VAULT="${AGENT_WORKSPACE_VAULT:-$HOME/code/agent-workspace}"
+INBOX_DIR="$VAULT/Inbox"
+DATE_ONLY="$(date '+%Y-%m-%d')"
+STAMP="$(date '+%Y-%m-%d-%H%M')"
+
+slugify() {
+  local s="$1"
+  s="$(printf '%s' "$s" | tr '\n' ' ')"
+  s="$(printf '%s' "$s" | sed -E 's#[/:*?"<>|]#-#g; s/[[:space:]]+/ /g; s/^[[:space:]-]+//; s/[[:space:]-]+$//')"
+  s="${s:0:60}"
+  [[ -z "$s" ]] && s="capture"
+  printf '%s' "$s"
+}
+
+create_inbox_note() {
+  local kind="$1"
+  local title="$2"
+  local slug file
+  slug="$(slugify "$title")"
+  file="$INBOX_DIR/${STAMP} ${slug}.md"
+  mkdir -p "$INBOX_DIR"
+
+  case "$kind" in
+    note)
+      cat >"$file" <<NOTE
+---
+kind: note
+created: $DATE_ONLY
+tags: []
+---
+
+# $title
+NOTE
+      ;;
+    task)
+      cat >"$file" <<TASK
+---
+kind: task
+status: triage
+project:
+source_root:
+created: $DATE_ONLY
+tags: []
+---
+
+# $title
+
+## Outcome
+
+One observable outcome.
+
+## Notes
+
+## Triage
+
+- [ ] Set \`project\` to a folder under \`contexts/\`.
+- [ ] Promote to \`contexts/<branch>/<project>/tasks/<slug>.md\` using
+      \`templates/task.md\`, or drop this note.
+TASK
+      ;;
+  esac
 }
 
 case "$TYPE" in
   todo)
-    append_obsidian "- [ ] $TIMESTAMP — #todo"
+    create_inbox_note "task" "$CONTENT"
     ;;
 
   note)
-    append_obsidian "## 📝 $TIMESTAMP #note" \
-    && printf "%s\n\n" "$CONTENT" >>"$OBSIDIAN_CAPTURE_FILE"
+    create_inbox_note "note" "$CONTENT"
     ;;
 
   reminder)
