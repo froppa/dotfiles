@@ -30,6 +30,7 @@ cd ~/.local/share/chezmoi
 - VSCode extensions are declared in `home/.chezmoidata/vscode.yml`.
 - VS Code user settings live in `home/dot_config/Code/User/`.
 - Vim stays in `home/dot_vimrc`; Neovim lives in `home/dot_config/nvim/`.
+- Raycast Script Commands live in `home/bin/raycast/` (deployed to `~/bin/raycast/`). On a new machine, add that folder once via Raycast → Settings → Extensions → Script Commands → Add Script Directory.
 - Core shell/git files such as `.zshrc`, `.zprofile`, `.exports`, `.functions`, `.gitconfig`, and `.vimrc` are meant to be chezmoi-managed.
 - Keep machine-specific overrides in `.zshrc.local`, `.zprofile.local`, `.exports.local`, `.aliases.local`, `.functions.local`, `.zsh_completions.local`, and `.gitconfig.local`.
 - Scripts run once on first setup.
