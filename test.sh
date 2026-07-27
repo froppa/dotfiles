@@ -87,12 +87,14 @@ grep -q '^personal = false$' "${rendered_work_config}" || fail "WORK=true should
 
 section "Testing chezmoi dry-run apply"
 
+# Encrypted entries need the age identity, which only exists on real machines.
 chezmoi init \
   --source="${PWD}" \
   --apply \
   --dry-run \
   --force \
   --keep-going \
+  --exclude encrypted \
   --promptString 'name=CI' \
   --promptString 'email=ci@example.invalid' \
   --promptString 'signingKey='
