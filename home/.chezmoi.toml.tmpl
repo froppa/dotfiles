@@ -14,16 +14,16 @@ recipient = "age1x8xj89ps3n8j2cy6guv2n9l788q0ud39yq0pw72lxehgdl2fdv8qqa0lfw"
 {{ $name := promptStringOnce . "name" "name" }}
 {{ $email := promptStringOnce . "email" "email" }}
 {{ $signingKey := promptStringOnce . "signingKey" "signingKey" }}
+{{/* WORK=true selects the work machine setup; anything else (incl. PERSONAL=true) is personal. */}}
+{{ $work := eq (env "WORK" | lower) "true" }}
 
 [data]
 name = {{ $name | quote }}
 email = {{ $email | quote }}
-{{ if $signingKey }}
 signingKey = {{ $signingKey | quote }}
-{{ end }}
-profile = "personal"
-work = false
-personal = true
+profile = {{ ternary "work" "personal" $work | quote }}
+work = {{ $work }}
+personal = {{ not $work }}
 computerName = {{ $computerName | quote }}
 hostname = {{ $computerName | quote }}
 
@@ -31,4 +31,4 @@ hostname = {{ $computerName | quote }}
 refreshPeriod = "12h"
 
 [template]
-options = ["missingkey=zero"]
+options = ["missingkey=error"]

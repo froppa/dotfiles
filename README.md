@@ -48,8 +48,8 @@ cd ~/.local/share/chezmoi
 ## Editors
 
 - VS Code remains the stable editor-of-record and is managed in `home/dot_config/Code/User/` plus `home/.chezmoidata/vscode.yml`.
-- Legacy Vim remains available through `home/dot_vimrc` and `home/.chezmoiscripts/run_once_21-install-vim.sh`.
-- Neovim is a parallel setup in `home/dot_config/nvim/`, based on the official LazyVim starter, with plugins bootstrapped by `home/.chezmoiscripts/run_once_22-install-neovim.sh`.
+- Legacy Vim remains available through `home/dot_vimrc` and `home/.chezmoiscripts/run_once_after_21-install-vim.sh`.
+- Neovim is a parallel setup in `home/dot_config/nvim/`, based on the official LazyVim starter, with plugins bootstrapped by `home/.chezmoiscripts/run_once_after_22-install-neovim.sh`.
 
 ### Neovim quick start
 

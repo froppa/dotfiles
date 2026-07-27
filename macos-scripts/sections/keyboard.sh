@@ -17,5 +17,5 @@ defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled   -bool false
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled    -bool false
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled   -bool false
 
-# Battery menu - show percentage
-defaults write com.apple.menuextra.battery ShowPercent -string "YES"
+# Battery - show percentage (Control Center on modern macOS)
+defaults write com.apple.controlcenter BatteryShowPercentage -bool true

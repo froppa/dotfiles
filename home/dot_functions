@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 dotcode() {
   code "$(chezmoi source-path)"
@@ -9,15 +9,20 @@ mkd() {
   mkdir -p "$@" && cd "$_"
 }
 
-# Create a symlink, removing existing file/dir/link if needed
+# Create a symlink, removing an existing file/link if needed.
+# Real directories are never removed.
 symlink() {
   local target="$1"
   local link_name="$2"
   local overwritten=""
 
+  if [[ -d "$link_name" && ! -L "$link_name" ]]; then
+    echo "symlink: $link_name is a real directory; refusing to remove" >&2
+    return 1
+  fi
   if [[ -e "$link_name" || -L "$link_name" ]]; then
     overwritten="(Overwritten)"
-    rm -rf "$link_name"
+    rm -f "$link_name"
   fi
   echo "$link_name -> $target $overwritten"
   ln -s "$target" "$link_name"
@@ -39,7 +44,7 @@ cdf() {
 
 # Create a .tar archive and compress it using best available compressor
 targz() {
-  local tmpFile="${@%/}.tar"
+  local tmpFile="${1%/}.tar"
 
   tar -cvf "${tmpFile}" --exclude=".DS_Store" "$@" || return 1
 
@@ -71,6 +76,9 @@ targz() {
 
 # Show size of file or directory, human-readable
 fs() {
+  # zsh aborts on unmatched globs; bash just passes them through
+  [[ -n "${ZSH_VERSION:-}" ]] && setopt localoptions null_glob
+
   local arg="-sh"
   if du -b /dev/null >/dev/null 2>&1; then
     arg="-sbh"

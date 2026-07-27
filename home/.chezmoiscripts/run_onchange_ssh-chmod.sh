@@ -2,5 +2,6 @@
 set -euo pipefail
 
 chmod 700 ~/.ssh
-chmod 600 ~/.ssh/*
-chmod 644 ~/.ssh/*.pub || true
+find ~/.ssh -type d -exec chmod 700 {} +
+find ~/.ssh -type f -exec chmod 600 {} +
+find ~/.ssh -type f -name '*.pub' -exec chmod 644 {} +

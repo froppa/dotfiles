@@ -113,7 +113,6 @@ on run argv
   set dueText to item 2 of argv
 
   tell application "Reminders"
-    activate
     if (count of lists whose name is "Raycast") = 0 then
       make new list with properties {name:"Raycast"}
     end if

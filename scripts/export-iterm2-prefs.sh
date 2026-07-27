@@ -3,21 +3,13 @@ set -euo pipefail
 
 [[ "${OSTYPE}" != darwin* ]] && exit 0
 
+# Export straight into the chezmoi source so `chezmoi diff` stays clean and
+# the change can be committed. Applying deploys it to ~/.config/iterm2.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_FILE_PLIST="${SCRIPT_DIR}/com.googlecode.iterm2.plist"
+SOURCE_PLIST="${SCRIPT_DIR}/../home/dot_config/iterm2/com.googlecode.iterm2.plist"
 
-export_iterm2_prefs() {
-  defaults export com.googlecode.iterm2 "${CONFIG_FILE_PLIST}"
-}
+defaults export com.googlecode.iterm2 "${SOURCE_PLIST}"
+plutil -convert xml1 "${SOURCE_PLIST}"
 
-convert_to_xml() {
-  plutil -convert xml1 "${CONFIG_FILE_PLIST}"
-}
-
-export_iterm2_prefs
-convert_to_xml
-
-PREFS_CUSTOM_FOLDER="${HOME}/.config/iterm2"
-mkdir -p "${PREFS_CUSTOM_FOLDER}"
-
-cp -p "${CONFIG_FILE_PLIST}" "${PREFS_CUSTOM_FOLDER}/"
+echo "Exported iTerm2 preferences to ${SOURCE_PLIST}"
+echo "Run 'chezmoi apply' to sync ~/.config/iterm2, then commit the change."

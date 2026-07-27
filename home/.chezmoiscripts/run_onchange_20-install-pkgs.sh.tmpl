@@ -34,6 +34,11 @@ cask "{{ . }}"
 {{ range .packages.work.brews -}}
 brew "{{ . }}"
 {{ end -}}
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.work.casks -}}
+cask "{{ . }}"
+{{ end -}}
+{{ end -}}
 {{ end -}}
 BREWFILE
 

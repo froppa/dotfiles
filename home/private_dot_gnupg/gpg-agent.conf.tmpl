@@ -1,5 +1,15 @@
 default-cache-ttl 600
 max-cache-ttl 7200
 {{- if eq .chezmoi.os "darwin" }}
-pinentry-program /opt/homebrew/bin/pinentry-mac
+{{- $pinentry := "" }}
+{{- if lookPath "pinentry-mac" }}
+{{- $pinentry = lookPath "pinentry-mac" }}
+{{- else if stat "/opt/homebrew/bin/pinentry-mac" }}
+{{- $pinentry = "/opt/homebrew/bin/pinentry-mac" }}
+{{- else if stat "/usr/local/bin/pinentry-mac" }}
+{{- $pinentry = "/usr/local/bin/pinentry-mac" }}
+{{- end }}
+{{- if $pinentry }}
+pinentry-program {{ $pinentry }}
+{{- end }}
 {{- end }}

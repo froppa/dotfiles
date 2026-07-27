@@ -1,6 +1,5 @@
 # Global config
 add_newline = false
-#format = "$directory $git_branch $git_state$git_status$git_metrics$character"
 format = "$directory $git_branch$git_status$character "
 
 [character]
@@ -33,13 +32,3 @@ modified = "*"
 staged = "+"
 #renamed = "»"
 #deleted = "✘"
-
-[git_state]
-style = "bold red"
-format = " [$state( $progress_current/$progress_total)]($style)"
-
-[git_metrics]
-disabled = true
-format = " ([+$added]($added_style) [-$deleted]($deleted_style))"
-added_style = "bold green"
-deleted_style = "bold red"
