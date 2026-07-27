@@ -2,19 +2,19 @@
 #
 # @raycast.schemaVersion 1
 # @raycast.title Quick Capture
-# @raycast.mode silent
+# @raycast.mode compact
 # @raycast.packageName Personal Productivity
 # @raycast.icon 📝
 # @raycast.description Capture a todo, reminder, or note from Raycast quickly.
 #
-# @raycast.argument1 { "type": "dropdown", "placeholder": "Type", "default": "todo", "data": [{"title": "Todo", "value": "todo"}, {"title": "Reminder", "value": "reminder"}, {"title": "Note", "value": "note"}] }
-# @raycast.argument2 { "type": "text", "placeholder": "What needs to be captured?" }
+# @raycast.argument1 { "type": "text", "placeholder": "What needs to be captured?" }
+# @raycast.argument2 { "type": "dropdown", "placeholder": "Type", "default": "todo", "data": [{"title": "Todo", "value": "todo"}, {"title": "Reminder", "value": "reminder"}, {"title": "Note", "value": "note"}] }
 # @raycast.argument3 { "type": "text", "placeholder": "Due date/time (optional for reminders, e.g. tomorrow 9am)", "optional": true }
 
 set -euo pipefail
 
-TYPE="${1:-todo}"
-CONTENT="${2:-}"
+CONTENT="${1:-}"
+TYPE="${2:-todo}"
 DUE_RAW="${3:-}"
 
 if [[ -z "$CONTENT" ]]; then
@@ -100,10 +100,12 @@ TASK
 case "$TYPE" in
   todo)
     create_inbox_note "task" "$CONTENT"
+    echo "✅ Task captured: $CONTENT"
     ;;
 
   note)
     create_inbox_note "note" "$CONTENT"
+    echo "📝 Note captured: $CONTENT"
     ;;
 
   reminder)
@@ -131,6 +133,7 @@ on run argv
   end tell
 end run
 APPLESCRIPT
+    echo "⏰ Reminder set: $CONTENT"
     ;;
 
   *)
