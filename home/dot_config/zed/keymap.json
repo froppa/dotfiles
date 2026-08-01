@@ -29,5 +29,17 @@
       "enter": "project_panel::Open",
       "cmd-enter": "project_panel::OpenPermanent"
     }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "cmd-down": "pane::SplitDown"
+    }
+  },
+  {
+    "context": "Terminal",
+    "unbind": {
+      "ctrl-alt-down": "pane::SplitDown"
+    }
   }
 ]

@@ -1,95 +1,127 @@
-# Dotfiles — macOS Setup with chezmoi
+# Dotfiles
 
-[![ci](https://github.com/froppa/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/froppa/dotfiles/actions/workflows/ci.yml)
-[![managed with chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-6e4c1e)](https://www.chezmoi.io/)
-![platform](https://img.shields.io/badge/platform-macOS%20%2B%20Linux-lightgrey)
+[![CI](https://github.com/froppa/dotfiles/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/froppa/dotfiles/actions/workflows/ci.yml)
+[![Chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-6e4c1e)](https://www.chezmoi.io/)
+![Platform](https://img.shields.io/badge/platform-macOS%20%2B%20Linux-lightgrey)
 
-Minimal, modular dotfiles for macOS, automated with chezmoi and Homebrew.
-Most shell configuration also works on Linux; packages and `macos-scripts/`
-are macOS-only.
+Personal macOS development environment managed with Chezmoi and Homebrew.
+Shell, Git, editor, and XDG configuration also work on Linux where supported.
 
-> ⚠️ **Work in progress — use at your own risk.** These are my personal
-> dotfiles, shared as-is.
+## Overview
 
-## Prerequisites
+| Area | Configuration |
+| --- | --- |
+| Terminal | Ghostty opens the persistent tmux session `main` |
+| Shell | Zsh, Oh My Zsh, Starship, fzf, mise, and direnv |
+| Editors | Zed, VS Code, Vim, and Neovim |
+| Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
+| Packages | Homebrew bundle with personal and work profiles |
+| Secrets | Owner SSH key encrypted with age; Raycast export encrypted by Raycast |
+| macOS | Dock, Finder, keyboard, Safari, and general defaults |
 
-🔑 The age identity must exist at `~/.config/sops/age/keys.txt` **before**
-applying — without it, `chezmoi apply` fails on the encrypted files (SSH
-private key, Zed settings).
-
-## Quickstart
-
-```bash
-# Personal machine
-PERSONAL=true sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply froppa
-
-# Work machine (different Homebrew package set)
-WORK=true sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply froppa
-```
-
-For a full bootstrap (Homebrew, packages, editor plugins):
+## Install
 
 ```bash
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-./init.sh    # options: --name --email --signing-key --macos (see --help)
+./init.sh --macos
 ```
 
-## Daily usage
+Use `WORK=true ./init.sh --macos` for the work package profile. Run
+`./init.sh --help` for Git identity and signing-key options. Omit `--macos` to
+apply the dotfiles without changing macOS defaults.
+
+### SSH and age
+
+The repository contains the owner's age-encrypted `~/.ssh/id_ed25519`. It can
+only be applied with the matching identity at
+`~/.config/sops/age/keys.txt`.
+
+This encrypted entry is owner-specific. Apply everything else with:
 
 ```bash
-chezmoi apply -v               # apply changes from the source repo
-chezmoi update -v              # pull the source repo and apply
-chezmoi diff                   # preview what would change
-chezmoi edit --apply ~/.zshrc  # edit a managed file and apply immediately
+sh -c "$(curl -fsLS get.chezmoi.io)" -- \
+  init --apply --exclude encrypted froppa
 ```
 
-Keep machine-specific overrides in `*.local` files, created directly on each
-machine and ignored by chezmoi: `.zshrc.local`, `.zprofile.local`,
-`.exports.local`, `.aliases.local`, `.functions.local`,
-`.zsh_completions.local`, `.gitconfig.local`.
+A fork can replace the recipient in `home/.chezmoi.toml.tmpl` and encrypt its
+own key with `scripts/import-ssh-key.sh`.
 
-## What's managed where
+SSH behavior is config-driven: `AddKeysToAgent` and macOS Keychain integration
+load the key on first use. Shell startup does not call `ssh-add`.
 
-- Homebrew packages — `home/.chezmoidata/40-packages.yml`, installed by
-  `home/.chezmoiscripts/run_onchange_20-install-pkgs.sh.tmpl` (re-runs when
-  the data changes)
-- Language runtimes (node, python, go, ruby, pnpm, yarn) — mise via
-  `home/dot_config/mise/config.toml`
-- VS Code extensions — `home/.chezmoidata/vscode.yml`
-- Raycast Script Commands — `home/dot_config/raycast/scripts/`, deployed to
-  `~/.config/raycast/scripts/` (kept out of `~/.config/raycast/` itself,
-  which Raycast uses for its own data). Add the folder once on a new machine
-  via Raycast → Settings → Extensions → Script Commands → Add Script Directory.
+## Manual steps
 
-## Structure
+| Component | Once per machine |
+| --- | --- |
+| Raycast | Import `~/.config/raycast/raycast.rayconfig` using Raycast's import action |
+| Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
+| Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
 
-- `home/` — chezmoi-managed home directory
-- `home/.chezmoidata/` — layered YAML config data
-- `home/.chezmoiscripts/` — setup scripts (brew, packages, vim, neovim, vscode)
-- `macos-scripts/` — macOS system defaults
-- `scripts/` — helper scripts (ssh-keygen, iterm2 prefs export)
-- `init.sh` — bootstrap entrypoint
+The Raycast export passphrase is separate from age. tmux plugins install through
+TPM; Continuum and Resurrect handle session restoration.
+
+## Terminal shortcuts
+
+Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty converts the
+following chords to tmux commands. Right Option remains available for Danish
+symbols.
+
+| Shortcut | Action |
+| --- | --- |
+| `Caps+C` | New window |
+| `Caps+I` | Side-by-side pane |
+| `Caps+-` | Stacked pane |
+| `Caps+Arrow` | Move between panes |
+| `Caps+0…9` | Select window |
+| `Caps+Z` | Toggle pane zoom |
+| `Caps+R` | Reload tmux |
+| `Caps+X` / `Caps+W` | Kill pane after confirmation |
+
+## Daily use
+
+```bash
+chezmoi diff                     # inspect changes
+chezmoi apply -v                 # apply source state
+chezmoi update -v                # pull and apply
+chezmoi edit --apply ~/.zshrc    # edit through Chezmoi
+chezmoi re-add ~/.zshrc          # capture a target change
+chezmoi cd                       # open the source repository
+```
+
+Machine-specific overrides use unmanaged `*.local` files such as
+`.zshrc.local`, `.exports.local`, `.aliases.local`, `.functions.local`, and
+`.gitconfig.local`.
+
+## Where things live
+
+| Path | Purpose |
+| --- | --- |
+| `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
+| `home/dot_config/tmux/` | tmux, status scripts, and plugins |
+| `home/dot_config/raycast/` | Raycast export and Script Commands |
+| `home/dot_config/zed/` | Zed settings and keybindings |
+| `home/dot_config/Code/User/` | VS Code XDG settings |
+| `home/dot_config/nvim/` | Neovim configuration |
+| `home/.chezmoidata/` | Packages, profiles, and VS Code extensions |
+| `home/.chezmoiscripts/` | Ordered and change-triggered setup |
+| `home/.chezmoiexternal.toml` | Pinned shell and TPM sources |
+| `macos-scripts/` | Auditable macOS defaults |
+| `scripts/` | SSH and preference helpers |
 
 ## macOS defaults
 
 ```bash
-macos-scripts/macos-defaults.sh --audit   # report drift, change nothing
-macos-scripts/macos-defaults.sh           # apply all sections
-macos-scripts/macos-defaults.sh --update  # also install macOS software updates
+macos-scripts/macos-defaults.sh --audit   # show differences
+macos-scripts/macos-defaults.sh           # apply defaults
+macos-scripts/macos-defaults.sh --update  # apply and update macOS
 ```
 
-## Editors
+## Validate
 
-- **VS Code** — editor-of-record: `home/dot_config/Code/User/` +
-  `home/.chezmoidata/vscode.yml`
-- **Vim** — legacy: `home/dot_vimrc`
-- **Neovim** — parallel LazyVim setup in `home/dot_config/nvim/`, mirroring
-  the VS Code workflow. Open `nvim` once after applying to finish Mason and
-  tree-sitter installs; run `:LazyHealth` if something feels off.
-  Keybindings: [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md)
+```bash
+./test.sh
+```
 
-## Testing
-
-CI runs `./test.sh` (shellcheck, chezmoi template render, dry-run apply).
-It also runs locally; requires `shellcheck` and `chezmoi` on `PATH`.
+The same ShellCheck, template, profile, and Chezmoi dry-run checks run in CI.
+Neovim reference: [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md).

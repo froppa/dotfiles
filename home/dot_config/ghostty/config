@@ -1,0 +1,74 @@
+# Appearance
+theme = iTerm2 Tango Dark
+
+font-family = MesloLGS NF
+font-size = 14
+font-feature = -calt, -liga, -dlig
+font-thicken = false
+bold-color = bright
+faint-opacity = 1
+
+background = #000000
+foreground = #ffffff
+selection-background = #b5d5ff
+selection-foreground = #000000
+
+cursor-color = #ffffff
+cursor-text = #000000
+cursor-style = bar
+cursor-style-blink = true
+
+# Window
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
+window-padding-color = background
+background-opacity = 0.8
+background-opacity-cells = false
+background-blur = true
+
+macos-titlebar-style = tabs
+macos-option-as-alt = left
+confirm-close-surface = false
+quit-after-last-window-closed = true
+
+# Input
+mouse-hide-while-typing = false
+focus-follows-mouse = false
+copy-on-select = clipboard
+right-click-action = context-menu
+
+# iTerm had unlimited scrollback; Ghostty uses a byte limit.
+scrollback-limit = 268435456
+scrollbar = system
+
+# Visual bell without sound
+bell-features = no-system,no-audio,attention,border
+
+# Shell
+shell-integration = detect
+shell-integration-features = cursor,title,ssh-env,path
+command = direct:/opt/homebrew/bin/tmux new-session -A -s main
+
+# Raycast Hyper (Ctrl+Option+Command) to tmux prefix C-a plus command.
+keybind = ctrl+alt+super+c=text:\x01c
+keybind = ctrl+alt+super+i=text:\x01|
+keybind = ctrl+alt+super+Slash=text:\x01-
+keybind = ctrl+alt+super+z=text:\x01z
+keybind = ctrl+alt+super+r=text:\x01r
+keybind = ctrl+alt+super+x=text:\x01x
+keybind = ctrl+alt+super+w=text:\x01x
+keybind = ctrl+alt+super+arrow_left=text:\x01\x1b[D
+keybind = ctrl+alt+super+arrow_down=text:\x01\x1b[B
+keybind = ctrl+alt+super+arrow_up=text:\x01\x1b[A
+keybind = ctrl+alt+super+arrow_right=text:\x01\x1b[C
+keybind = ctrl+alt+super+Digit0=text:\x010
+keybind = ctrl+alt+super+Digit1=text:\x011
+keybind = ctrl+alt+super+Digit2=text:\x012
+keybind = ctrl+alt+super+Digit3=text:\x013
+keybind = ctrl+alt+super+Digit4=text:\x014
+keybind = ctrl+alt+super+Digit5=text:\x015
+keybind = ctrl+alt+super+Digit6=text:\x016
+keybind = ctrl+alt+super+Digit7=text:\x017
+keybind = ctrl+alt+super+Digit8=text:\x018
+keybind = ctrl+alt+super+Digit9=text:\x019

@@ -63,7 +63,10 @@ packages:
     - shellcheck
 
   casks:
+    - ghostty
+    - raycast
     - font-hack-nerd-font
+    - font-meslo-lg-nerd-font
     - hammerspoon
     - maccy
     - scroll-reverser

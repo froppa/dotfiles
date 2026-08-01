@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Re-run when the tmux configuration, including its @plugin list, changes.
+# tmux-config-sha256: {{ include "dot_config/tmux/tmux.conf" | sha256sum }}
+
+command -v tmux >/dev/null 2>&1 || {
+  echo "=> tmux not found, skipping plugin installation"
+  exit 0
+}
+
+tpm="${HOME}/.config/tmux/plugins/tpm"
+[[ -x "${tpm}/bin/install_plugins" ]] || {
+  echo "=> TPM not available, skipping plugin installation"
+  exit 0
+}
+
+echo "=> Installing tmux plugins..."
+"${tpm}/bin/install_plugins"

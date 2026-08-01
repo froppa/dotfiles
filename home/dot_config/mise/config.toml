@@ -7,3 +7,7 @@ go = "latest"
 ruby = "latest"
 pnpm = "latest"
 yarn = "latest"
+java = "temurin-21"
+
+[settings.ruby]
+compile = false
