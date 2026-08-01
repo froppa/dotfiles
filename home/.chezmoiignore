@@ -1,6 +1,5 @@
 # shellcheck disable=all
 .inputrc
-.ssh/id*
 .aliases.local
 .exports.local
 .functions.local

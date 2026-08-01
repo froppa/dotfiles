@@ -14,8 +14,8 @@ are macOS-only.
 ## Prerequisites
 
 🔑 The age identity must exist at `~/.config/sops/age/keys.txt` **before**
-applying — without it, `chezmoi apply` fails on the encrypted files (SSH
-private key, Zed settings).
+applying the encrypted SSH private key. Keep that identity in a separate
+password manager or offline backup; never commit it to this repository.
 
 ## Quickstart
 
@@ -66,6 +66,24 @@ machine and ignored by chezmoi: `.zshrc.local`, `.zprofile.local`,
 - Raycast settings and hotkeys — restore the encrypted
   `~/.config/raycast/raycast.rayconfig` with **Import Settings & Data**. The
   passphrase is intentionally not stored in this repository.
+
+## SSH keys
+
+The default bootstrap decrypts the repository's age-encrypted
+`~/.ssh/id_ed25519`. SSH itself loads the key on first use through
+`AddKeysToAgent` and the macOS Keychain; shell startup does not call `ssh-add`.
+
+To keep a key that already exists on a new machine, apply the public dotfiles
+without encrypted entries, then import that key into the encrypted source:
+
+```bash
+chezmoi init --apply --exclude encrypted froppa
+~/.local/share/chezmoi/scripts/import-ssh-key.sh ~/.ssh/id_ed25519
+```
+
+Review and commit the resulting encrypted source change. The age recipient is
+public, so importing a key does not require the decryption identity; restoring
+the encrypted key later does.
 
 ## Structure
 
