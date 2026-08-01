@@ -73,17 +73,17 @@ The default bootstrap decrypts the repository's age-encrypted
 `~/.ssh/id_ed25519`. SSH itself loads the key on first use through
 `AddKeysToAgent` and the macOS Keychain; shell startup does not call `ssh-add`.
 
-To keep a key that already exists on a new machine, apply the public dotfiles
-without encrypted entries, then import that key into the encrypted source:
+To keep a key that already exists on a new machine, restore the age identity,
+apply the public dotfiles without encrypted entries, then import that key into
+the encrypted source:
 
 ```bash
 chezmoi init --apply --exclude encrypted froppa
 ~/.local/share/chezmoi/scripts/import-ssh-key.sh ~/.ssh/id_ed25519
 ```
 
-Review and commit the resulting encrypted source change. The age recipient is
-public, so importing a key does not require the decryption identity; restoring
-the encrypted key later does.
+Review and commit the resulting encrypted source change. The age identity stays
+outside this repository and is required for subsequent full applies.
 
 ## Structure
 
