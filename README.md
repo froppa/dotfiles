@@ -4,43 +4,22 @@
 [![Chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-6e4c1e)](https://www.chezmoi.io/)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%2B%20Linux-lightgrey)
 
-Personal development environment managed with Chezmoi. macOS is the primary
-platform; the shell, Git, editor, and XDG configuration also cover Linux where
-the underlying tools are available.
+Personal macOS development environment managed with Chezmoi and Homebrew.
+Shell, Git, editor, and XDG configuration also work on Linux where supported.
 
-## What it configures
+## Overview
 
-- Ghostty launching into a persistent tmux session
-- Raycast Hyper shortcuts for tmux windows and panes
-- Zsh, Starship, Git, GPG, SSH, and common CLI tools
-- Zed, VS Code, Vim, Neovim, and Hammerspoon
-- Homebrew packages with personal and work profiles
-- Raycast settings, Script Commands, and Quick Capture
-- macOS defaults through an explicit, separate command
+| Area | Configuration |
+| --- | --- |
+| Terminal | Ghostty opens the persistent tmux session `main` |
+| Shell | Zsh, Oh My Zsh, Starship, fzf, mise, and direnv |
+| Editors | Zed, VS Code, Vim, and Neovim |
+| Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
+| Packages | Homebrew bundle with personal and work profiles |
+| Secrets | Owner SSH key encrypted with age; Raycast export encrypted by Raycast |
+| macOS | Dock, Finder, keyboard, Safari, and general defaults |
 
-Chezmoi source state lives in [`home/`](home/). External shell and tmux plugins
-are declared in [`home/.chezmoiexternal.toml`](home/.chezmoiexternal.toml).
-
-## Bootstrap
-
-### Using the checked-in SSH key
-
-The encrypted SSH payload is tied to the age recipient in
-[`home/.chezmoi.toml.tmpl`](home/.chezmoi.toml.tmpl). A matching identity must be
-available at `~/.config/sops/age/keys.txt` before the encrypted entry can be
-applied.
-
-```bash
-install -d -m 700 ~/.config/sops/age
-# Place the matching keys.txt at ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
-
-PERSONAL=true sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply froppa
-```
-
-Use `WORK=true` instead of `PERSONAL=true` for the work package profile.
-
-For a repository checkout plus the complete bootstrap flow:
+## Install
 
 ```bash
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
@@ -48,175 +27,101 @@ cd ~/.local/share/chezmoi
 ./init.sh --macos
 ```
 
-`./init.sh --help` lists the Git identity and signing-key options. `--macos`
-applies the settings in `macos-scripts/` after Chezmoi completes.
+Use `WORK=true ./init.sh --macos` for the work package profile. Run
+`./init.sh --help` for Git identity and signing-key options. Omit `--macos` to
+apply the dotfiles without changing macOS defaults.
 
-### Applying without the encrypted SSH key
+### SSH and age
 
-The public configuration can be applied without an age identity:
+The repository contains the owner's age-encrypted `~/.ssh/id_ed25519`. It can
+only be applied with the matching identity at
+`~/.config/sops/age/keys.txt`.
+
+This encrypted entry is owner-specific. Apply everything else with:
 
 ```bash
-PERSONAL=true sh -c "$(curl -fsLS get.chezmoi.io)" -- \
+sh -c "$(curl -fsLS get.chezmoi.io)" -- \
   init --apply --exclude encrypted froppa
 ```
 
-This installs the managed configuration while leaving encrypted entries out of
-the apply.
+A fork can replace the recipient in `home/.chezmoi.toml.tmpl` and encrypt its
+own key with `scripts/import-ssh-key.sh`.
 
-### Using a different age identity
+SSH behavior is config-driven: `AddKeysToAgent` and macOS Keychain integration
+load the key on first use. Shell startup does not call `ssh-add`.
 
-The checked-in ciphertext is specific to this repository owner. A fork can
-continue excluding encrypted entries, or replace the age recipient and encrypt
-its own SSH key.
+## Manual steps
 
-From a cloned fork:
+| Component | Once per machine |
+| --- | --- |
+| Raycast | Import `~/.config/raycast/raycast.rayconfig` using Raycast's import action |
+| Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
+| Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
 
-```bash
-cd ~/.local/share/chezmoi
+The Raycast export passphrase is separate from age. tmux plugins install through
+TPM; Continuum and Resurrect handle session restoration.
 
-chezmoi init --source "$PWD" --apply --exclude encrypted
+## Terminal shortcuts
 
-install -d -m 700 ~/.config/sops/age
-age-keygen -o ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
-age-keygen -y ~/.config/sops/age/keys.txt
-```
-
-Use the printed recipient for `[age].recipient` in
-`home/.chezmoi.toml.tmpl`, then refresh the local Chezmoi configuration and
-replace the encrypted SSH source:
-
-```bash
-chezmoi init --source "$PWD"
-./scripts/import-ssh-key.sh ~/.ssh/id_ed25519
-chezmoi diff
-```
-
-`import-ssh-key.sh` also adds the matching public key when it exists. The
-resulting encrypted source can then be reviewed and committed in the fork.
-
-## SSH behavior
-
-SSH uses [`home/private_dot_ssh/config`](home/private_dot_ssh/config):
-
-- `~/.ssh/id_ed25519` is the configured identity
-- macOS Keychain integration is enabled when supported
-- the agent receives the key on first use through `AddKeysToAgent`
-- shell startup does not run `ssh-add`
-
-To encrypt an existing key into the Chezmoi source:
-
-```bash
-./scripts/import-ssh-key.sh ~/.ssh/id_ed25519
-```
-
-To create a new Ed25519 key first:
-
-```bash
-./scripts/ssh-keygen.sh
-./scripts/import-ssh-key.sh ~/.ssh/id_ed25519
-```
-
-## Terminal workflow
-
-Ghostty starts or attaches to the tmux session named `main`. Raycast owns Caps
-Lock and emits `Ctrl+Option+Command`; Ghostty translates those chords into tmux
-prefix commands while Right Option remains available for Danish symbols.
+Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty converts the
+following chords to tmux commands. Right Option remains available for Danish
+symbols.
 
 | Shortcut | Action |
 | --- | --- |
-| `Caps+C` | New tmux window |
+| `Caps+C` | New window |
 | `Caps+I` | Side-by-side pane |
 | `Caps+-` | Stacked pane |
 | `Caps+Arrow` | Move between panes |
-| `Caps+0…9` | Select tmux window |
+| `Caps+0…9` | Select window |
 | `Caps+Z` | Toggle pane zoom |
-| `Caps+R` | Reload tmux configuration |
+| `Caps+R` | Reload tmux |
 | `Caps+X` / `Caps+W` | Kill pane after confirmation |
 
-tmux configuration and status scripts live under
-[`home/dot_config/tmux/`](home/dot_config/tmux/). TPM is pinned as a Chezmoi
-external; declared plugins are installed by an onchange script. Continuum and
-Resurrect retain session restoration.
-
-## Applications and settings
-
-### Raycast
-
-The Raycast export is managed at
-`~/.config/raycast/raycast.rayconfig` and imported through Raycast's
-**Import Settings & Data** action. Its export passphrase is separate from
-Chezmoi and age.
-
-Script Commands are applied to `~/.config/raycast/scripts/`. Add that directory
-once in Raycast under **Settings → Extensions → Script Commands**.
-
-### Editors
-
-- Zed settings and keybindings: `home/dot_config/zed/`
-- VS Code XDG settings: `home/dot_config/Code/User/`
-- VS Code extension list: `home/.chezmoidata/vscode.yml`
-- Neovim: `home/dot_config/nvim/`
-- Vim: `home/dot_vimrc`
-
-The VS Code extension script runs when the `code` CLI is available. Neovim uses
-Lazy and may finish language tooling setup on its first interactive launch.
-
-### Packages and runtimes
-
-Homebrew package data lives in
-[`home/.chezmoidata/40-packages.yml`](home/.chezmoidata/40-packages.yml).
-Changes rerender the Brew bundle and rerun its Chezmoi onchange script.
-
-Global language runtimes are defined in
-[`home/dot_config/mise/config.toml`](home/dot_config/mise/config.toml).
-
-## Daily workflow
+## Daily use
 
 ```bash
-chezmoi diff                     # inspect target/source differences
-chezmoi apply -v                 # apply the current source
+chezmoi diff                     # inspect changes
+chezmoi apply -v                 # apply source state
 chezmoi update -v                # pull and apply
-chezmoi edit --apply ~/.zshrc    # edit a managed target
-chezmoi re-add ~/.zshrc          # capture an intentional target change
+chezmoi edit --apply ~/.zshrc    # edit through Chezmoi
+chezmoi re-add ~/.zshrc          # capture a target change
 chezmoi cd                       # open the source repository
 ```
 
-Machine-specific values belong in the unmanaged `*.local` files sourced by the
-shell and Git configuration, including `.zshrc.local`, `.exports.local`,
-`.aliases.local`, `.functions.local`, and `.gitconfig.local`.
+Machine-specific overrides use unmanaged `*.local` files such as
+`.zshrc.local`, `.exports.local`, `.aliases.local`, `.functions.local`, and
+`.gitconfig.local`.
+
+## Where things live
+
+| Path | Purpose |
+| --- | --- |
+| `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
+| `home/dot_config/tmux/` | tmux, status scripts, and plugins |
+| `home/dot_config/raycast/` | Raycast export and Script Commands |
+| `home/dot_config/zed/` | Zed settings and keybindings |
+| `home/dot_config/Code/User/` | VS Code XDG settings |
+| `home/dot_config/nvim/` | Neovim configuration |
+| `home/.chezmoidata/` | Packages, profiles, and VS Code extensions |
+| `home/.chezmoiscripts/` | Ordered and change-triggered setup |
+| `home/.chezmoiexternal.toml` | Pinned shell and TPM sources |
+| `macos-scripts/` | Auditable macOS defaults |
+| `scripts/` | SSH and preference helpers |
 
 ## macOS defaults
 
 ```bash
-macos-scripts/macos-defaults.sh --audit
-macos-scripts/macos-defaults.sh
-macos-scripts/macos-defaults.sh --update
+macos-scripts/macos-defaults.sh --audit   # show differences
+macos-scripts/macos-defaults.sh           # apply defaults
+macos-scripts/macos-defaults.sh --update  # apply and update macOS
 ```
 
-`--audit` reports differences without changing them. The default command applies
-the configured sections; `--update` also includes macOS software updates.
-
-## Repository layout
-
-| Path | Purpose |
-| --- | --- |
-| `home/` | Chezmoi source state |
-| `home/.chezmoidata/` | Package, feature, and editor data |
-| `home/.chezmoiscripts/` | Ordered and change-triggered setup scripts |
-| `macos-scripts/` | macOS defaults and Dock/Finder/keyboard setup |
-| `scripts/` | Import, export, and key-generation helpers |
-| `docs/` | Reference notes |
-| `init.sh` | Local repository bootstrap |
-| `test.sh` | Local and CI validation |
-
-## Validation
+## Validate
 
 ```bash
 ./test.sh
 ```
 
-The test suite runs ShellCheck, verifies executable scripts, renders both
-personal and work Chezmoi configurations, and performs a dry-run apply without
-encrypted entries. GitHub Actions runs the same suite for pushes and pull
-requests.
+The same ShellCheck, template, profile, and Chezmoi dry-run checks run in CI.
+Neovim reference: [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md).
