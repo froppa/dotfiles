@@ -37,8 +37,8 @@ url = "https://github.com/Aloxaf/fzf-tab/archive/refs/tags/v1.3.0.tar.gz"
 exact = true
 stripComponents = 1
 
-# TPM manages the other ~/.tmux/plugins/* itself (prefix+I); only tpm is bootstrapped here
-[".tmux/plugins/tpm"]
+# TPM manages the other ~/.config/tmux/plugins/* itself; only TPM is external.
+[".config/tmux/plugins/tpm"]
 type = "archive"
 url = "https://github.com/tmux-plugins/tpm/archive/refs/tags/v3.1.0.tar.gz"
 exact = true

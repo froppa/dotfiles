@@ -61,6 +61,11 @@ machine and ignored by chezmoi: `.zshrc.local`, `.zprofile.local`,
   `~/.config/raycast/scripts/` (kept out of `~/.config/raycast/` itself,
   which Raycast uses for its own data). Add the folder once on a new machine
   via Raycast → Settings → Extensions → Script Commands → Add Script Directory.
+- Ghostty, Raycast, Meslo Nerd Font, tmux, TPM, and tmux plugins — installed
+  automatically. TPM lives at `~/.config/tmux/plugins/tpm`.
+- Raycast settings and hotkeys — restore the encrypted
+  `~/.config/raycast/raycast.rayconfig` with **Import Settings & Data**. The
+  passphrase is intentionally not stored in this repository.
 
 ## Structure
 

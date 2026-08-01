@@ -154,8 +154,10 @@ bindkey "^u" backward-kill-line
 bindkey "^R" history-incremental-pattern-search-backward
 bindkey "^F" history-incremental-pattern-search-forward
 
-# Alt-backspace / Ctrl-arrow compatibility
+# Alt-backspace / arrow compatibility
 bindkey '^[^?' backward-kill-word
+bindkey "^[[H" beginning-of-line
+bindkey "^[[F" end-of-line
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
