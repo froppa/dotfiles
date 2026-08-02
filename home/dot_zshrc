@@ -124,6 +124,11 @@ bindkey "^F" history-incremental-pattern-search-forward
 bindkey '^[^?' backward-kill-word
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
+# Ctrl+Fn+Left/Right may arrive as either Ctrl+Home/End encoding.
+bindkey "^[[1;5H" beginning-of-line
+bindkey "^[[1;5F" end-of-line
+bindkey "^[[5H" beginning-of-line
+bindkey "^[[5F" end-of-line
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 

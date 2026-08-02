@@ -45,6 +45,9 @@ scrollbar = system
 # Visual bell without sound
 bell-features = no-system,no-audio,attention,border
 
+# Clear Ghostty's visible screen and scrollback.
+keybind = super+k=clear_screen
+
 # Shell
 shell-integration = detect
 shell-integration-features = cursor,title,ssh-env,path
