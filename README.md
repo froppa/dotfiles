@@ -28,10 +28,11 @@ cd ~/.local/share/chezmoi
 ```
 
 Use `WORK=true ./init.sh --macos` for the work package profile. An existing
-`~/.gitconfig` is left unchanged. On a machine without one, the
-repository creates its defaults without setting an identity; put machine-specific
-identity or signing settings in `~/.gitconfig.local`. Omit `--macos` to apply the
-dotfiles without changing macOS defaults.
+`~/.gitconfig` is left unchanged and any detected global identity is reused. If
+the file does not exist, bootstrap prompts for a missing Git name or email
+before creating the default config. Put machine-specific overrides or signing
+settings in `~/.gitconfig.local`. Omit `--macos` to apply the dotfiles without
+changing macOS defaults.
 
 ### SSH and age
 
@@ -106,7 +107,7 @@ Machine-specific overrides use unmanaged `*.local` files such as
 | --- | --- |
 | `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
 | `home/dot_config/tmux/` | tmux, status scripts, and plugins |
-| `home/dot_config/raycast/` | Raycast export and Script Commands |
+| `home/dot_config/raycast/` | Raycast Script Commands |
 | `home/dot_config/zed/` | Zed settings and keybindings |
 | `home/dot_config/Code/User/` | VS Code XDG settings |
 | `home/dot_config/nvim/` | Neovim configuration |

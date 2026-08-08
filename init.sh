@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+git_name="${GIT_NAME:-}"
+git_email="${GIT_EMAIL:-}"
 run_macos=false
 
 usage() {
@@ -12,8 +14,8 @@ Options:
   -h, --help               Show this help
 
 Notes:
-  An existing ~/.gitconfig is preserved. On a new machine, the repository's
-  defaults are created without setting a Git identity.
+  An existing ~/.gitconfig is preserved and its global identity is reused.
+  If no identity is configured, bootstrap prompts for a Git name and email.
 EOF
   exit 0
 }
@@ -67,8 +69,26 @@ apply_dotfiles() {
     exit 1
   fi
 
+  if [[ -z "${git_name}" ]]; then
+    git_name="$(git config --global --get user.name 2>/dev/null || true)"
+  fi
+  if [[ -z "${git_email}" ]]; then
+    git_email="$(git config --global --get user.email 2>/dev/null || true)"
+  fi
+
+  local args=(init --apply "${PWD}")
+
+  if [[ -e "${HOME}/.gitconfig" ]]; then
+    # The create-only template will preserve this file; blank values avoid
+    # asking irrelevant questions when identity comes from conditional includes.
+    args+=(--promptString "name=${git_name}" --promptString "email=${git_email}")
+  else
+    [[ -n "${git_name}" ]] && args+=(--promptString "name=${git_name}")
+    [[ -n "${git_email}" ]] && args+=(--promptString "email=${git_email}")
+  fi
+
   info "Applying dotfiles from local repo..."
-  chezmoi init --apply "${PWD}"
+  chezmoi "${args[@]}"
 }
 
 run_macos_post_setup() {
