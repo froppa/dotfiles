@@ -89,8 +89,9 @@ section "Checking safe adoption defaults"
 grep -Fq 'name = {{ .name | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git name"
 grep -Fq 'email = {{ .email | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git email"
 [[ ! -e home/dot_config/raycast/raycast.rayconfig ]] || fail "Raycast exports must not be managed"
-grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config || fail "missing tmux-aware Command-K binding"
-if grep -Fq 'keybind = shift+enter=' home/dot_config/ghostty/config; then
+[[ -f home/dot_config/ghostty/config.ghostty ]] || fail "Ghostty config must use its current filename"
+grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config.ghostty || fail "missing tmux-aware Command-K binding"
+if grep -Fq 'keybind = shift+enter=' home/dot_config/ghostty/config.ghostty; then
   fail "Shift-Enter must use Ghostty and Claude Code's native handling"
 fi
 
