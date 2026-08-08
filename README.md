@@ -31,8 +31,9 @@ Use `WORK=true ./init.sh --macos` for the work package profile. An existing
 `~/.gitconfig` is left unchanged and any detected global identity is reused. If
 the file does not exist, bootstrap prompts for a missing Git name or email
 before creating the default config. Put machine-specific overrides or signing
-settings in `~/.gitconfig.local`. Omit `--macos` to apply the dotfiles without
-changing macOS defaults.
+settings in `~/.gitconfig.local`. On new machines, the root config includes
+repository defaults from the managed `~/.config/git/dotfiles.gitconfig`. Omit
+`--macos` to apply the dotfiles without changing macOS defaults.
 
 ### SSH and age
 

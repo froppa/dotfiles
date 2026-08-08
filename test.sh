@@ -88,12 +88,17 @@ section "Checking safe adoption defaults"
 [[ ! -e home/dot_gitconfig.tmpl ]] || fail "Git config must not overwrite an existing setup"
 grep -Fq 'name = {{ .name | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git name"
 grep -Fq 'email = {{ .email | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git email"
+grep -Fq 'joinPath .chezmoi.homeDir ".config/git/dotfiles.gitconfig"' home/create_dot_gitconfig.tmpl || fail "root Git config must include managed defaults"
+[[ -f home/dot_config/git/dotfiles.gitconfig.tmpl ]] || fail "managed Git defaults are missing"
+grep -Fq "alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'" home/dot_aliases || fail "confgit must edit managed defaults"
 [[ ! -e home/dot_config/raycast/raycast.rayconfig ]] || fail "Raycast exports must not be managed"
 [[ -f home/dot_config/ghostty/config.ghostty ]] || fail "Ghostty config must use its current filename"
 grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config.ghostty || fail "missing tmux-aware Command-K binding"
 if grep -Fq 'keybind = shift+enter=' home/dot_config/ghostty/config.ghostty; then
   fail "Shift-Enter must use Ghostty and Claude Code's native handling"
 fi
+grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
+grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 
 section "Testing chezmoi dry-run apply"
 
