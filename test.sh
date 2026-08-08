@@ -54,7 +54,6 @@ chezmoi execute-template \
   --init \
   --promptString 'name=CI' \
   --promptString 'email=ci@example.invalid' \
-  --promptString 'signingKey=' \
   < home/.chezmoi.toml.tmpl \
   > "${rendered_config}"
 
@@ -64,7 +63,6 @@ chezmoi --config "${rendered_config}" data >/dev/null
 
 grep -q '^name = "CI"$' "${rendered_config}" || fail "generated config missing CI name"
 grep -q '^email = "ci@example.invalid"$' "${rendered_config}" || fail "generated config missing CI email"
-grep -q '^signingKey = ""$' "${rendered_config}" || fail "empty signingKey should render as empty string"
 grep -q '^personal = true$' "${rendered_config}" || fail "default profile should be personal"
 grep -q '^work = false$' "${rendered_config}" || fail "work should default to false"
 
@@ -77,13 +75,29 @@ WORK=true chezmoi execute-template \
   --init \
   --promptString 'name=CI' \
   --promptString 'email=ci@example.invalid' \
-  --promptString 'signingKey=' \
   < home/.chezmoi.toml.tmpl \
   > "${rendered_work_config}"
 
 grep -q '^profile = "work"$' "${rendered_work_config}" || fail "WORK=true should select the work profile"
 grep -q '^work = true$' "${rendered_work_config}" || fail "WORK=true should set work = true"
 grep -q '^personal = false$' "${rendered_work_config}" || fail "WORK=true should set personal = false"
+
+section "Checking safe adoption defaults"
+
+[[ -f home/create_dot_gitconfig.tmpl ]] || fail "Git defaults must be create-only"
+[[ ! -e home/dot_gitconfig.tmpl ]] || fail "Git config must not overwrite an existing setup"
+grep -Fq 'name = {{ .name | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git name"
+grep -Fq 'email = {{ .email | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git email"
+grep -Fq 'joinPath .chezmoi.homeDir ".config/git/dotfiles.gitconfig"' home/create_dot_gitconfig.tmpl || fail "root Git config must include managed defaults"
+[[ -f home/dot_config/git/dotfiles.gitconfig.tmpl ]] || fail "managed Git defaults are missing"
+grep -Fq "alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'" home/dot_aliases || fail "confgit must edit managed defaults"
+[[ ! -e home/dot_config/raycast/raycast.rayconfig ]] || fail "Raycast exports must not be managed"
+[[ -f home/dot_config/ghostty/config.ghostty ]] || fail "Ghostty config must use its current filename"
+grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config.ghostty || fail "missing tmux-aware Command-K binding"
+grep -Fq 'keybind = shift+enter=unbind' home/dot_config/ghostty/config.ghostty || fail "legacy Shift-Enter paste binding must be removed"
+grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
+grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
+grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 
 section "Testing chezmoi dry-run apply"
 
@@ -96,7 +110,6 @@ chezmoi init \
   --keep-going \
   --exclude encrypted \
   --promptString 'name=CI' \
-  --promptString 'email=ci@example.invalid' \
-  --promptString 'signingKey='
+  --promptString 'email=ci@example.invalid'
 
 section "All tests passed"

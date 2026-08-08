@@ -16,7 +16,7 @@ Shell, Git, editor, and XDG configuration also work on Linux where supported.
 | Editors | Zed, VS Code, Vim, and Neovim |
 | Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
 | Packages | Homebrew bundle with personal and work profiles |
-| Secrets | Owner SSH key encrypted with age; Raycast export encrypted by Raycast |
+| Secrets | Owner SSH key encrypted with age; machine-specific data stays local |
 | macOS | Dock, Finder, keyboard, Safari, and general defaults |
 
 ## Install
@@ -27,9 +27,13 @@ cd ~/.local/share/chezmoi
 ./init.sh --macos
 ```
 
-Use `WORK=true ./init.sh --macos` for the work package profile. Run
-`./init.sh --help` for Git identity and signing-key options. Omit `--macos` to
-apply the dotfiles without changing macOS defaults.
+Use `WORK=true ./init.sh --macos` for the work package profile. An existing
+`~/.gitconfig` is left unchanged and any detected global identity is reused. If
+the file does not exist, bootstrap prompts for a missing Git name or email
+before creating the default config. Put machine-specific overrides or signing
+settings in `~/.gitconfig.local`. On new machines, the root config includes
+repository defaults from the managed `~/.config/git/dotfiles.gitconfig`. Omit
+`--macos` to apply the dotfiles without changing macOS defaults.
 
 ### SSH and age
 
@@ -54,12 +58,15 @@ load the key on first use. Shell startup does not call `ssh-add`.
 
 | Component | Once per machine |
 | --- | --- |
-| Raycast | Import `~/.config/raycast/raycast.rayconfig` using Raycast's import action |
+| Raycast | Configure Caps Lock as Hyper (`Control+Option+Command`, no Shift) |
 | Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
 | Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
 
-The Raycast export passphrase is separate from age. tmux plugins install through
-TPM; Continuum and Resurrect handle session restoration.
+Raycast exports are intentionally not managed because they can contain private
+local data and did not reliably restore settings. To add a Ghostty launcher,
+open Raycast's Applications extension, add a Command for Ghostty, and assign the
+hotkey there. tmux plugins install through TPM; Continuum and Resurrect handle
+session restoration.
 
 ## Terminal shortcuts
 
@@ -69,6 +76,8 @@ symbols.
 
 | Shortcut | Action |
 | --- | --- |
+| `Command+K` | Clear the active application screen through tmux |
+| `Shift+Enter` | Insert a newline in Claude Code and shell prompts |
 | `Caps+C` | New window |
 | `Caps+I` | Side-by-side pane |
 | `Caps+-` | Stacked pane |
@@ -99,7 +108,7 @@ Machine-specific overrides use unmanaged `*.local` files such as
 | --- | --- |
 | `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
 | `home/dot_config/tmux/` | tmux, status scripts, and plugins |
-| `home/dot_config/raycast/` | Raycast export and Script Commands |
+| `home/dot_config/raycast/` | Raycast Script Commands |
 | `home/dot_config/zed/` | Zed settings and keybindings |
 | `home/dot_config/Code/User/` | VS Code XDG settings |
 | `home/dot_config/nvim/` | Neovim configuration |

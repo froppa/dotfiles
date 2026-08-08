@@ -1,0 +1,7 @@
+[user]
+  name = {{ .name | quote }}
+  email = {{ .email | quote }}
+  useConfigOnly = true
+
+[include]
+  path = {{ joinPath .chezmoi.homeDir ".config/git/dotfiles.gitconfig" | quote }}
