@@ -54,7 +54,7 @@ keybind = shift+enter=unbind
 # Shell
 shell-integration = detect
 shell-integration-features = cursor,title,ssh-env,path
-command = direct:/opt/homebrew/bin/tmux new-session -A -s main
+command = direct:tmux new-session -A -s main
 
 # Raycast Hyper (Ctrl+Option+Command) to tmux prefix C-a plus command.
 keybind = ctrl+alt+super+c=text:\x01c

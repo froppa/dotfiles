@@ -16,7 +16,7 @@ Shell, Git, editor, and XDG configuration also work on Linux where supported.
 | Editors | Zed, VS Code, Vim, and Neovim |
 | Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
 | Packages | Homebrew bundle with personal and work profiles |
-| Secrets | Owner SSH key encrypted with age; machine-specific data stays local |
+| SSH | Portable client config; keys stay local to each machine |
 | macOS | Dock, Finder, keyboard, Safari, and general defaults |
 
 ## Install
@@ -35,21 +35,14 @@ settings in `~/.gitconfig.local`. On new machines, the root config includes
 repository defaults from the managed `~/.config/git/dotfiles.gitconfig`. Omit
 `--macos` to apply the dotfiles without changing macOS defaults.
 
-### SSH and age
+### SSH
 
-The repository contains the owner's age-encrypted `~/.ssh/id_ed25519`. It can
-only be applied with the matching identity at
-`~/.config/sops/age/keys.txt`.
-
-This encrypted entry is owner-specific. Apply everything else with:
+SSH keys are never managed by this repository. Generate a new key on each
+machine when needed:
 
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- \
-  init --apply --exclude encrypted froppa
+./scripts/ssh-keygen.sh
 ```
-
-A fork can replace the recipient in `home/.chezmoi.toml.tmpl` and encrypt its
-own key with `scripts/import-ssh-key.sh`.
 
 SSH behavior is config-driven: `AddKeysToAgent` and macOS Keychain integration
 load the key on first use. Shell startup does not call `ssh-add`.
@@ -116,7 +109,7 @@ Machine-specific overrides use unmanaged `*.local` files such as
 | `home/.chezmoiscripts/` | Ordered and change-triggered setup |
 | `home/.chezmoiexternal.toml` | Pinned shell and TPM sources |
 | `macos-scripts/` | Auditable macOS defaults |
-| `scripts/` | SSH and preference helpers |
+| `scripts/` | Local SSH key generation and preference helpers |
 
 ## macOS defaults
 

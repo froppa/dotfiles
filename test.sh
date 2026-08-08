@@ -91,24 +91,37 @@ grep -Fq 'email = {{ .email | quote }}' home/create_dot_gitconfig.tmpl || fail "
 grep -Fq 'joinPath .chezmoi.homeDir ".config/git/dotfiles.gitconfig"' home/create_dot_gitconfig.tmpl || fail "root Git config must include managed defaults"
 [[ -f home/dot_config/git/dotfiles.gitconfig.tmpl ]] || fail "managed Git defaults are missing"
 grep -Fq "alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'" home/dot_aliases || fail "confgit must edit managed defaults"
+grep -Fq "alias conftmux='chezmoi edit --apply ~/.config/tmux/tmux.conf'" home/dot_aliases || fail "conftmux must edit the managed tmux config"
 [[ ! -e home/dot_config/raycast/raycast.rayconfig ]] || fail "Raycast exports must not be managed"
 [[ -f home/dot_config/ghostty/config.ghostty ]] || fail "Ghostty config must use its current filename"
+grep -Fq 'command = direct:tmux new-session -A -s main' home/dot_config/ghostty/config.ghostty || fail "Ghostty must resolve tmux through PATH"
 grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config.ghostty || fail "missing tmux-aware Command-K binding"
 grep -Fq 'keybind = shift+enter=unbind' home/dot_config/ghostty/config.ghostty || fail "legacy Shift-Enter paste binding must be removed"
 grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
+if find home/private_dot_ssh -type f ! -name config -print -quit | grep -q .; then
+  fail "SSH key material must not be managed"
+fi
+[[ ! -e scripts/import-ssh-key.sh ]] || fail "SSH key import must not be supported"
+[[ ! -e home/.chezmoiscripts/run_once_after_21-install-vim.sh ]] || fail "Vim setup must not invoke an unconfigured plugin manager"
+! grep -Fq 'encryption = "age"' home/.chezmoi.toml.tmpl || fail "bootstrap must not depend on an age identity"
+! grep -Fq -- '--exclude encrypted' README.md || fail "the documented install must apply cleanly without an age identity"
+sed -n '/^  darwin:/,/^  personal:/p' home/.chezmoidata/40-packages.yml | grep -Fq -- '- xcode-build-server' || fail "xcode-build-server must be macOS-only"
+grep -Fq '/usr/local/bin/brew' home/.chezmoiscripts/run_once_10-install-homebrew.sh || fail "Homebrew setup must support Intel macOS"
+grep -Fq '/home/linuxbrew/.linuxbrew/bin/brew' home/.chezmoiscripts/run_once_10-install-homebrew.sh || fail "Homebrew setup must support Linux"
 
-section "Testing chezmoi dry-run apply"
+section "Testing fresh-home chezmoi dry-run apply"
 
-# Encrypted entries need the age identity, which only exists on real machines.
-chezmoi init \
+fresh_home="$(mktemp -d "${TMPDIR:-/tmp}/chezmoi-home.XXXXXX")"
+
+HOME="${fresh_home}" chezmoi init \
   --source="${PWD}" \
+  --destination="${fresh_home}" \
   --apply \
   --dry-run \
   --force \
   --keep-going \
-  --exclude encrypted \
   --promptString 'name=CI' \
   --promptString 'email=ci@example.invalid'
 

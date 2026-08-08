@@ -66,7 +66,7 @@ alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'
 alias confgitl='${EDITOR:-nvim} ~/.gitconfig.local'
 alias confzcompl='chezmoi edit --apply ~/.zsh_completions'
 alias confzcompll='${EDITOR:-nvim} ~/.zsh_completions.local'
-alias conftmux='chezmoi edit --apply ~/.tmux.conf'
+alias conftmux='chezmoi edit --apply ~/.config/tmux/tmux.conf'
 
 # =======================================
 # Navigation

@@ -18,6 +18,6 @@ email="${email:-${USER}@$(hostname)}"
 mkdir -p "${HOME}/.ssh"
 chmod 700 "${HOME}/.ssh"
 
-ssh-keygen -t ed25519 -C "$email" -f "${key}" -N ""
+ssh-keygen -t ed25519 -C "$email" -f "${key}"
 
 echo "✅ SSH key generated. SSH will add it to the configured agent on first use."
