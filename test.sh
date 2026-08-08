@@ -99,6 +99,7 @@ if grep -Fq 'keybind = shift+enter=' home/dot_config/ghostty/config.ghostty; the
 fi
 grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
+grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 
 section "Testing chezmoi dry-run apply"
 
