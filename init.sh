@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-git_name="${GIT_NAME:-}"
-git_email="${GIT_EMAIL:-}"
-git_signing_key="${GIT_SIGNING_KEY:-}"
 run_macos=false
 
 usage() {
@@ -11,23 +8,12 @@ usage() {
 Usage: ./init.sh [options]
 
 Options:
-  --name="Your Name"       Git user.name for this machine
-  --email="you@example"    Git user.email for this machine
-  --signing-key="KEY"      Git user.signingkey (SSH key / GPG key id)
   --macos                  Run macOS post-setup after apply
   -h, --help               Show this help
 
-Environment:
-  GIT_NAME
-  GIT_EMAIL
-  GIT_SIGNING_KEY
-
 Notes:
-  Values for name/email/signing-key are stored by chezmoi in
-  ~/.config/chezmoi/chezmoi.toml the first time they're provided.
-
-  Omit the flags on subsequent runs to reuse stored values.
-  Chezmoi will prompt interactively if a value is still missing.
+  An existing ~/.gitconfig is preserved. On a new machine, the repository's
+  defaults are created without setting a Git identity.
 EOF
   exit 0
 }
@@ -46,15 +32,6 @@ error() {
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --name=*)
-      git_name="${1#*=}"
-      ;;
-    --email=*)
-      git_email="${1#*=}"
-      ;;
-    --signing-key=*)
-      git_signing_key="${1#*=}"
-      ;;
     --macos)
       run_macos=true
       ;;
@@ -90,14 +67,8 @@ apply_dotfiles() {
     exit 1
   fi
 
-  local args=(init --apply "${PWD}")
-
-  [[ -n "${git_name}" ]] && args+=(--promptString "name=${git_name}")
-  [[ -n "${git_email}" ]] && args+=(--promptString "email=${git_email}")
-  [[ -n "${git_signing_key}" ]] && args+=(--promptString "signingKey=${git_signing_key}")
-
   info "Applying dotfiles from local repo..."
-  chezmoi "${args[@]}"
+  chezmoi init --apply "${PWD}"
 }
 
 run_macos_post_setup() {

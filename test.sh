@@ -52,9 +52,6 @@ touch "${empty_config}"
 chezmoi execute-template \
   --config "${empty_config}" \
   --init \
-  --promptString 'name=CI' \
-  --promptString 'email=ci@example.invalid' \
-  --promptString 'signingKey=' \
   < home/.chezmoi.toml.tmpl \
   > "${rendered_config}"
 
@@ -62,9 +59,6 @@ cat "${rendered_config}"
 
 chezmoi --config "${rendered_config}" data >/dev/null
 
-grep -q '^name = "CI"$' "${rendered_config}" || fail "generated config missing CI name"
-grep -q '^email = "ci@example.invalid"$' "${rendered_config}" || fail "generated config missing CI email"
-grep -q '^signingKey = ""$' "${rendered_config}" || fail "empty signingKey should render as empty string"
 grep -q '^personal = true$' "${rendered_config}" || fail "default profile should be personal"
 grep -q '^work = false$' "${rendered_config}" || fail "work should default to false"
 
@@ -75,15 +69,22 @@ rendered_work_config="$(mktemp "${TMPDIR:-/tmp}/chezmoi-work.XXXXXX").toml"
 WORK=true chezmoi execute-template \
   --config "${empty_config}" \
   --init \
-  --promptString 'name=CI' \
-  --promptString 'email=ci@example.invalid' \
-  --promptString 'signingKey=' \
   < home/.chezmoi.toml.tmpl \
   > "${rendered_work_config}"
 
 grep -q '^profile = "work"$' "${rendered_work_config}" || fail "WORK=true should select the work profile"
 grep -q '^work = true$' "${rendered_work_config}" || fail "WORK=true should set work = true"
 grep -q '^personal = false$' "${rendered_work_config}" || fail "WORK=true should set personal = false"
+
+section "Checking safe adoption defaults"
+
+[[ -f home/create_dot_gitconfig.tmpl ]] || fail "Git defaults must be create-only"
+[[ ! -e home/dot_gitconfig.tmpl ]] || fail "Git config must not overwrite an existing setup"
+[[ ! -e home/dot_config/raycast/raycast.rayconfig ]] || fail "Raycast exports must not be managed"
+grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config || fail "missing tmux-aware Command-K binding"
+if grep -Fq 'keybind = shift+enter=' home/dot_config/ghostty/config; then
+  fail "Shift-Enter must use Ghostty and Claude Code's native handling"
+fi
 
 section "Testing chezmoi dry-run apply"
 
@@ -94,9 +95,6 @@ chezmoi init \
   --dry-run \
   --force \
   --keep-going \
-  --exclude encrypted \
-  --promptString 'name=CI' \
-  --promptString 'email=ci@example.invalid' \
-  --promptString 'signingKey='
+  --exclude encrypted
 
 section "All tests passed"

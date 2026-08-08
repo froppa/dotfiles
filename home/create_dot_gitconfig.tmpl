@@ -1,16 +1,3 @@
-[user]
-  name = {{ .name | quote }}
-  email = {{ .email | quote }}
-  useConfigOnly = true
-{{- if .signingKey }}
-  signingkey = {{ .signingKey | quote }}
-{{- end }}
-
-{{- if .signingKey }}
-[commit]
-  gpgsign = true
-{{- end }}
-
 [alias]
   # Helpers
   aliases = config --get-regexp "^alias\\."

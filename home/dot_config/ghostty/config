@@ -45,12 +45,8 @@ scrollbar = system
 # Visual bell without sound
 bell-features = no-system,no-audio,attention,border
 
-# Clear the active tmux pane's history, then redraw its shell prompt.
-keybind = super+k=text:\x01:clear-history\r\x0c
-
-# Zsh's default Ctrl+V widget quotes the following LF into the edit buffer.
-# This works through tmux without enabling its extended-key protocol.
-keybind = shift+enter=text:\x16\n
+# Send the standard clear-screen key through tmux to the active application.
+keybind = super+k=text:\x0c
 
 # Shell
 shell-integration = detect
