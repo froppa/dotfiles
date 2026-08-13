@@ -101,6 +101,7 @@ grep -Fq 'keybind = ctrl+alt+super+space=text:\x01' home/dot_config/ghostty/conf
 grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
+grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
 if find home/private_dot_ssh -type f ! -name config -print -quit | grep -q .; then
   fail "SSH key material must not be managed"
 fi
