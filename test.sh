@@ -97,9 +97,11 @@ grep -Fq "alias conftmux='chezmoi edit --apply ~/.config/tmux/tmux.conf'" home/d
 grep -Fq 'command = direct:tmux new-session -A -s main' home/dot_config/ghostty/config.ghostty || fail "Ghostty must resolve tmux through PATH"
 grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config.ghostty || fail "missing tmux-aware Command-K binding"
 grep -Fq 'keybind = shift+enter=unbind' home/dot_config/ghostty/config.ghostty || fail "legacy Shift-Enter paste binding must be removed"
+grep -Fq 'keybind = ctrl+alt+super+space=text:\x01' home/dot_config/ghostty/config.ghostty || fail "Hyper-Space must send the reusable tmux prefix"
 grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
+grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
 if find home/private_dot_ssh -type f ! -name config -print -quit | grep -q .; then
   fail "SSH key material must not be managed"
 fi

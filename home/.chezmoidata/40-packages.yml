@@ -53,6 +53,8 @@ packages:
     - libtool
     - boost
     - pkgconf
+    # rustc wrapper; see ~/.cargo/config.toml
+    - sccache
 
     # DevOps & container tools
     # terraform was removed from homebrew-core (BSL license); use opentofu,

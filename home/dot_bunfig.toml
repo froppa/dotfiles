@@ -1,0 +1,6 @@
+# ~/.bunfig.toml
+# Managed by chezmoi — bun installs by hardlinking from its own cache instead
+# of copying every package into each node_modules. Nothing else changes: the
+# trees look and behave identically, they just stop being separate copies.
+[install]
+backend = "hardlink"

@@ -57,6 +57,7 @@ shell-integration-features = cursor,title,ssh-env,path
 command = direct:tmux new-session -A -s main
 
 # Raycast Hyper (Ctrl+Option+Command) to tmux prefix C-a plus command.
+keybind = ctrl+alt+super+space=text:\x01
 keybind = ctrl+alt+super+c=text:\x01c
 keybind = ctrl+alt+super+i=text:\x01|
 keybind = ctrl+alt+super+Slash=text:\x01-
