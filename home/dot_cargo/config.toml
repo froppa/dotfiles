@@ -1,0 +1,11 @@
+# ~/.cargo/config.toml
+# Managed by chezmoi — rustc compiles through sccache, a cache keyed by
+# compilation inputs, so the same dependency crate is built once per machine
+# rather than once per checkout.
+#
+# Deliberately NOT a shared [build] target-dir: cargo takes an exclusive lock
+# on the directory it builds into, so pointing several checkouts at one dir
+# would serialise every build that runs in parallel today. sccache is safe for
+# concurrent readers and writers; target dirs stay per-project.
+[build]
+rustc-wrapper = "sccache"
