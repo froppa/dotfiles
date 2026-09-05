@@ -69,7 +69,6 @@ packages:
     - font-hack-nerd-font
     - font-meslo-lg-nerd-font
     - hammerspoon
-    - maccy
     - scroll-reverser
 
   darwin:
