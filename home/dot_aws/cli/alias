@@ -33,19 +33,24 @@ query = get-query-results --query-id
 
 # Example:
 # aws logs insights "/ecs/ch-prod-my-service" "fields @timestamp, @message | sort @timestamp desc | limit 50"
+# Every continuation line MUST be indented. This is an INI file: a line at
+# column 0 is a new key, not part of the value above it, and the whole
+# file fails to parse. The parser strips the indentation before the shell
+# sees the alias, so the heredoc terminators below still reach the shell
+# at column 0, where a <<'PY' heredoc needs them.
 insights = !f() {
     group=${1:?expected log group}
     query=${2:?expected insights query}
     start=$(date -u -d '30 minutes ago' '+%s' 2>/dev/null || python3 - <<'PY'
-import time
-print(int(time.time()) - 1800)
-PY
-)
+    import time
+    print(int(time.time()) - 1800)
+    PY
+    )
     end=$(date -u '+%s' 2>/dev/null || python3 - <<'PY'
-import time
-print(int(time.time()))
-PY
-)
+    import time
+    print(int(time.time()))
+    PY
+    )
     aws logs start-query \
       --log-group-name "$group" \
       --start-time "$start" \
@@ -74,15 +79,15 @@ stat = !f() {
     window=${6:-3600}
 
     end=$(date -u '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || python3 - <<'PY'
-from datetime import datetime, timezone
-print(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
-PY
-)
+    from datetime import datetime, timezone
+    print(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'))
+    PY
+    )
     start=$(date -u -d "${window} seconds ago" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || python3 - <<PY
-from datetime import datetime, timedelta, timezone
-print((datetime.now(timezone.utc) - timedelta(seconds=${window})).strftime('%Y-%m-%dT%H:%M:%SZ'))
-PY
-)
+    from datetime import datetime, timedelta, timezone
+    print((datetime.now(timezone.utc) - timedelta(seconds=${window})).strftime('%Y-%m-%dT%H:%M:%SZ'))
+    PY
+    )
 
     if [ -n "$dimensions" ]; then
       aws cloudwatch get-metric-statistics \
