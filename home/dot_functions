@@ -91,10 +91,30 @@ fs() {
   fi
 }
 
-# Override diff with git diff --no-index if git is available
+# Override diff with git diff --no-index if git is available.
+#
+# Only when the output is a terminal. --color-words prints word-level colour
+# and NO line-prefixed hunks, so anything reading the output sees a diff that
+# never says a line was added or removed: `diff a b | grep -c '^[<>]'` counts
+# 0 however different the files are, with no error. That silently answers
+# "these files are identical" to scripts and to coding agents, which is the
+# worst direction for the question to fail in.
+#
+# The test has to be here, at call time, rather than a guard on the
+# definition: .zshrc only runs for interactive shells anyway, and Claude Code
+# snapshots the interactive shell's functions and replays them into its
+# non-interactive ones — so a definition-time guard would always be true and
+# would change nothing.
+#
+# This is also what git itself does with colour: on when a terminal is
+# reading, off when a pipe is.
 if command -v git >/dev/null 2>&1; then
   diff() {
-    git diff --no-index --color-words "$@"
+    if [[ -t 1 ]]; then
+      git diff --no-index --color-words "$@"
+    else
+      command diff "$@"
+    fi
   }
 fi
 
