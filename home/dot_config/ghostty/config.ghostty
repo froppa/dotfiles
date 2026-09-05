@@ -79,3 +79,10 @@ keybind = ctrl+alt+super+Digit6=text:\x016
 keybind = ctrl+alt+super+Digit7=text:\x017
 keybind = ctrl+alt+super+Digit8=text:\x018
 keybind = ctrl+alt+super+Digit9=text:\x019
+
+# Machine-local overrides, last so they win. Optional: a machine without one
+# is not an error. This is where a Dock-launched Ghostty, which has launchd's
+# PATH and cannot find Homebrew's tmux, names the absolute path — the
+# portable `direct:tmux` above stays the managed default (test.sh enforces
+# it), and no machine's Homebrew prefix ends up in the source.
+config-file = ?config.local
