@@ -79,6 +79,20 @@ keybind = ctrl+alt+super+Digit6=text:\x016
 keybind = ctrl+alt+super+Digit7=text:\x017
 keybind = ctrl+alt+super+Digit8=text:\x018
 keybind = ctrl+alt+super+Digit9=text:\x019
+keybind = ctrl+alt+super+comma=text:\x01,
+keybind = ctrl+alt+super+n=text:\x01n
+keybind = ctrl+alt+super+p=text:\x01p
+keybind = ctrl+alt+super+tab=text:\x01l
+keybind = ctrl+alt+super+f=text:\x01w
+keybind = ctrl+alt+super+b=text:\x01!
+keybind = ctrl+alt+super+j=text:\x01j
+keybind = ctrl+alt+super+m=text:\x01m
+keybind = ctrl+alt+super+u=text:\x01u
+keybind = ctrl+alt+super+h=text:\x01h
+keybind = ctrl+alt+super+shift+arrow_left=text:\x01\x1b[1;2D
+keybind = ctrl+alt+super+shift+arrow_down=text:\x01\x1b[1;2B
+keybind = ctrl+alt+super+shift+arrow_up=text:\x01\x1b[1;2A
+keybind = ctrl+alt+super+shift+arrow_right=text:\x01\x1b[1;2C
 
 # Machine-local overrides, last so they win. Optional: a machine without one
 # is not an error. This is where a Dock-launched Ghostty, which has launchd's

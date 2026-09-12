@@ -39,6 +39,7 @@ section "Checking executable scripts"
 
 [[ -x ./init.sh ]] || fail "init.sh must be executable"
 [[ -x ./test.sh ]] || fail "test.sh must be executable"
+[[ -x ./bootstrap.sh ]] || fail "bootstrap.sh must be executable"
 
 section "Testing chezmoi config template"
 
@@ -84,11 +85,11 @@ grep -q '^personal = false$' "${rendered_work_config}" || fail "WORK=true should
 
 section "Checking safe adoption defaults"
 
-[[ -f home/create_dot_gitconfig.tmpl ]] || fail "Git defaults must be create-only"
 [[ -f home/dot_local/bin/symlink_depot.tmpl ]] || fail "Depot must resolve to the standalone Cargo installation"
 grep -Fq '".cargo/bin/depot"' home/dot_local/bin/symlink_depot.tmpl || fail "Depot link must not target the legacy Verk binary"
 grep -Fq 'source <(depot completions zsh 2>/dev/null)' home/dot_zsh_completions || fail "Depot completion must follow the installed version"
 
+[[ -f home/create_dot_gitconfig.tmpl ]] || fail "Git defaults must be create-only"
 [[ ! -e home/dot_gitconfig.tmpl ]] || fail "Git config must not overwrite an existing setup"
 grep -Fq 'name = {{ .name | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git name"
 grep -Fq 'email = {{ .email | quote }}' home/create_dot_gitconfig.tmpl || fail "new machines must receive a Git email"
@@ -106,6 +107,9 @@ grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Gho
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
+grep -Fq 'MouseDragEnd1Pane send -X copy-selection-no-clear' home/dot_config/tmux/tmux.conf || fail "mouse selection must not snap the view back to the bottom"
+grep -Fq 'xterm-ghostty:RGB:extkeys:hyperlinks' home/dot_config/tmux/tmux.conf || fail "tmux must pass OSC 8 hyperlinks through to Ghostty"
+! grep -rqE '(^|[^a-z])evo(-|[^a-z]|$)|192\.168|100\.[0-9]+\.' home/dot_config/tmux || fail "host names and addresses belong in the unmanaged tmux *.local files"
 if find home/private_dot_ssh -type f ! -name private_config -print -quit | grep -q .; then
   fail "SSH key material must not be managed"
 fi
