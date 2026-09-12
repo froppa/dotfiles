@@ -37,9 +37,9 @@ row "Caps+B" "break pane to a new window" "Caps+J" "join a pane from elsewhere"
 row "Caps+M" "move this pane to another window"
 
 section "SCROLLBACK AND COPYING   the mouse works everywhere"
-row "wheel" "scroll like Ghostty; bottom exits" "drag" "select + copy, view stays"
+row "wheel" "scroll; bottom exits copy mode" "drag" "select + copy, view stays"
 row "2x / 3x click" "copy word / line" "Cmd+V" "paste"
-row "Esc, q, typing" "leave copy mode" "Ctrl-a [" "copy mode: v select, y copy, / search"
+row "Esc or q" "leave copy mode" "Ctrl-a [" "copy mode: v select, y copy, / search"
 row "Shift+drag" "Ghostty selects, bypassing tmux"
 
 section "LINKS"
