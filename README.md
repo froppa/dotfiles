@@ -66,6 +66,7 @@ load the key on first use. Shell startup does not call `ssh-add`.
 | Raycast | Configure Caps Lock as Hyper (`Control+Option+Command`, no Shift) |
 | Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
 | Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
+| SwiftBar | Launch once and allow it to run; the plugin directory is preset to `~/.config/swiftbar` |
 
 Raycast exports are intentionally not managed because they can contain private
 local data and did not reliably restore settings. To add a Ghostty launcher,
@@ -104,7 +105,10 @@ the connection ends. Outside tmux, Claude Code rings the terminal bell when it
 needs attention and Ghostty marks the tab. Starship's right prompt shows the
 ssh host, running agents (with how many are working or waiting for you), and
 remaining limits from the same caches the tmux status bar uses, refreshed in
-the background; it is cleared once a command runs so history stays clean.
+the background; it is cleared once a command runs so history stays clean. The
+same facts sit in the macOS menu bar through SwiftBar: the title shows the
+Claude count, working and waiting sessions, and the 7-day figure; the menu
+lists each session with its directory and state.
 
 ### tmux status bar
 
@@ -159,6 +163,7 @@ completion initialization; no generated completion file needs updating.
 | `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
 | `home/dot_config/tmux/` | tmux, status scripts, and plugins |
 | `home/dot_config/raycast/` | Raycast Script Commands |
+| `home/dot_config/swiftbar/` | Menu bar item with agent sessions and limits |
 | `home/dot_config/zed/` | Zed settings and keybindings |
 | `home/dot_config/Code/User/` | VS Code XDG settings |
 | `home/dot_config/nvim/` | Neovim configuration |
