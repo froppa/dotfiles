@@ -54,49 +54,42 @@ keybind = shift+enter=unbind
 # Shell
 shell-integration = detect
 shell-integration-features = cursor,title,ssh-env,path
-command = direct:tmux new-session -A -s main
+# Ghostty owns tabs, splits, scrollback and selection. tmux is only for
+# sessions that must outlive the window: `tm` locally, `ssht <host>` remotely.
+window-save-state = always
 
-# Raycast Hyper (Ctrl+Option+Command) to tmux prefix C-a plus command.
-keybind = ctrl+alt+super+space=text:\x01
-keybind = ctrl+alt+super+c=text:\x01c
-keybind = ctrl+alt+super+i=text:\x01|
-keybind = ctrl+alt+super+Slash=text:\x01-
-keybind = ctrl+alt+super+z=text:\x01z
-keybind = ctrl+alt+super+r=text:\x01r
-keybind = ctrl+alt+super+x=text:\x01x
-keybind = ctrl+alt+super+w=text:\x01x
-keybind = ctrl+alt+super+arrow_left=text:\x01\x1b[D
-keybind = ctrl+alt+super+arrow_down=text:\x01\x1b[B
-keybind = ctrl+alt+super+arrow_up=text:\x01\x1b[A
-keybind = ctrl+alt+super+arrow_right=text:\x01\x1b[C
-keybind = ctrl+alt+super+Digit0=text:\x010
-keybind = ctrl+alt+super+Digit1=text:\x011
-keybind = ctrl+alt+super+Digit2=text:\x012
-keybind = ctrl+alt+super+Digit3=text:\x013
-keybind = ctrl+alt+super+Digit4=text:\x014
-keybind = ctrl+alt+super+Digit5=text:\x015
-keybind = ctrl+alt+super+Digit6=text:\x016
-keybind = ctrl+alt+super+Digit7=text:\x017
-keybind = ctrl+alt+super+Digit8=text:\x018
-keybind = ctrl+alt+super+Digit9=text:\x019
-keybind = ctrl+alt+super+comma=text:\x01,
-keybind = ctrl+alt+super+n=text:\x01n
-keybind = ctrl+alt+super+p=text:\x01p
-keybind = ctrl+alt+super+tab=text:\x01l
-keybind = ctrl+alt+super+f=text:\x01w
-keybind = ctrl+alt+super+b=text:\x01!
-keybind = ctrl+alt+super+j=text:\x01j
-keybind = ctrl+alt+super+m=text:\x01m
-keybind = ctrl+alt+super+u=text:\x01u
-keybind = ctrl+alt+super+h=text:\x01h
-keybind = ctrl+alt+super+shift+arrow_left=text:\x01\x1b[1;2D
-keybind = ctrl+alt+super+shift+arrow_down=text:\x01\x1b[1;2B
-keybind = ctrl+alt+super+shift+arrow_up=text:\x01\x1b[1;2A
-keybind = ctrl+alt+super+shift+arrow_right=text:\x01\x1b[1;2C
+# Raycast Hyper (Ctrl+Option+Command) chords, the same keys the tmux config
+# binds behind Ctrl-a, mapped to Ghostty actions.
+keybind = ctrl+alt+super+c=new_tab
+keybind = ctrl+alt+super+i=new_split:right
+keybind = ctrl+alt+super+Slash=new_split:down
+keybind = ctrl+alt+super+z=toggle_split_zoom
+keybind = ctrl+alt+super+equal=equalize_splits
+keybind = ctrl+alt+super+r=reload_config
+keybind = ctrl+alt+super+x=close_surface
+keybind = ctrl+alt+super+w=close_surface
+keybind = ctrl+alt+super+arrow_left=goto_split:left
+keybind = ctrl+alt+super+arrow_down=goto_split:down
+keybind = ctrl+alt+super+arrow_up=goto_split:up
+keybind = ctrl+alt+super+arrow_right=goto_split:right
+keybind = ctrl+alt+super+shift+arrow_left=resize_split:left,10
+keybind = ctrl+alt+super+shift+arrow_down=resize_split:down,10
+keybind = ctrl+alt+super+shift+arrow_up=resize_split:up,10
+keybind = ctrl+alt+super+shift+arrow_right=resize_split:right,10
+keybind = ctrl+alt+super+n=next_tab
+keybind = ctrl+alt+super+p=previous_tab
+keybind = ctrl+alt+super+f=toggle_tab_overview
+keybind = ctrl+alt+super+Digit0=last_tab
+keybind = ctrl+alt+super+Digit1=goto_tab:1
+keybind = ctrl+alt+super+Digit2=goto_tab:2
+keybind = ctrl+alt+super+Digit3=goto_tab:3
+keybind = ctrl+alt+super+Digit4=goto_tab:4
+keybind = ctrl+alt+super+Digit5=goto_tab:5
+keybind = ctrl+alt+super+Digit6=goto_tab:6
+keybind = ctrl+alt+super+Digit7=goto_tab:7
+keybind = ctrl+alt+super+Digit8=goto_tab:8
+keybind = ctrl+alt+super+Digit9=goto_tab:9
 
 # Machine-local overrides, last so they win. Optional: a machine without one
-# is not an error. This is where a Dock-launched Ghostty, which has launchd's
-# PATH and cannot find Homebrew's tmux, names the absolute path — the
-# portable `direct:tmux` above stays the managed default (test.sh enforces
-# it), and no machine's Homebrew prefix ends up in the source.
+# is not an error.
 config-file = ?config.local

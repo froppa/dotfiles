@@ -170,3 +170,24 @@ command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
 if command -v starship >/dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
+
+# Agent counts and Claude/Codex limits for starship's right prompt: the tmux
+# status scripts refresh plain-text caches in the background, at most every
+# 10 s, so the prompt itself never waits on ssh or the usage endpoints.
+if [[ -x "$HOME/.config/tmux/scripts/status-agents.sh" ]]; then
+  zmodload -F zsh/stat b:zstat 2>/dev/null
+  _status_cache_refresh() {
+    local d="${XDG_CACHE_HOME:-$HOME/.cache}/tmux" s="$HOME/.config/tmux/scripts"
+    mkdir -p "$d"
+    "$s/status-agents.sh" | sed 's/#\[[^]]*\]//g' > "$d/agents.txt.$$" && mv -f "$d/agents.txt.$$" "$d/agents.txt"
+    "$s/status-usage.sh" | sed 's/#\[[^]]*\]//g' > "$d/limits.txt.$$" && mv -f "$d/limits.txt.$$" "$d/limits.txt"
+  }
+  _status_cache_precmd() {
+    local -a m
+    zstat -A m +mtime "${XDG_CACHE_HOME:-$HOME/.cache}/tmux/agents.txt" 2>/dev/null
+    (( EPOCHSECONDS - ${m[1]:-0} < 10 )) && return
+    ( _status_cache_refresh >/dev/null 2>&1 & )
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd _status_cache_precmd
+fi

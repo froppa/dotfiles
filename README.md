@@ -11,10 +11,10 @@ Shell, Git, editor, and XDG configuration also work on Linux where supported.
 
 | Area | Configuration |
 | --- | --- |
-| Terminal | Ghostty opens the persistent tmux session `main`; the tmux status bar shows where the active pane runs, running agents, and Claude and Codex limits |
+| Terminal | Ghostty natively for tabs, splits, and scrollback; tmux only for sessions that must outlive the window (`tm` locally, `ssht <host>` remotely) |
 | Shell | Zsh, Oh My Zsh, Starship, fzf, mise, and direnv |
 | Editors | Zed, VS Code, Vim, and Neovim |
-| Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
+| Shortcuts | Raycast Caps Lock Hyper chords, the same keys in Ghostty and under `Ctrl-a` in tmux |
 | Packages | Homebrew bundle with personal and work profiles |
 | SSH | Portable client config; keys stay local to each machine |
 | macOS | Dock, Finder, keyboard, Safari, and general defaults |
@@ -75,40 +75,39 @@ session restoration.
 
 ## Terminal shortcuts
 
-Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty converts the
-following chords to tmux commands. Right Option remains available for Danish
+Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty maps the
+chords below to its own tabs and splits; inside a tmux session the same keys
+work after the `Ctrl-a` prefix. Right Option remains available for Danish
 symbols.
 
-| Shortcut | Action |
-| --- | --- |
-| `Command+K` | Clear the active application screen through tmux |
-| `Shift+Enter` | Insert a newline in Claude Code and shell prompts |
-| `Caps+C` | New window |
-| `Caps+I` | Side-by-side pane |
-| `Caps+-` | Stacked pane |
-| `Caps+Arrow` | Move between panes |
-| `Caps+0…9` | Select window |
-| `Caps+Z` | Toggle pane zoom |
-| `Caps+R` | Reload tmux |
-| `Caps+X` / `Caps+W` | Kill pane after confirmation |
-| `Caps+,` | Rename window |
-| `Caps+N` / `Caps+P` / `Caps+Tab` | Next, previous, last window |
-| `Caps+F` | Pick a window from a list |
-| `Caps+B` | Break the pane out into its own window |
-| `Caps+J` / `Caps+M` | Join a pane from, or move this pane to, another window |
-| `Caps+Shift+Arrow` | Resize pane |
-| `Caps+U` | Pick a URL from the pane history and open it |
-| `Caps+H` | tmux cheat sheet; the bottom status row carries the hint |
+| Shortcut | Ghostty | tmux (`Ctrl-a` + key) |
+| --- | --- | --- |
+| `Command+K` | Clear the screen of the active application | same |
+| `Shift+Enter` | Newline in Claude Code and shell prompts | same |
+| `Caps+C` | New tab | New window |
+| `Caps+I` / `Caps+-` | Split right / down | Same |
+| `Caps+Arrow` | Move between splits | Move between panes |
+| `Caps+Shift+Arrow` | Resize split | Resize pane |
+| `Caps+=` | Equalize splits | |
+| `Caps+Z` | Zoom split | Zoom pane |
+| `Caps+X` / `Caps+W` | Close split or tab | Kill pane after confirmation |
+| `Caps+1…9` / `Caps+0` | Go to tab / last tab | Window 0…9 |
+| `Caps+N` / `Caps+P` | Next / previous tab | Same |
+| `Caps+F` | Tab overview | Window picker |
+| `Caps+R` | Reload Ghostty config | Reload tmux config |
+| `Caps+,` `Caps+B` `Caps+J` `Caps+M` `Caps+U` `Caps+H` | | Rename, break, join, move, URL picker, cheat sheet |
 
-Every chord is the tmux prefix `Ctrl-a` plus the same key, so it also works
-from a plain keyboard. Windows are named after their directory or ssh host;
-rename one and the name sticks. Mouse drag, double-click, and triple-click copy
-to the clipboard without leaving copy mode; `Cmd+V` pastes; `Cmd+click` opens
-a link; hold Shift to let Ghostty select text itself.
+`tm` attaches to (or creates) the persistent local tmux session `main`;
+`ssht <host> [session]` does the same on a remote machine over ssh, tinting
+Ghostty's background in the host's colour and titling the tab after it until
+the connection ends. Outside tmux, Claude Code rings the terminal bell when it
+needs attention and Ghostty marks the tab. Starship's right prompt shows the
+ssh host, running agents, and remaining limits from the same caches the tmux
+status bar uses, refreshed in the background.
 
 ### tmux status bar
 
-Row one is the context badge and the window tabs: `⌂ local`, or `⇅ host` in a
+Inside a tmux session, row one is the context badge and the window tabs: `⌂ local`, or `⇅ host` in a
 colour derived from the host name when the active pane runs `ssh` (or when tmux
 itself runs on a machine reached over ssh). The bar tint and the active pane
 border follow the same colour. A tab whose pane runs `claude` or `codex`

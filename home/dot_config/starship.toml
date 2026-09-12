@@ -1,6 +1,29 @@
 # Global config
 add_newline = false
 format = "$directory $git_branch$git_status$character "
+# Outside tmux the right prompt carries what the tmux status bar shows inside
+# it: the ssh host, running agents, and remaining limits (caches refreshed by
+# a background hook in ~/.zshrc).
+right_format = "$hostname${custom.agents}${custom.limits}"
+
+[hostname]
+ssh_only = true
+format = "[⇅ $hostname]($style) "
+style = "bold green"
+
+[custom.agents]
+command = "cat ~/.cache/tmux/agents.txt"
+when = "test -z \"$TMUX\" && test -s ~/.cache/tmux/agents.txt"
+shell = ["sh"]
+format = "[$output]($style) "
+style = "dimmed white"
+
+[custom.limits]
+command = "cat ~/.cache/tmux/limits.txt"
+when = "test -z \"$TMUX\" && test -s ~/.cache/tmux/limits.txt"
+shell = ["sh"]
+format = "[$output]($style)"
+style = "dimmed white"
 
 [character]
 success_symbol = "[>](bold green)"

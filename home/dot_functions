@@ -234,3 +234,23 @@ gw() {
   cd "$path"
 }
 
+# ssht <host> [session]: persistent remote tmux over ssh. While connected,
+# Ghostty's background takes the host's tint (the colour the tmux status bar
+# uses for it, overridable in ~/.config/tmux/hosts.local) and the tab is
+# titled after the host; both reset when ssh returns. Works from inside a
+# local tmux too, through its passthrough.
+ssht() {
+  local host=$1 session=${2:-main} tint rc
+  [[ -n "$host" ]] || { echo "usage: ssht <host> [session]" >&2; return 2; }
+  _ssht_osc() {
+    if [[ -n "$TMUX" ]]; then printf '\033Ptmux;\033%s\033\\' "$1"; else printf '%s' "$1"; fi
+  }
+  tint=$("$HOME/.config/tmux/scripts/status-context.sh" host "$host" tint 2>/dev/null)
+  [[ -n "$tint" ]] && _ssht_osc "$(printf '\033]11;%s\a' "$tint")"
+  _ssht_osc "$(printf '\033]0;%s\a' "$host")"
+  ssh -t -- "$host" "tmux new-session -A -s '$session'"
+  rc=$?
+  _ssht_osc "$(printf '\033]111\a')"
+  _ssht_osc "$(printf '\033]0;\a')"
+  return $rc
+}

@@ -67,6 +67,8 @@ alias confgitl='${EDITOR:-nvim} ~/.gitconfig.local'
 alias confzcompl='chezmoi edit --apply ~/.zsh_completions'
 alias confzcompll='${EDITOR:-nvim} ~/.zsh_completions.local'
 alias conftmux='chezmoi edit --apply ~/.config/tmux/tmux.conf'
+# Persistent local session for work that must outlive the Ghostty window.
+alias tm='tmux new-session -A -s main'
 
 # =======================================
 # Navigation

@@ -34,7 +34,7 @@ normalize_type() {
 
 TYPE="$(normalize_type "$TYPE")"
 
-VAULT="${AGENT_WORKSPACE_VAULT:-$HOME/code/agent-workspace}"
+VAULT="${AGENT_WORKSPACE_VAULT:-$HOME/code/froppa/agent-workspace}"
 INBOX_DIR="$VAULT/Inbox"
 DATE_ONLY="$(date '+%Y-%m-%d')"
 STAMP="$(date '+%Y-%m-%d-%H%M')"

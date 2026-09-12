@@ -12,6 +12,7 @@
 #          yellow waiting for input, grey idle), or the coloured host for ssh
 #          panes
 #   color  the accent colour only
+#   tint   the bar tint colour only (ssht uses it as the Ghostty background)
 
 pid=$1
 cmd=$2
@@ -91,6 +92,9 @@ fi
 case $mode in
   color)
     printf '%s\n' "$accent"
+    ;;
+  tint)
+    printf '%s\n' "$tint"
     ;;
   tab)
     if [ -z "$host" ]; then
