@@ -84,6 +84,24 @@ setup; these dotfiles manage only portable client configuration. A remote
 tmux session continues when you disconnect, but not when the Ubuntu VM shuts
 down.
 
+### Ubuntu AI tools
+
+After applying the native package configuration, install Claude Code and mise
+through their signed apt repositories, and Codex through its official standalone
+installer:
+
+```bash
+./scripts/bootstrap-ubuntu-ai.sh
+codex login
+claude auth login
+gh auth login --web
+```
+
+This does not authenticate automatically or copy credentials from your Mac.
+Codex is pinned to the validated CLI version in the script. Runtime installation
+is separate; do not run source-building plugin installers until the required
+Depot build wrapper is available on the machine.
+
 ### SSH
 
 SSH keys are never managed by this repository. Generate a new key on each
