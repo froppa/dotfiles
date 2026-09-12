@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Ubuntu uses apt; never install or update Linuxbrew during bootstrap.
+[[ "$(uname -s)" == Darwin ]] || exit 0
+
 if ! command -v brew &>/dev/null; then
   echo "=> Homebrew installing..."
   bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"

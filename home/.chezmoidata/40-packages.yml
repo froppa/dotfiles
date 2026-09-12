@@ -63,6 +63,54 @@ packages:
     - chezmoi
     - shellcheck
 
+  # Ubuntu package names are explicit: Brew formula names are not portable.
+  # Vendor tools and language runtimes are documented separately in README.md.
+  ubuntu:
+    apt:
+      - ca-certificates
+      - curl
+      - unzip
+      - coreutils
+      - findutils
+      - sed
+      - grep
+      - moreutils
+      - tree
+      - build-essential
+      - ripgrep
+      - zsh
+      - starship
+      - tmux
+      - fzf
+      - direnv
+      - ncdu
+      - gnupg
+      - openssh-client
+      - openssl
+      - nmap
+      - age
+      - bat
+      - fd-find
+      - jq
+      - htop
+      - gh
+      - git
+      - git-lfs
+      - pipx
+      - eza
+      - httpie
+      - vim
+      - neovim
+      - cmake
+      - m4
+      - autoconf
+      - automake
+      - libtool
+      - libboost-dev
+      - pkgconf
+      - sccache
+      - shellcheck
+
   casks:
     - ghostty
     - raycast

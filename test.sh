@@ -16,6 +16,8 @@ section "Checking required tools"
 
 command -v shellcheck >/dev/null 2>&1 || fail "shellcheck is required"
 command -v chezmoi >/dev/null 2>&1 || fail "chezmoi is required"
+command -v python3 >/dev/null 2>&1 || fail "python3 is required"
+command -v zsh >/dev/null 2>&1 || fail "zsh is required"
 
 section "Running shellcheck"
 
@@ -111,7 +113,9 @@ fi
 ! grep -Fq -- '--exclude encrypted' README.md || fail "the documented install must apply cleanly without an age identity"
 sed -n '/^  darwin:/,/^  personal:/p' home/.chezmoidata/40-packages.yml | grep -Fq -- '- xcode-build-server' || fail "xcode-build-server must be macOS-only"
 grep -Fq '/usr/local/bin/brew' home/.chezmoiscripts/run_once_10-install-homebrew.sh || fail "Homebrew setup must support Intel macOS"
-grep -Fq '/home/linuxbrew/.linuxbrew/bin/brew' home/.chezmoiscripts/run_once_10-install-homebrew.sh || fail "Homebrew setup must support Linux"
+
+section "Testing Ubuntu and macOS bootstrap behavior"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 section "Testing fresh-home chezmoi dry-run apply"
 

@@ -29,7 +29,9 @@ jobs:
             ca-certificates \
             curl \
             gnupg \
-            shellcheck
+            shellcheck \
+            python3 \
+            zsh
 
       - name: Cache chezmoi binary
         id: cache-chezmoi

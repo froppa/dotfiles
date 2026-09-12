@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+{{ if eq .chezmoi.os "darwin" -}}
 command -v brew >/dev/null 2>&1 || {
   echo "=> brew not found, skipping package install"
   exit 0
@@ -43,3 +44,25 @@ cask "{{ . }}"
 BREWFILE
 
 brew cleanup
+{{ else if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "ubuntu") -}}
+packages=(
+{{ range .packages.ubuntu.apt }}  "{{ . }}"
+{{ end -}}
+)
+missing=()
+for package in "${packages[@]}"; do
+  if [[ "$(dpkg-query -W -f='${Status}' "$package" 2>/dev/null || true)" != "install ok installed" ]]; then
+    missing+=("$package")
+  fi
+done
+
+if [[ ${#missing[@]} -gt 0 ]]; then
+  sudo apt-get update
+  sudo apt-get install -y --no-install-recommends "${missing[@]}"
+else
+  echo "=> Ubuntu packages already installed"
+fi
+{{ else -}}
+echo "Package bootstrap supports macOS and Ubuntu; install packages manually on this OS." >&2
+exit 1
+{{ end -}}

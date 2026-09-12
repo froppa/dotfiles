@@ -12,3 +12,9 @@
 # stray one read as a file to delete on the next apply.
 **/.DS_Store
 .oh-my-zsh/cache/**
+
+{{ if ne .chezmoi.os "darwin" -}}
+.hammerspoon
+.config/raycast
+.config/iterm2
+{{ end -}}
