@@ -12,11 +12,13 @@ urls=$(tmux capture-pane -p -J -S -5000 -t "$pane" \
 
 [ -n "$urls" ] || { tmux display-message 'No URLs in this pane'; exit 0; }
 
-if command -v fzf > /dev/null 2>&1; then
-  url=$(printf '%s\n' "$urls" | fzf --tac --no-sort --prompt='open › ')
-else
+# Without fzf nothing is chosen, so nothing is opened: copy the newest URL.
+command -v fzf > /dev/null 2>&1 || {
   url=$(printf '%s\n' "$urls" | tail -n 1)
-fi
+  tmux set-buffer -w "$url" \; display-message "Copied $url"
+  exit 0
+}
+url=$(printf '%s\n' "$urls" | fzf --tac --no-sort --prompt='open › ')
 [ -n "$url" ] || exit 0
 
 if command -v open > /dev/null 2>&1; then

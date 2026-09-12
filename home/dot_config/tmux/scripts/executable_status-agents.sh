@@ -33,7 +33,7 @@ while IFS= read -r host; do
   case $host in ''|'#'*) continue ;; esac
   cache="$cache_dir/agents-$host"
   if ! [ -f "$cache" ] || ! find "$cache" -mmin -1 | grep -q .; then
-    ssh -o BatchMode=yes -o ConnectTimeout=3 "$host" "$remote_cmd" > "$cache.$$" 2>/dev/null \
+    ssh -o BatchMode=yes -o ConnectTimeout=3 -- "$host" "$remote_cmd" > "$cache.$$" 2>/dev/null \
       || printf '?' > "$cache.$$"
     mv -f "$cache.$$" "$cache"
   fi

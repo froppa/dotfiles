@@ -3,7 +3,9 @@
 # Claude Code's own status line) and Codex from their OAuth usage endpoints,
 # shown as the percentage still available, cached 5 min. Tokens are read where the CLIs keep them (macOS
 # Keychain or ~/.claude/.credentials.json; ~/.codex/auth.json) and never leave
-# this machine except for the usage call itself. "--" = no token or no answer.
+# this machine except for the usage call itself, and reach curl through its
+# stdin config so they never appear in the process list. "--" = no token or no
+# answer.
 
 cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/tmux"
 cache="$cache_dir/usage"
@@ -25,8 +27,9 @@ claude_token() {
 claude_windows() {
   token=$(claude_token)
   [ -n "$token" ] || return 1
-  curl -sS -m 8 -H "Authorization: Bearer $token" -H 'anthropic-beta: oauth-2025-04-20' \
-    https://api.anthropic.com/api/oauth/usage 2>/dev/null \
+  printf 'header = "Authorization: Bearer %s"\n' "$token" \
+    | curl -sS -m 8 --config - -H 'anthropic-beta: oauth-2025-04-20' \
+        https://api.anthropic.com/api/oauth/usage 2>/dev/null \
     | jq -r '[["604800", .seven_day]][] | select(.[1] != null) | "\(.[0]) \(.[1].utilization | floor)"'
 }
 
@@ -36,8 +39,8 @@ codex_windows() {
   token=$(jq -r '.tokens.access_token // empty' "$auth")
   account=$(jq -r '.tokens.account_id // empty' "$auth")
   [ -n "$token" ] || return 1
-  curl -sS -m 8 -H "Authorization: Bearer $token" -H "ChatGPT-Account-Id: $account" \
-    https://chatgpt.com/backend-api/wham/usage 2>/dev/null \
+  printf 'header = "Authorization: Bearer %s"\nheader = "ChatGPT-Account-Id: %s"\n' "$token" "$account" \
+    | curl -sS -m 8 --config - https://chatgpt.com/backend-api/wham/usage 2>/dev/null \
     | jq -r '.rate_limit | [.primary_window, .secondary_window][] | select(. != null) | "\(.limit_window_seconds) \(.used_percent | floor)"'
 }
 
