@@ -102,7 +102,7 @@ grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Gho
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
-if find home/private_dot_ssh -type f ! -name config -print -quit | grep -q .; then
+if find home/private_dot_ssh -type f ! -name private_config -print -quit | grep -q .; then
   fail "SSH key material must not be managed"
 fi
 [[ ! -e scripts/import-ssh-key.sh ]] || fail "SSH key import must not be supported"

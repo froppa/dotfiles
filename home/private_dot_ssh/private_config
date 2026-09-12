@@ -1,0 +1,22 @@
+# Managed by chezmoi. Machine-specific hosts belong in the unmanaged
+# ~/.ssh/config.local; it is included first so its Host blocks win.
+Include ~/.ssh/config.local
+
+HashKnownHosts no
+
+# Defaults for every host that config.local does not pin. No IdentitiesOnly
+# here: agent keys (local or 1Password) are offered alongside the default file.
+Host *
+  IgnoreUnknown UseKeychain
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+
+# Agent selection: the local agent behind SSH_AUTH_SOCK wins whenever it holds
+# keys; 1Password's agent is the fallback. ssh-add exits 0 only when the agent
+# has identities, and ssh keeps the first IdentityAgent it matches.
+Match exec "ssh-add -l >/dev/null 2>&1"
+  IdentityAgent SSH_AUTH_SOCK
+
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

@@ -8,6 +8,7 @@
 .zsh_completions.local
 .zshrc.local
 .config/ghostty/config.local
+.ssh/config.local
 # Finder drops these anywhere it browses; oh-my-zsh is an external so every
 # stray one read as a file to delete on the next apply.
 **/.DS_Store
