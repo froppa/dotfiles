@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import tomllib
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -150,6 +151,21 @@ class PackageBootstrapTests(unittest.TestCase):
                     self.assertEqual(app in paths, system == "darwin", app)
                 self.assertIn(".config/nvim/init.lua", paths)
                 self.assertIn(".config/ghostty/config.ghostty", paths)
+
+    def test_mise_preserves_mac_and_scopes_runtime_changes_to_ubuntu(self):
+        original = '# ~/.config/mise/config.toml\n# Managed by chezmoi — global default runtimes (replaces nvm/pyenv/brew runtimes)\n[tools]\nnode = "lts"\npython = "3.12"\ngo = "latest"\nruby = "latest"\npnpm = "latest"\nyarn = "latest"\njava = "temurin-21"\n\n[settings.ruby]\ncompile = false\n'
+        for system, distro in (("darwin", ""), ("linux", "fedora")):
+            with self.subTest(system=system, distro=distro):
+                self.assertEqual(self.render("home/dot_config/mise/config.toml.tmpl",
+                                            system=system, distro=distro), original)
+        expected = tomllib.loads(original)
+        del expected["tools"]["yarn"]
+        expected["tools"].update(rust="stable", bun="latest")
+        expected["settings"].update(node={"compile": False}, python={"compile": False})
+        for work in (False, True):
+            with self.subTest(work=work):
+                rendered = self.render("home/dot_config/mise/config.toml.tmpl", work=work)
+                self.assertEqual(tomllib.loads(rendered), expected)
 
     def test_rendered_shell_templates_pass_shellcheck(self):
         for system, distro in (("darwin", ""), ("linux", "ubuntu"), ("linux", "fedora")):
