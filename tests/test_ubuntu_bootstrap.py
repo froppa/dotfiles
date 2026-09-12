@@ -160,7 +160,8 @@ class PackageBootstrapTests(unittest.TestCase):
                                             system=system, distro=distro), original)
         expected = tomllib.loads(original)
         del expected["tools"]["yarn"]
-        expected["tools"].update(rust="stable", bun="latest")
+        del expected["tools"]["pnpm"]
+        expected["tools"].update({"rust": "stable", "bun": "latest", "aqua:pnpm/pnpm": "latest"})
         expected["settings"].update(node={"compile": False}, python={"compile": False})
         for work in (False, True):
             with self.subTest(work=work):

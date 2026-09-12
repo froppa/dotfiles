@@ -6,11 +6,12 @@ node = "lts"
 python = "3.12"
 go = "latest"
 ruby = "latest"
-pnpm = "latest"
 {{ if $ubuntu -}}
+"aqua:pnpm/pnpm" = "latest"
 rust = "stable"
 bun = "latest"
 {{ else -}}
+pnpm = "latest"
 yarn = "latest"
 {{ end -}}
 java = "temurin-21"
