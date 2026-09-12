@@ -98,7 +98,7 @@ symbols.
 | `Caps+J` / `Caps+M` | Join a pane from, or move this pane to, another window |
 | `Caps+Shift+Arrow` | Resize pane |
 | `Caps+U` | Pick a URL from the pane history and open it |
-| `Caps+H` | tmux cheat sheet; row two of the status bar carries the hint |
+| `Caps+H` | tmux cheat sheet; the bottom status row carries the hint |
 
 Every chord is the tmux prefix `Ctrl-a` plus the same key, so it also works
 from a plain keyboard. Windows are named after their directory or ssh host;
