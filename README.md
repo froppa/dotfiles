@@ -127,3 +127,8 @@ macos-scripts/macos-defaults.sh --update  # apply and update macOS
 
 The same ShellCheck, template, profile, and Chezmoi dry-run checks run in CI.
 Neovim reference: [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md).
+Depot is installed separately with Cargo from `struktly/tools`. The managed
+`~/.local/bin/depot` link points to `~/.cargo/bin/depot`, replacing the legacy
+Verk entry point. Zsh loads completion from the installed Depot version after
+completion initialization; no generated completion file needs updating.
+
