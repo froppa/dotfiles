@@ -107,7 +107,7 @@ grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Gho
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
-grep -Fq 'MouseDragEnd1Pane send -X copy-selection-no-clear' home/dot_config/tmux/tmux.conf || fail "mouse selection must not snap the view back to the bottom"
+grep -Fq 'MouseDragEnd1Pane send -X copy-selection' home/dot_config/tmux/tmux.conf || fail "mouse selection must not snap the view back to the bottom"
 grep -Fq 'xterm-ghostty:RGB:extkeys:hyperlinks' home/dot_config/tmux/tmux.conf || fail "tmux must pass OSC 8 hyperlinks through to Ghostty"
 ! grep -rqE '(^|[^a-z])evo(-|[^a-z]|$)|192\.168|100\.[0-9]+\.' home/dot_config/tmux || fail "host names and addresses belong in the unmanaged tmux *.local files"
 if find home/private_dot_ssh -type f ! -name private_config -print -quit | grep -q .; then
