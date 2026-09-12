@@ -102,8 +102,9 @@ symbols.
 Ghostty's background in the host's colour and titling the tab after it until
 the connection ends. Outside tmux, Claude Code rings the terminal bell when it
 needs attention and Ghostty marks the tab. Starship's right prompt shows the
-ssh host, running agents, and remaining limits from the same caches the tmux
-status bar uses, refreshed in the background.
+ssh host, running agents (with how many are working or waiting for you), and
+remaining limits from the same caches the tmux status bar uses, refreshed in
+the background; it is cleared once a command runs so history stays clean.
 
 ### tmux status bar
 

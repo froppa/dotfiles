@@ -4,7 +4,8 @@
 # unmanaged ~/.config/tmux/agent-hosts.local (cached 60 s; "?" = unreachable).
 # No ControlMaster here: a persisted master keeps the job's pipes open and
 # tmux would wait on it instead of drawing the result.
-# ✦ is Claude, ◆ is Codex, as on the window tabs.
+# ✦ is Claude, ◆ is Codex, as on the window tabs. After the Claude count come
+# the sessions the hooks know about: ⟳n working, ?n waiting for you.
 # The ChatGPT desktop app's Codex threads are not visible as processes.
 
 hosts_file="${XDG_CONFIG_HOME:-$HOME/.config}/tmux/agent-hosts.local"
@@ -22,12 +23,26 @@ codex_icon='#[fg=#5fd7af]◆'
 value='#[fg=#d0d0d0]'
 
 claude=$(pgrep -f "$claude_pattern" | wc -l | tr -d ' ')
+working=0
+input=0
+for f in "${XDG_CACHE_HOME:-$HOME/.cache}"/agents/claude-*; do
+  [ -f "$f" ] || continue
+  pid=${f##*claude-}
+  kill -0 "$pid" 2> /dev/null || { rm -f "$f"; continue; }
+  case $(cat "$f") in
+    working) working=$((working + 1)) ;;
+    input) input=$((input + 1)) ;;
+  esac
+done
 codex=$(ps -axo comm=,args= | awk '
   { n = split($1, path, "/") }
   path[n] == "codex" && $0 !~ /app-server|sandbox|code-mode-host|mcp-server/ { count++ }
   END { print count + 0 }')
 
-printf '%s %s%s  %s %s%s' "$claude_icon" "$value" "$claude" "$codex_icon" "$value" "$codex"
+printf '%s %s%s' "$claude_icon" "$value" "$claude"
+[ "$working" -gt 0 ] && printf ' #[fg=#d7875f]⟳%s' "$working"
+[ "$input" -gt 0 ] && printf ' #[fg=#d7af5f]?%s' "$input"
+printf '  %s %s%s' "$codex_icon" "$value" "$codex"
 
 [ -r "$hosts_file" ] || { printf '\n'; exit 0; }
 mkdir -p "$cache_dir"

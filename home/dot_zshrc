@@ -191,3 +191,10 @@ if [[ -x "$HOME/.config/tmux/scripts/status-agents.sh" ]]; then
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd _status_cache_precmd
 fi
+
+# Transient right prompt: once a command line is accepted the right side is
+# cleared, so only the live prompt carries status and the scrollback stays
+# clean. Starship's precmd hook sets it again for the next prompt.
+_rprompt_transient() { RPROMPT=''; zle reset-prompt; }
+autoload -Uz add-zle-hook-widget
+add-zle-hook-widget line-finish _rprompt_transient
