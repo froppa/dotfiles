@@ -122,8 +122,10 @@ Claude Code and Codex read from their OAuth usage endpoints with the tokens the
 CLIs already store (cached 5 min), the git branch, and RAM. Claude Code's own
 status line keeps only model, effort, and context left.
 
-Two unmanaged files under `~/.config/tmux/` keep host details out of this
-repository:
+Claude Code keeps `~/.claude/settings.json` itself, so the tab-state hooks are
+installed once per machine with `scripts/claude-tmux-hooks.sh`, which merges
+them idempotently. Two unmanaged files under `~/.config/tmux/` keep host
+details out of this repository:
 
 | File | Content |
 | --- | --- |
@@ -164,7 +166,7 @@ completion initialization; no generated completion file needs updating.
 | `home/.chezmoiscripts/` | Ordered and change-triggered setup |
 | `home/.chezmoiexternal.toml` | Pinned shell and TPM sources |
 | `macos-scripts/` | Auditable macOS defaults |
-| `scripts/` | Local SSH key generation and preference helpers |
+| `scripts/` | Local SSH key generation, Claude Code hook install, and preference helpers |
 
 ## macOS defaults
 

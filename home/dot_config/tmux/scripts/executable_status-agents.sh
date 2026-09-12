@@ -2,6 +2,8 @@
 # Running agent sessions: claude and codex CLI processes on this machine,
 # plus the same counts over ssh for every alias listed one per line in the
 # unmanaged ~/.config/tmux/agent-hosts.local (cached 60 s; "?" = unreachable).
+# No ControlMaster here: a persisted master keeps the job's pipes open and
+# tmux would wait on it instead of drawing the result.
 # ✦ is Claude, ◆ is Codex, as on the window tabs.
 # The ChatGPT desktop app's Codex threads are not visible as processes.
 
@@ -33,7 +35,7 @@ while IFS= read -r host; do
   case $host in ''|'#'*) continue ;; esac
   cache="$cache_dir/agents-$host"
   if ! [ -f "$cache" ] || ! find "$cache" -mmin -1 | grep -q .; then
-    ssh -o BatchMode=yes -o ConnectTimeout=3 -- "$host" "$remote_cmd" > "$cache.$$" 2>/dev/null \
+    ssh -o BatchMode=yes -o ConnectTimeout=2 -- "$host" "$remote_cmd" < /dev/null > "$cache.$$" 2>/dev/null \
       || printf '?' > "$cache.$$"
     mv -f "$cache.$$" "$cache"
   fi
