@@ -4,8 +4,9 @@
 [![Chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-6e4c1e)](https://www.chezmoi.io/)
 ![Platform](https://img.shields.io/badge/platform-macOS%20%2B%20Linux-lightgrey)
 
-Personal macOS development environment managed with Chezmoi and Homebrew.
-Shell, Git, editor, and XDG configuration also work on Linux where supported.
+Personal development environment managed with Chezmoi: Homebrew on macOS,
+native apt packages on Ubuntu 26.04. Shell, Git, editor, and XDG configuration
+are shared across both systems.
 
 ## Overview
 
@@ -15,7 +16,7 @@ Shell, Git, editor, and XDG configuration also work on Linux where supported.
 | Shell | Zsh, Oh My Zsh, Starship, fzf, mise, and direnv |
 | Editors | Zed, VS Code, Vim, and Neovim |
 | Shortcuts | Raycast Caps Lock Hyper chords, the same keys in Ghostty and under `Ctrl-a` in tmux |
-| Packages | Homebrew bundle with personal and work profiles |
+| Packages | Homebrew profiles on macOS; common native apt packages on Ubuntu |
 | SSH | Portable client config; keys stay local to each machine |
 | macOS | Dock, Finder, keyboard, Safari, and general defaults |
 
@@ -46,6 +47,72 @@ before creating the default config. Put machine-specific overrides or signing
 settings in `~/.gitconfig.local`. On new machines, the root config includes
 repository defaults from the managed `~/.config/git/dotfiles.gitconfig`. Omit
 `--macos` to apply the dotfiles without changing macOS defaults.
+
+### Ubuntu 26.04
+
+Install the bootstrap prerequisites and Chezmoi, then preview before applying:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git curl ca-certificates
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
+cd ~/.local/share/chezmoi
+chezmoi init --source="$PWD" --promptString 'name=sdf'
+chezmoi diff
+chezmoi apply -v
+```
+
+If already cloned, use that checkout instead of cloning again. Ubuntu setup
+installs missing packages with apt and never installs or updates Linuxbrew.
+An existing Linuxbrew installation is left on disk, but managed Zsh startup
+no longer adds it to PATH. Personal and work profiles currently share the same
+Ubuntu package set. Raycast, Hammerspoon, and iTerm2 configuration is macOS-only.
+
+The native set covers shell, editor, Git, and common build tools. It does not
+add third-party repositories or install mise, Codex, Claude Code, Docker,
+OpenTofu, AWS CLI, lazygit, Ghostty, GUI editors, or Nerd Fonts. These remain
+separate bootstrap steps; Ubuntu's `yq` is also not assumed equivalent to the
+Homebrew formula. Once mise is installed, `mise install` installs the declared
+runtimes; copying its configuration alone does not install them. Some Neovim
+plugins need those runtimes before their first launch.
+
+After applying, choose Zsh as your login shell if desired:
+
+```bash
+chsh -s "$(command -v zsh)"
+```
+
+Log out and back in. `fd` and `bat` aliases handle Ubuntu's executable names,
+and fzf uses an executable path that also works in its subprocesses. The Linux
+`update` alias uses apt. Mac-specific Hyper shortcuts require separate desktop
+key bindings on Ubuntu.
+
+Authenticate GitHub, Codex, and Claude freshly on Ubuntu as your normal user.
+Do not copy tokens, private keys, or provider credential stores from another
+machine. SSH access and the SSH server belong to the machine's infrastructure
+setup; these dotfiles manage only portable client configuration. A remote
+tmux session continues when you disconnect, but not when the Ubuntu VM shuts
+down.
+
+### Ubuntu AI tools
+
+After applying the native package configuration, install Claude Code and mise
+through their signed apt repositories, and Codex through its official standalone
+installer:
+
+```bash
+./scripts/bootstrap-ubuntu-ai.sh
+codex login
+claude auth login
+gh auth login --web
+```
+
+This does not authenticate automatically or copy credentials from your Mac.
+Codex is pinned to the validated CLI version in the script. Runtime installation
+is separate; do not run source-building plugin installers until the required
+Depot build wrapper is available on the machine.
 
 ### SSH
 

@@ -1,0 +1,27 @@
+{{- $ubuntu := and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "ubuntu") -}}
+# ~/.config/mise/config.toml
+# Managed by chezmoi — global default runtimes (replaces nvm/pyenv/brew runtimes)
+[tools]
+node = "lts"
+python = "3.12"
+go = "latest"
+ruby = "latest"
+{{ if $ubuntu -}}
+"aqua:pnpm/pnpm" = "latest"
+rust = "stable"
+bun = "latest"
+{{ else -}}
+pnpm = "latest"
+yarn = "latest"
+{{ end -}}
+java = "temurin-21"
+
+[settings.ruby]
+compile = false
+{{ if $ubuntu }}
+[settings.node]
+compile = false
+
+[settings.python]
+compile = false
+{{ end -}}

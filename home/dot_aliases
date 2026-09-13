@@ -137,7 +137,12 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
 fi
 
-alias brewup='brew update && brew upgrade && brew cleanup'
+if [[ "$OSTYPE" == linux* ]] && command -v apt-get >/dev/null 2>&1; then
+  alias update='sudo apt-get update && sudo apt-get upgrade'
+fi
+if [[ "$OSTYPE" == darwin* ]]; then
+  alias brewup='brew update && brew upgrade && brew cleanup'
+fi
 alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 
 [[ -f "$HOME/.aliases.local" ]] && source "$HOME/.aliases.local"

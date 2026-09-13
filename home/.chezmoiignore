@@ -13,3 +13,12 @@
 # stray one read as a file to delete on the next apply.
 **/.DS_Store
 .oh-my-zsh/cache/**
+
+{{ if ne .chezmoi.os "darwin" -}}
+.hammerspoon
+.config/raycast
+.config/iterm2
+# evo-dev runs the real Linux Depot binary the evo development role installs
+# at ~/.local/bin/depot; the Cargo-install symlink must not replace it.
+.local/bin/depot
+{{ end -}}

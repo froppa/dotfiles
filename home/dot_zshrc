@@ -93,7 +93,9 @@ fi
 # =======================================
 alias g="git"
 
-command -v fdfind >/dev/null 2>&1 && alias fd="fdfind"
+# Ubuntu exposes these programs under different executable names.
+(( ! $+commands[fd] && $+commands[fdfind] )) && alias fd="fdfind"
+(( ! $+commands[bat] && $+commands[batcat] )) && alias bat="batcat"
 
 gpgkeys() {
   gpg -K --with-colons 2>/dev/null | awk -F: '$1 == "sec" { print $5 }'
@@ -138,11 +140,14 @@ bindkey "^[[1;5D" backward-word
 # =======================================
 if command -v fzf >/dev/null 2>&1; then
   source <(fzf --zsh)
-  if command -v fd >/dev/null 2>&1; then
-    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+  # fzf launches a child shell, so a Zsh alias alone cannot provide fd.
+  fd_command="${commands[fd]:-${commands[fdfind]:-}}"
+  if [[ -n "$fd_command" ]]; then
+    export FZF_DEFAULT_COMMAND="${(q)fd_command} --type f --hidden --follow --exclude .git"
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    export FZF_ALT_C_COMMAND="${(q)fd_command} --type d --hidden --follow --exclude .git"
   fi
+  unset fd_command
 fi
 
 # =======================================

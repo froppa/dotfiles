@@ -16,6 +16,8 @@ section "Checking required tools"
 
 command -v shellcheck >/dev/null 2>&1 || fail "shellcheck is required"
 command -v chezmoi >/dev/null 2>&1 || fail "chezmoi is required"
+command -v python3 >/dev/null 2>&1 || fail "python3 is required"
+command -v zsh >/dev/null 2>&1 || fail "zsh is required"
 
 section "Running shellcheck"
 
@@ -108,6 +110,7 @@ grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Gho
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
+grep -Fq '.local/bin/depot' home/.chezmoiignore || fail "the Depot symlink must not replace evo-dev's real binary on Linux"
 grep -Fq 'MouseDragEnd1Pane send -X copy-selection' home/dot_config/tmux/tmux.conf || fail "mouse selection must not snap the view back to the bottom"
 grep -Fq 'xterm-ghostty:RGB:extkeys:hyperlinks' home/dot_config/tmux/tmux.conf || fail "tmux must pass OSC 8 hyperlinks through to Ghostty"
 ! grep -rqE '(^|[^a-z])evo(-|[^a-z]|$)|192\.168|100\.[0-9]+\.' home/dot_config/tmux || fail "host names and addresses belong in the unmanaged tmux *.local files"
@@ -120,7 +123,9 @@ fi
 ! grep -Fq -- '--exclude encrypted' README.md || fail "the documented install must apply cleanly without an age identity"
 sed -n '/^  darwin:/,/^  personal:/p' home/.chezmoidata/40-packages.yml | grep -Fq -- '- xcode-build-server' || fail "xcode-build-server must be macOS-only"
 grep -Fq '/usr/local/bin/brew' home/.chezmoiscripts/run_once_10-install-homebrew.sh || fail "Homebrew setup must support Intel macOS"
-grep -Fq '/home/linuxbrew/.linuxbrew/bin/brew' home/.chezmoiscripts/run_once_10-install-homebrew.sh || fail "Homebrew setup must support Linux"
+
+section "Testing Ubuntu and macOS bootstrap behavior"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 section "Testing fresh-home chezmoi dry-run apply"
 
