@@ -6,8 +6,8 @@
 #
 # The state lands in a per-session file under ~/.cache/agents, named by the
 # Claude session id so Verk can join it to the transcript it already lists:
-# first line the state, second the CLI's pid (the hook runs as a child of the
-# claude process, so $PPID is the session). It also goes on the tmux pane as
+# line 1 the state, line 2 the CLI's pid (the hook runs as a child of the
+# claude process, so $PPID is the session), line 3 the working directory. It also goes on the tmux pane as
 # @agent_state when inside tmux, and into the terminal tab title through the
 # hook's JSON reply: Claude Code emits `terminalSequence` to the terminal on
 # the hook's behalf (hooks have no terminal of their own).
@@ -24,7 +24,7 @@ file="$dir/claude-${session:-$PPID}"
 if [ "$state" = off ]; then
   rm -f "$file"
 else
-  mkdir -p "$dir" && printf '%s\n%s\n' "$state" "$PPID" > "$file"
+  mkdir -p "$dir" && printf '%s\n%s\n%s\n' "$state" "$PPID" "$cwd" > "$file"
 fi
 
 if [ -n "${TMUX_PANE:-}" ]; then
