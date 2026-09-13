@@ -25,11 +25,15 @@ value='#[fg=#d0d0d0]'
 claude=$(pgrep -f "$claude_pattern" | wc -l | tr -d ' ')
 working=0
 input=0
+# Each file: state on line one, the session's pid on line two.
 for f in "${XDG_CACHE_HOME:-$HOME/.cache}"/agents/claude-*; do
   [ -f "$f" ] || continue
-  pid=${f##*claude-}
-  kill -0 "$pid" 2> /dev/null || { rm -f "$f"; continue; }
-  case $(cat "$f") in
+  pid=$(sed -n 2p "$f")
+  if [ -z "$pid" ] || ! kill -0 "$pid" 2> /dev/null; then
+    rm -f "$f"
+    continue
+  fi
+  case $(sed -n 1p "$f") in
     working) working=$((working + 1)) ;;
     input) input=$((input + 1)) ;;
   esac
