@@ -106,6 +106,8 @@ grep -Fq 'keybind = ctrl+alt+super+c=new_tab' home/dot_config/ghostty/config.gho
 grep -Fq 'ssht() {' home/dot_functions || fail "ssht must open a persistent remote tmux"
 grep -Fq 'keybind = super+k=text:\x0c' home/dot_config/ghostty/config.ghostty || fail "missing tmux-aware Command-K binding"
 grep -Fq 'keybind = shift+enter=unbind' home/dot_config/ghostty/config.ghostty || fail "legacy Shift-Enter paste binding must be removed"
+[[ -f home/.chezmoiscripts/run_once_after_24-install-ghostty-terminfo.sh ]] || fail "Linux hosts must install an xterm-ghostty terminfo entry for plain ssh logins"
+grep -Fq '      - ncurses-term' home/.chezmoidata/40-packages.yml || fail "ncurses-term must ship the ghostty terminfo that xterm-ghostty is derived from"
 grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Ghostty must advertise extended keys to tmux"
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"

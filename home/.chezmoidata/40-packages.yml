@@ -81,6 +81,9 @@ packages:
       - zsh
       - starship
       - tmux
+      # Source of the ghostty terminfo entry that
+      # run_once_after_24-install-ghostty-terminfo.sh derives xterm-ghostty from.
+      - ncurses-term
       - fzf
       - direnv
       - ncdu
