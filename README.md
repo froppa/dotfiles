@@ -100,8 +100,10 @@ symbols.
 `tm` attaches to (or creates) the persistent local tmux session `main`;
 `ssht <host> [session]` does the same on a remote machine over ssh, tinting
 Ghostty's background in the host's colour and titling the tab after it until
-the connection ends. Outside tmux, Claude Code rings the terminal bell when it
-needs attention and Ghostty marks the tab. Starship's right prompt shows the
+the connection ends. Outside tmux, the same hooks retitle the Ghostty tab with the
+session's state and directory (`⟳ repo` working, `? repo` waiting for you,
+`· repo` idle), Claude Code rings the terminal bell when it needs attention,
+and Ghostty marks the tab. Starship's right prompt shows the
 ssh host, running agents (with how many are working or waiting for you), and
 remaining limits from the same caches the tmux status bar uses, refreshed in
 the background; it is cleared once a command runs so history stays clean.
