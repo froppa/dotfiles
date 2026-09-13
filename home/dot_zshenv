@@ -1,0 +1,13 @@
+# ~/.zshenv
+# Managed by chezmoi
+# Read by every zsh, including the non-interactive ones an `ssh host cmd`,
+# a cron job or an agent runs, which never see ~/.zshrc. The user tool
+# directories go on PATH here so `depot`, `verkd` and the cargo-installed
+# tools resolve there too; ~/.zshrc still owns the interactive PATH order.
+for dir in "$HOME/.cargo/bin" "$HOME/.local/bin"; do
+  case ":$PATH:" in
+    *":$dir:"*) ;;
+    *) [[ -d "$dir" ]] && export PATH="$dir:$PATH" ;;
+  esac
+done
+unset dir
