@@ -70,7 +70,6 @@ packages:
     - font-meslo-lg-nerd-font
     - hammerspoon
     - scroll-reverser
-    - swiftbar
 
   darwin:
     brews:
