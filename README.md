@@ -145,11 +145,18 @@ session restoration.
 Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty maps the
 chords below to its own tabs and splits; inside a tmux session the same keys
 work after the `Ctrl-a` prefix. Right Option remains available for Danish
-symbols.
+symbols. `Caps+T` is a global binding, so macOS only delivers it once Ghostty
+is ticked under System Settings > Privacy & Security > Accessibility; every
+other chord works without that.
+
+Closing a split or tab confirms while a process is still running, and a command
+that took more than five seconds and finished while you were in another window
+marks its tab and posts a notification. Both need Ghostty 1.3 or newer.
 
 | Shortcut | Ghostty | tmux (`Ctrl-a` + key) |
 | --- | --- | --- |
-| `Command+K` | Clear the screen of the active application | same |
+| `Command+K` | Clear the screen and the scrollback | Clears Ghostty's scrollback, not the pane |
+| `Command+F` | Search the scrollback | Copy mode, then `/` |
 | `Shift+Enter` | Newline in Claude Code and shell prompts | same |
 | `Caps+C` | New tab | New window |
 | `Caps+I` / `Caps+-` | Split right / down | Same |
@@ -160,9 +167,13 @@ symbols.
 | `Caps+X` / `Caps+W` | Close split or tab | Kill pane after confirmation |
 | `Caps+1…9` / `Caps+0` | Go to tab / last tab | Window 0…9 |
 | `Caps+N` / `Caps+P` | Next / previous tab | Same |
-| `Caps+F` | Tab overview | Window picker |
+| `Caps+F` | Tab overview (Linux only) | Window picker |
 | `Caps+R` | Reload Ghostty config | Reload tmux config |
-| `Caps+,` `Caps+B` `Caps+J` `Caps+M` `Caps+U` `Caps+H` | | Rename, break, join, move, URL picker, cheat sheet |
+| `Caps+T` | Scratch terminal over any app | `display-popup` |
+| `Caps+,` | Rename the tab | Rename window |
+| `Caps+Shift+,` / `Caps+Shift+.` | Move the tab left / right | Move window left / right |
+| `Caps+H` | Command palette, which lists every binding | Cheat sheet |
+| `Caps+B` `Caps+J` `Caps+M` `Caps+U` | | Break, join, move pane, URL picker |
 
 `tm` attaches to (or creates) the persistent local tmux session `main`;
 `ssht <host> [session]` does the same on a remote machine over ssh, tinting

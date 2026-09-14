@@ -13,6 +13,13 @@ foreground = #ffffff
 selection-background = #b5d5ff
 selection-foreground = #000000
 
+# Command-F replaces tmux copy-mode search, so matches keep the colours
+# copy mode used: a plain hit dimmed, the focused hit in the selection colour.
+search-background = #303030
+search-foreground = #ffffff
+search-selected-background = #b5d5ff
+search-selected-foreground = #000000
+
 cursor-color = #ffffff
 cursor-text = #000000
 cursor-style = bar
@@ -26,10 +33,21 @@ window-padding-color = background
 background-opacity = 0.8
 background-opacity-cells = false
 background-blur = true
+# Unfocused splits already dim themselves; the divider carries what
+# pane-border-style gave tmux.
+split-divider-color = #303030
+
+# A scratch terminal over whatever is in front, replacing tmux display-popup.
+# Its chord is global, which macOS grants only once Ghostty is ticked under
+# System Settings > Privacy & Security > Accessibility.
+quick-terminal-position = top
+quick-terminal-size = 45%
 
 macos-titlebar-style = tabs
 macos-option-as-alt = left
-confirm-close-surface = false
+# tmux confirmed before killing a pane. Ghostty asks only when shell
+# integration still sees a process, so an idle shell closes on the first press.
+confirm-close-surface = true
 quit-after-last-window-closed = true
 
 # Input
@@ -45,8 +63,11 @@ scrollbar = system
 # Visual bell without sound
 bell-features = no-system,no-audio,attention,border
 
-# Send the standard clear-screen key through tmux to the active application.
-keybind = super+k=text:\x0c
+# tmux watched windows for activity. Ghostty watches the command: one that ran
+# longer than five seconds and finishes while you are looking elsewhere marks
+# the tab through bell-features and posts a notification.
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = bell,notify
 
 # Remove the legacy Ctrl-V mapping so Claude Code receives native Shift-Enter.
 keybind = shift+enter=unbind
@@ -89,6 +110,13 @@ keybind = ctrl+alt+super+Digit6=goto_tab:6
 keybind = ctrl+alt+super+Digit7=goto_tab:7
 keybind = ctrl+alt+super+Digit8=goto_tab:8
 keybind = ctrl+alt+super+Digit9=goto_tab:9
+
+# The tmux bindings that had no Ghostty counterpart while tmux held them.
+keybind = global:ctrl+alt+super+t=toggle_quick_terminal
+keybind = ctrl+alt+super+comma=prompt_tab_title
+keybind = ctrl+alt+super+shift+comma=move_tab:-1
+keybind = ctrl+alt+super+shift+period=move_tab:1
+keybind = ctrl+alt+super+h=toggle_command_palette
 
 # Machine-local overrides, last so they win. Optional: a machine without one
 # is not an error.
