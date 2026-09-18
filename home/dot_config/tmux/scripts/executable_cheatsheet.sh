@@ -56,5 +56,6 @@ note "       ~/.config/tmux/agent-hosts.local  ssh aliases to count agents on"
 section "SESSION"
 row "Caps+R" "reload tmux config" "Caps+H" "this sheet, q closes"
 row "Ctrl-a d" "detach; Ghostty reattaches to main"
-note "Inside a remote tmux, press Ctrl-a twice to reach the inner prefix."
+note "In an ssht pane the Caps chords drive the remote tmux; Caps+Space or"
+note "Ctrl-a, then the key, still reaches this one."
 printf '\n'

@@ -197,6 +197,17 @@ if [[ -x "$HOME/.config/tmux/scripts/status-agents.sh" ]]; then
   add-zsh-hook precmd _status_cache_precmd
 fi
 
+# A program that exits without restoring the terminal (a remote tmux whose ssh
+# connection dropped, a crashed TUI) leaves mouse, focus or key reporting on,
+# and every click, focus change or Ctrl chord then types sequences such as
+# "35;32;10M" at the prompt. The prompt owns the terminal, so switch those
+# modes off before each one.
+_terminal_modes_reset() {
+  [[ -t 1 ]] && print -n '\e[?1000l\e[?1002l\e[?1003l\e[?1005l\e[?1006l\e[?1015l\e[?1004l\e[>4m\e[=0;1u'
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _terminal_modes_reset
+
 # Transient right prompt: once a command line is accepted the right side is
 # cleared, so only the live prompt carries status and the scrollback stays
 # clean. Starship's precmd hook sets it again for the next prompt.
