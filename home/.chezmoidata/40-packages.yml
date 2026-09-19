@@ -91,6 +91,7 @@ packages:
       - openssh-client
       - openssl
       - nmap
+      - netcat-openbsd
       - age
       - bat
       - fd-find

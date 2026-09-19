@@ -12,10 +12,10 @@ are shared across both systems.
 
 | Area | Configuration |
 | --- | --- |
-| Terminal | Ghostty natively for tabs, splits, and scrollback; tmux only for sessions that must outlive the window (`tm` locally, `ssht <host>` remotely) |
+| Terminal | Ghostty opens the persistent tmux session `main`; `ssht <host>` nests a persistent remote one; the tmux status bar shows where the active pane runs, running agents, and Claude and Codex limits |
 | Shell | Zsh, Oh My Zsh, Starship, fzf, mise, and direnv |
 | Editors | Zed, VS Code, Vim, and Neovim |
-| Shortcuts | Raycast Caps Lock Hyper chords, the same keys in Ghostty and under `Ctrl-a` in tmux |
+| Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
 | Packages | Homebrew profiles on macOS; common native apt packages on Ubuntu |
 | SSH | Portable client config; keys stay local to each machine |
 | macOS | Dock, Finder, keyboard, Safari, and general defaults |
@@ -133,6 +133,7 @@ load the key on first use. Shell startup does not call `ssh-add`.
 | Raycast | Configure Caps Lock as Hyper (`Control+Option+Command`, no Shift) |
 | Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
 | Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
+| Ghostty | Launched from the Dock or Raycast it has launchd's PATH, so name tmux's absolute path in `~/.config/ghostty/config.local`: `command = direct:/opt/homebrew/bin/tmux new-session -A -s main` |
 
 Raycast exports are intentionally not managed because they can contain private
 local data and did not reliably restore settings. To add a Ghostty launcher,
@@ -142,43 +143,59 @@ session restoration.
 
 ## Terminal shortcuts
 
-Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty maps the
-chords below to its own tabs and splits; inside a tmux session the same keys
-work after the `Ctrl-a` prefix. Right Option remains available for Danish
-symbols. `Caps+T` is a global binding, so macOS only delivers it once Ghostty
-is ticked under System Settings > Privacy & Security > Accessibility; every
-other chord works without that.
+Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty converts the
+following chords to tmux commands. Right Option remains available for Danish
+symbols.
 
-Closing a split or tab confirms while a process is still running, and a command
-that took more than five seconds and finished while you were in another window
-marks its tab and posts a notification. Both need Ghostty 1.3 or newer.
+| Shortcut | Action |
+| --- | --- |
+| `Command+K` | Clear the active application screen through tmux |
+| `Shift+Enter` | Insert a newline in Claude Code and shell prompts |
+| `Caps+C` | New window |
+| `Caps+I` | Side-by-side pane |
+| `Caps+-` | Stacked pane |
+| `Caps+Arrow` | Move between panes |
+| `Caps+Shift+Arrow` | Resize pane |
+| `Caps+=` | Spread the panes evenly |
+| `Caps+0…9` | Select window |
+| `Caps+Z` | Toggle pane zoom |
+| `Caps+R` | Reload tmux |
+| `Caps+X` / `Caps+W` | Kill pane after confirmation |
+| `Caps+,` | Rename window |
+| `Caps+Shift+,` / `Caps+Shift+.` | Move window left / right |
+| `Caps+N` / `Caps+P` / `Caps+Tab` | Next, previous, last window |
+| `Caps+F` | Pick a window from a list |
+| `Caps+B` | Break the pane out into its own window |
+| `Caps+J` / `Caps+M` | Join a pane from, or move this pane to, another window |
+| `Caps+U` | Pick a URL from the pane history and open it |
+| `Caps+H` | tmux cheat sheet; the bottom status row carries the hint |
+| `Caps+Space` | The local tmux prefix; press the key after it |
 
-| Shortcut | Ghostty | tmux (`Ctrl-a` + key) |
-| --- | --- | --- |
-| `Command+K` | Clear the screen and the scrollback | Clears Ghostty's scrollback, not the pane |
-| `Command+F` | Search the scrollback | Copy mode, then `/` |
-| `Shift+Enter` | Newline in Claude Code and shell prompts | same |
-| `Caps+C` | New tab | New window |
-| `Caps+I` / `Caps+-` | Split right / down | Same |
-| `Caps+Arrow` | Move between splits | Move between panes |
-| `Caps+Shift+Arrow` | Resize split | Resize pane |
-| `Caps+=` | Equalize splits | |
-| `Caps+Z` | Zoom split | Zoom pane |
-| `Caps+X` / `Caps+W` | Close split or tab | Kill pane after confirmation |
-| `Caps+1…9` / `Caps+0` | Go to tab / last tab | Window 0…9 |
-| `Caps+N` / `Caps+P` | Next / previous tab | Same |
-| `Caps+F` | Tab overview (Linux only) | Window picker |
-| `Caps+R` | Reload Ghostty config | Reload tmux config |
-| `Caps+T` | Scratch terminal over any app | `display-popup` |
-| `Caps+,` | Rename the tab | Rename window |
-| `Caps+Shift+,` / `Caps+Shift+.` | Move the tab left / right | Move window left / right |
-| `Caps+H` | Command palette, which lists every binding | Cheat sheet |
-| `Caps+B` `Caps+J` `Caps+M` `Caps+U` | | Break, join, move pane, URL picker |
+Every chord is the tmux prefix `Ctrl-a` plus the same key, so it also works
+from a plain keyboard. Windows are named after their directory or ssh host;
+rename one and the name sticks. Mouse drag, double-click, and triple-click copy
+to the clipboard without leaving copy mode; `Cmd+V` pastes; `Cmd+click` opens
+a link; hold Shift to let Ghostty select text itself. `tm` attaches the same
+session from any other terminal.
 
-`tm` attaches to (or creates) the persistent local tmux session `main`;
-`ssht <host> [session]` does the same on a remote machine over ssh, tinting
-Ghostty's background in the host's colour and titling the tab after it until
-the connection ends. The hooks also record each session's state under
+`ssht <host> [session]` attaches a persistent tmux session on a remote machine
+inside the current pane. While it runs there, the Caps chords drive the remote
+tmux; `Caps+Space` or `Ctrl-a` and then the key still reach the local one, as
+does a click on the local status bar. Run outside tmux, `ssht` instead tints
+Ghostty's background in the host's colour and titles the tab after it until
+the connection ends.
+
+`ssht` also forwards the Mac's clipboard socket, which the
+`com.froppa.clip-serve` LaunchAgent serves. The `wl-paste` shim on the remote
+host reads it, so a screenshot copied on the Mac (`Cmd+Ctrl+Shift+4`) pastes
+into a remote Claude Code with `Ctrl+V`. Only images cross; text still pastes
+with `Cmd+V`. Plain `ssh` does not carry it.
+
+When a program exits without restoring the terminal (a remote tmux whose
+connection dropped, a crashed TUI), the next prompt switches mouse, focus, and
+extended-key reporting off again, so clicks stop typing escape sequences.
+
+The hooks also record each session's state under
 `~/.cache/agents/claude-<session id>`, which Verk reads to list a waiting
 terminal session in Today and in its menu bar. Outside tmux, the same hooks
 retitle the Ghostty tab with the session's state and directory (`⟳ repo` working, `? repo` waiting for you,
@@ -190,7 +207,7 @@ the background; it is cleared once a command runs so history stays clean.
 
 ### tmux status bar
 
-Inside a tmux session, row one is the context badge and the window tabs: `⌂ local`, or `⇅ host` in a
+Row one is the context badge and the window tabs: `⌂ local`, or `⇅ host` in a
 colour derived from the host name when the active pane runs `ssh` (or when tmux
 itself runs on a machine reached over ssh). The bar tint and the active pane
 border follow the same colour. A tab whose pane runs `claude` or `codex`
@@ -240,6 +257,7 @@ completion initialization; no generated completion file needs updating.
 | --- | --- |
 | `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
 | `home/dot_config/tmux/` | tmux, status scripts, and plugins |
+| `home/dot_local/bin/` | `clip-serve` (Mac) and the `wl-paste` shim (Linux) behind the ssht clipboard bridge |
 | `home/dot_config/raycast/` | Raycast Script Commands |
 | `home/dot_config/zed/` | Zed settings and keybindings |
 | `home/dot_config/Code/User/` | VS Code XDG settings |

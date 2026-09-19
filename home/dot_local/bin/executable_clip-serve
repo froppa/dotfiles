@@ -1,0 +1,12 @@
+#!/bin/sh
+# launchd starts one copy per connection to ~/.cache/clip.sock (see
+# com.froppa.clip-serve.plist) with the socket as stdin, stdout and stderr.
+# It writes the clipboard image as PNG, or nothing when there is none; text
+# never leaves this way. ssht forwards the socket, and the wl-paste shim on
+# the far side reads it for Claude Code's Ctrl-V image paste.
+exec 2>/dev/null
+f=$(mktemp -t clip-serve) || exit 1
+trap 'rm -f "$f"' EXIT
+osascript -e "set fp to open for access POSIX file \"$f\" with write permission" \
+  -e 'write (the clipboard as «class PNGf») to fp' -e 'close access fp' >/dev/null &&
+  cat "$f"

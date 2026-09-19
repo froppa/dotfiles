@@ -18,7 +18,14 @@
 .hammerspoon
 .config/raycast
 .config/iterm2
+Library/LaunchAgents/com.froppa.clip-serve.plist
+.local/bin/clip-serve
 # evo-dev runs the real Linux Depot binary the evo development role installs
 # at ~/.local/bin/depot; the Cargo-install symlink must not replace it.
 .local/bin/depot
+{{ end -}}
+
+{{ if eq .chezmoi.os "darwin" -}}
+# The Mac serves the clipboard to remote hosts; only they need the shim.
+.local/bin/wl-paste
 {{ end -}}

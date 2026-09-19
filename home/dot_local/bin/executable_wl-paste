@@ -1,0 +1,29 @@
+#!/bin/bash
+# wl-paste for a headless host reached with ssht: it answers the two calls
+# Claude Code's Ctrl-V image paste makes, `wl-paste -l` and
+# `wl-paste --type image/png`, from the Mac clipboard socket ssht forwards
+# (clip-serve writes the image as PNG, or nothing). Anything else fails, as
+# it does with no wl-paste at all.
+# ponytail: images only, and it shadows a real wl-paste; gate it on
+# WAYLAND_DISPLAY if a Linux desktop ever applies these dotfiles.
+command -v nc >/dev/null || exit 1
+t=$(mktemp) || exit 1
+trap 'rm -f "$t"' EXIT
+
+# Any forward that accepts a connection belongs to a live ssht, and all reach
+# the same Mac; one that refuses is left behind by a session that ended.
+fetch() {
+  for s in /tmp/ssht-clip-*.sock; do
+    [[ -S $s && -O $s ]] || continue
+    nc -dU -w 5 "$s" >"$t" 2>/dev/null || continue
+    [[ $(head -c 4 "$t" | tail -c 3) == PNG ]]
+    return
+  done
+  return 1
+}
+
+case "$*" in
+  -l | --list-types) fetch && echo image/png ;;
+  "--type image/png" | "-t image/png") fetch && cat "$t" ;;
+  *) exit 1 ;;
+esac

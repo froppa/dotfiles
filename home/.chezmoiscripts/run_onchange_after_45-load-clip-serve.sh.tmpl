@@ -1,0 +1,14 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Reload the clipboard bridge whenever its LaunchAgent changes.
+# plist-sha256: {{ include "private_Library/private_LaunchAgents/com.froppa.clip-serve.plist.tmpl" | sha256sum }}
+
+label=com.froppa.clip-serve
+mkdir -p "$HOME/.cache"
+launchctl bootout "gui/$(id -u)/$label" 2>/dev/null || true
+# bootout returns before teardown finishes; a lost race must not abort apply.
+launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/$label.plist" 2>/dev/null ||
+  launchctl kickstart -k "gui/$(id -u)/$label"
+{{ end -}}
