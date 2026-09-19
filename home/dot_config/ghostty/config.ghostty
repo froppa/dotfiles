@@ -62,7 +62,8 @@ keybind = super+k=text:\x0c
 keybind = shift+enter=unbind
 
 # Shell
-shell-integration = detect
+# detect sees tmux, not a shell, once command is overridden below.
+shell-integration = zsh
 shell-integration-features = cursor,title,ssh-env,path
 command = direct:tmux new-session -A -s main
 

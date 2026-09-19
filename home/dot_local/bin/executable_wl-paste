@@ -6,6 +6,7 @@
 # it does with no wl-paste at all.
 # ponytail: images only, and it shadows a real wl-paste; gate it on
 # WAYLAND_DISPLAY if a Linux desktop ever applies these dotfiles.
+command -v nc >/dev/null || exit 1
 t=$(mktemp) || exit 1
 trap 'rm -f "$t"' EXIT
 
