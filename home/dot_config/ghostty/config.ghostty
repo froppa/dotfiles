@@ -1,5 +1,3 @@
-command = direct:herdr
-
 # Appearance
 theme = iTerm2 Tango Dark
 

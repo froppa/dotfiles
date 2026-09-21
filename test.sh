@@ -104,6 +104,8 @@ grep -Fq "alias conftmux='chezmoi edit --apply ~/.config/tmux/tmux.conf'" home/d
 grep -Fq 'command = direct:tmux new-session -A -s main' home/dot_config/ghostty/config.ghostty || fail "Ghostty must open the persistent tmux session through PATH"
 grep -Fq 'keybind = ctrl+alt+super+c=text:\x1b\x01c' home/dot_config/ghostty/config.ghostty || fail "Hyper chords must reach tmux as Meta-C-a plus the key"
 grep -Fq 'keybind = ctrl+alt+super+space=text:\x01' home/dot_config/ghostty/config.ghostty || fail "Hyper-Space must send the plain prefix that always stays local"
+[[ "$(grep -oE '^keybind = ctrl\+alt\+super\+[^=]+' home/dot_config/ghostty/config.ghostty | sed 's/$/=unbind/')" == "$(grep -E '^keybind = ' home/dot_config/ghostty/herdr.ghostty)" ]] || fail "herdr mode must unbind exactly the Hyper chords config.ghostty sends to tmux"
+! grep -q '^command' home/dot_config/ghostty/herdr.ghostty || fail "herdr mode loads after config.local, so it must leave the command to config.local"
 grep -Fq "bind -n M-C-a if -F '#{@ssht}' 'send-keys M-C-a' 'switch-client -T prefix'" home/dot_config/tmux/tmux.conf || fail "Hyper chords must drive the remote tmux in an ssht pane"
 grep -Fq 'tmux*:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "a remote tmux nested by ssht must get extended keys for Claude Code's Shift-Enter"
 grep -Fq 'ssht() {' home/dot_functions || fail "ssht must open a persistent remote tmux"

@@ -1,0 +1,49 @@
+# herdr mode. Included from config.local on a machine trialling herdr as
+# Ghostty's command, which config.local also sets:
+#
+#   config-file = herdr.ghostty
+#
+# config.ghostty turns every Raycast Hyper chord into tmux prefix bytes, so
+# herdr never saw them. Unbound, Ghostty sends each chord through with Command
+# intact over the kitty keyboard protocol herdr enables, and herdr's [keys]
+# match it directly. test.sh keeps this list in step with config.ghostty.
+
+keybind = ctrl+alt+super+space=unbind
+keybind = ctrl+alt+super+c=unbind
+keybind = ctrl+alt+super+i=unbind
+keybind = ctrl+alt+super+Slash=unbind
+keybind = ctrl+alt+super+z=unbind
+keybind = ctrl+alt+super+equal=unbind
+keybind = ctrl+alt+super+r=unbind
+keybind = ctrl+alt+super+x=unbind
+keybind = ctrl+alt+super+w=unbind
+keybind = ctrl+alt+super+arrow_left=unbind
+keybind = ctrl+alt+super+arrow_down=unbind
+keybind = ctrl+alt+super+arrow_up=unbind
+keybind = ctrl+alt+super+arrow_right=unbind
+keybind = ctrl+alt+super+shift+arrow_left=unbind
+keybind = ctrl+alt+super+shift+arrow_down=unbind
+keybind = ctrl+alt+super+shift+arrow_up=unbind
+keybind = ctrl+alt+super+shift+arrow_right=unbind
+keybind = ctrl+alt+super+Digit0=unbind
+keybind = ctrl+alt+super+Digit1=unbind
+keybind = ctrl+alt+super+Digit2=unbind
+keybind = ctrl+alt+super+Digit3=unbind
+keybind = ctrl+alt+super+Digit4=unbind
+keybind = ctrl+alt+super+Digit5=unbind
+keybind = ctrl+alt+super+Digit6=unbind
+keybind = ctrl+alt+super+Digit7=unbind
+keybind = ctrl+alt+super+Digit8=unbind
+keybind = ctrl+alt+super+Digit9=unbind
+keybind = ctrl+alt+super+comma=unbind
+keybind = ctrl+alt+super+shift+comma=unbind
+keybind = ctrl+alt+super+shift+period=unbind
+keybind = ctrl+alt+super+n=unbind
+keybind = ctrl+alt+super+p=unbind
+keybind = ctrl+alt+super+tab=unbind
+keybind = ctrl+alt+super+f=unbind
+keybind = ctrl+alt+super+b=unbind
+keybind = ctrl+alt+super+j=unbind
+keybind = ctrl+alt+super+m=unbind
+keybind = ctrl+alt+super+u=unbind
+keybind = ctrl+alt+super+h=unbind
