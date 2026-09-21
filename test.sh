@@ -121,6 +121,8 @@ grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tm
 grep -Fq '.local/bin/depot' home/.chezmoiignore || fail "the Depot symlink must not replace evo-dev's real binary on Linux"
 sed -n '/ne .chezmoi.os "darwin"/,/end/p' home/.chezmoiignore | grep -Fq 'Library/LaunchAgents/com.froppa.clip-serve.plist' || fail "the clipboard LaunchAgent is macOS-only"
 sed -n '/eq .chezmoi.os "darwin"/,/end/p' home/.chezmoiignore | grep -Fq '.local/bin/wl-paste' || fail "the wl-paste shim must not land on the Mac"
+[[ -x home/dot_local/bin/executable_follow-main.sh && -f home/dot_config/systemd/user/follow-main.timer ]] || fail "follow-main must ship its script and timer for evo-dev"
+sed -n '/eq .chezmoi.os "darwin"/,/end/p' home/.chezmoiignore | grep -Fq '.config/systemd' || fail "systemd user units must not be applied on macOS"
 grep -Fq 'MouseDragEnd1Pane send -X copy-selection' home/dot_config/tmux/tmux.conf || fail "mouse selection must not snap the view back to the bottom"
 grep -Fq 'xterm-ghostty:RGB:extkeys:hyperlinks' home/dot_config/tmux/tmux.conf || fail "tmux must pass OSC 8 hyperlinks through to Ghostty"
 ! grep -rqE '(^|[^a-z])evo(-|[^a-z]|$)|192\.168|100\.[0-9]+\.' home/dot_config/tmux || fail "host names and addresses belong in the unmanaged tmux *.local files"

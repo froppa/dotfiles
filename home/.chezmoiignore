@@ -14,6 +14,13 @@
 **/.DS_Store
 .oh-my-zsh/cache/**
 
+{{ if eq .chezmoi.os "darwin" -}}
+# The follow-main timer keeps a Linux workstation on main; the Mac has no
+# systemd and is where the changes are made.
+.config/systemd
+.local/bin/follow-main.sh
+{{ end -}}
+
 {{ if ne .chezmoi.os "darwin" -}}
 .hammerspoon
 .config/raycast
