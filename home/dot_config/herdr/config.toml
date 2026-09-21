@@ -2,13 +2,17 @@ onboarding = false
 # ~/.config/herdr/config.toml
 
 [keys]
+# Hyper-Space, as in tmux. Not Ctrl-a: Ghostty sends Command-Left as Ctrl-a.
+prefix = "ctrl+alt+cmd+space"
+help   = "ctrl+alt+cmd+h"
+
 new_tab = "ctrl+alt+cmd+c"
 
 split_vertical   = "ctrl+alt+cmd+i"
 split_horizontal = "ctrl+alt+cmd+slash"
 zoom             = "ctrl+alt+cmd+z"
 resize_mode      = "ctrl+alt+cmd+r"
-close_pane       = ["ctrl+alt+cmd+x", "ctrl+alt+cmd+w"]
+close_pane       = "ctrl+alt+cmd+x"
 
 focus_pane_left  = "ctrl+alt+cmd+left"
 focus_pane_down  = "ctrl+alt+cmd+down"
