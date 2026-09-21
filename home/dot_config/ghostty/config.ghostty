@@ -1,3 +1,5 @@
+command = direct:herdr
+
 # Appearance
 theme = iTerm2 Tango Dark
 
@@ -57,6 +59,12 @@ bell-features = no-system,no-audio,attention,border
 
 # Send the standard clear-screen key through tmux to the active application.
 keybind = super+k=text:\x0c
+
+# tmux watched windows for activity. Ghostty watches the command: one that ran
+# longer than five seconds and finishes while you are looking elsewhere marks
+# the tab through bell-features and posts a notification.
+# notify-on-command-finish = unfocused
+# notify-on-command-finish-action = bell,notify
 
 # Remove the legacy Ctrl-V mapping so Claude Code receives native Shift-Enter.
 keybind = shift+enter=unbind
