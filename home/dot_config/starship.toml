@@ -5,7 +5,7 @@
 # running agents, and remaining limits (caches refreshed by a background hook
 # in ~/.zshrc). Colours match ~/.config/tmux/tmux.conf.
 add_newline = false
-format = "$directory$git_branch$git_status$git_state$direnv$jobs$rust$golang$nodejs$bun$python $character "
+format = "$directory$git_branch$git_status$git_state$direnv$jobs $character "
 right_format = "$status$cmd_duration$username$hostname${custom.agents}${custom.limits}"
 palette = "froppa"
 
