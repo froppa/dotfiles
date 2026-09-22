@@ -1,126 +1,109 @@
-# One-line prompt: directory, git, then a few things that only appear when
-# they matter (rebase in progress, direnv, jobs, tool versions inside a
-# project). The right side carries exit status, slow-command duration, and,
-# outside tmux, what the tmux status bar shows inside it: ssh user@host,
-# running agents, and remaining limits (caches refreshed by a background hook
-# in ~/.zshrc). Colours match ~/.config/tmux/tmux.conf.
+# Preserve the compact left prompt; show contextual details on the right.
+# Reference: https://starship.rs/config/
 add_newline = false
-format = "$directory$git_branch$git_status$git_state$direnv$jobs $character "
-right_format = "$status$cmd_duration$username$hostname${custom.agents}${custom.limits}"
-palette = "froppa"
+format = '$directory$git_branch$git_status$git_state$direnv$jobs$character '
+right_format = '($username$hostname )${custom.agents}${custom.limits}$cmd_duration$status'
+palette = 'froppa'
 
 [palettes.froppa]
-blue = "#5f87d7"
-light = "#87afff"
-purple = "#d75fd7"
-yellow = "#d7af5f"
-green = "#5faf5f"
-red = "#d75f5f"
-grey = "#767676"
+blue = '#5f87d7'
+light = '#87afff'
+purple = '#d75fd7'
+yellow = '#d7af5f'
+green = '#5faf5f'
+red = '#d75f5f'
+grey = '#767676'
 
 [character]
-success_symbol = "[>](bold green)"
-error_symbol = "[>](bold red)"
-format = "$symbol"
+success_symbol = '[\$](bold green)'
+error_symbol = '[\$](bold red)'
+format = ' $symbol'
 
 [directory]
-style = "bold blue"
+style = 'bold blue'
 truncate_to_repo = false
-format = "[$path]($style)[$read_only]($read_only_style)"
-read_only = " ro"
-read_only_style = "red"
+format = '[$path]($style)[$read_only]($read_only_style)'
+read_only = ' ro'
+read_only_style = 'red'
 
 [git_branch]
-style = "bold purple"
-format = ' ([$branch]($style))'
+style = 'bold purple'
+format = '[\($branch\)]($style)'
 
 [git_status]
-style = "bold yellow"
-format = "([ $all_status$ahead_behind]($style))"
-conflicted = "⚔"
-ahead = "⇡${count}"
-behind = "⇣${count}"
-diverged = "⇡${ahead_count}⇣${behind_count}"
-untracked = "?"
-stashed = "s"
-modified = "*"
-staged = "+"
-renamed = "»"
-deleted = "✘"
+style = 'bold yellow'
+format = '([$all_status$ahead_behind]($style))'
+conflicted = '⚔'
+ahead = '⇡${count}'
+behind = '⇣${count}'
+diverged = '⇡${ahead_count}⇣${behind_count}'
+untracked = '?'
+stashed = 's'
+modified = '*'
+staged = '+'
+renamed = 'M'
+deleted = 'X'
 
 [git_state]
-style = "yellow"
+style = 'yellow'
 format = ' [$state( $progress_current/$progress_total)]($style)'
 
 [direnv]
 disabled = false
-style = "grey"
-format = " [$allowed]($style)"
-allowed_msg = "env"
-not_allowed_msg = "env!"
-denied_msg = "env✗"
+style = 'grey'
+format = ' [$allowed]($style)'
+allowed_msg = 'env'
+not_allowed_msg = 'env!'
+denied_msg = 'env✗'
 
 [jobs]
-style = "yellow"
-symbol = "⚙"
+style = 'yellow'
+symbol = '⚙'
 number_threshold = 1
-format = " [$symbol$number]($style)"
+format = ' [$symbol$number]($style)'
 
-[rust]
-style = "grey"
-symbol = "rs "
-format = " [$symbol$version]($style)"
-
-[golang]
-style = "grey"
-symbol = "go "
-format = " [$symbol$version]($style)"
-
-[nodejs]
-style = "grey"
-symbol = "node "
-format = " [$symbol$version]($style)"
-
-[bun]
-style = "grey"
-symbol = "bun "
-format = " [$symbol$version]($style)"
-
+# Available when explicitly added to format or right_format; hidden otherwise.
 [python]
-style = "grey"
-symbol = "py "
+style = 'grey'
+symbol = 'py '
 format = ' [$symbol$version( $virtualenv)]($style)'
 
 [status]
 disabled = false
-style = "red"
-format = "[$status]($style) "
+style = 'red'
+format = '[$status]($style) '
 
 [cmd_duration]
 min_time = 2000
-style = "grey"
-format = "[$duration]($style) "
+style = 'grey'
+format = '[$duration]($style) '
 
+# The top-level conditional group supplies spacing for both modules together.
+# This avoids a dangling @ when username is displayed locally without hostname.
 [username]
-style_user = "green"
-style_root = "red"
-format = "[$user]($style)@"
+style_user = 'green'
+style_root = 'red'
+show_always = false
+format = '[$user]($style)'
 
 [hostname]
 ssh_only = true
-style = "bold green"
-format = "[⇅ $hostname]($style) "
+style = 'bold green'
+format = '[@$hostname]($style)'
 
+# Retain existing cache paths. Their producer must run independently of tmux.
+# No TMUX guard: these modules display whenever their cache files are nonempty.
+# These commands only read the caches; they do not update them.
 [custom.agents]
-command = "cat ~/.cache/tmux/agents.txt"
-when = "test -z \"$TMUX\" && test -s ~/.cache/tmux/agents.txt"
-shell = ["sh"]
-style = "grey"
-format = "[$output]($style) "
+command = 'cat "$HOME/.cache/tmux/agents.txt"'
+when = 'test -s "$HOME/.cache/tmux/agents.txt"'
+shell = ['sh']
+style = 'grey'
+format = '[$output]($style) '
 
 [custom.limits]
-command = "cat ~/.cache/tmux/limits.txt"
-when = "test -z \"$TMUX\" && test -s ~/.cache/tmux/limits.txt"
-shell = ["sh"]
-style = "grey"
-format = "[$output]($style)"
+command = 'cat "$HOME/.cache/tmux/limits.txt"'
+when = 'test -s "$HOME/.cache/tmux/limits.txt"'
+shell = ['sh']
+style = 'grey'
+format = '[$output]($style) '
