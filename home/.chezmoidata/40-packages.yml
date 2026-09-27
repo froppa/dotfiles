@@ -6,7 +6,6 @@ packages:
     - gnu-sed
     - grep
     - moreutils
-    - tree
     - gcc
     - make
     - ripgrep
@@ -22,12 +21,15 @@ packages:
     - zoxide
     - direnv
     - ncdu
+    - screen
+    - pure
 
     # Networking & security
     - gnupg
     - openssh
-    - openssl
     - nmap
+    - sops
+    - keychain
 
     # CLI tools
     - age
@@ -43,19 +45,30 @@ packages:
     - pipx
     - eza
     - httpie
+    - cloc
+    - humanlog
+    - rtk
+    - worktrunk
+    - uv
 
     # Programming (language runtimes live in ~/.config/mise/config.toml)
     - mise
     - vim
+    - neovim
+    - gopls
+    - goimports
+    - lua-language-server
+    - eslint
+    - yamllint
+    - bazel
+    # keg-only, but linked so psql is on PATH; brew bundle would unlink it otherwise
+    - name: libpq
+      link: true
 
     # Build tools
     - cmake
-    - m4
-    - autoconf
     - automake
     - libtool
-    - boost
-    - pkgconf
     # rustc wrapper; see ~/.cargo/config.toml
     - sccache
 
@@ -63,8 +76,21 @@ packages:
     # terraform was removed from homebrew-core (BSL license); use opentofu,
     # or add `tap "hashicorp/tap"` + hashicorp/tap/terraform if genuinely needed
     - docker
+    - docker-buildx
+    - colima
+    - kubernetes-cli
+    - k9s
+    - ansible
+    - ansible-lint
+    - cloudflare-wrangler
+    - openclaw/tap/gogcli
     - chezmoi
     - shellcheck
+
+    # Documents & fonts
+    - ghostscript
+    - mupdf-tools
+    - woff2
 
   # Ubuntu package names are explicit: Brew formula names are not portable.
   # Vendor tools and language runtimes are documented separately in README.md.
@@ -128,20 +154,33 @@ packages:
     - raycast
     - font-hack-nerd-font
     - font-meslo-lg-nerd-font
+    - font-powerline-symbols
     - hammerspoon
     - scroll-reverser
+    - karabiner-elements
+    - dockdoor
+    - 1password-cli
+    - db-browser-for-sqlite
 
   darwin:
     brews:
       - pinentry-mac
       - dockutil
+      - duti
       - xcode-build-server
+      - xcodegen
+      - cocoapods
+      - age-plugin-se
+      - libimobiledevice
+      # Serial and embedded hardware
+      - minicom
+      - libftdi
+      - e2fsprogs
 
   personal:
     brews:
       - opentofu
-    casks:
-      - discord
+    casks: []
 
   work:
     brews:
