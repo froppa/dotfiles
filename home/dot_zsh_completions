@@ -21,7 +21,8 @@ if [[ -n "${LS_COLORS:-}" ]]; then
 fi
 
 # fzf completion/key-bindings come from `fzf --zsh` in .zshrc; fzf-tab is
-# loaded as an oh-my-zsh plugin. Only plugin options live here.
+# is sourced by .zshrc from Homebrew or ~/.local/share/zsh/plugins. Only
+# plugin options live here.
 
 # fzf-tab options
 zstyle ':fzf-tab:*' switch-group '<' '>'

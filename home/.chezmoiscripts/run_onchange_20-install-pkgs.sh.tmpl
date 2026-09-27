@@ -11,7 +11,11 @@ echo "=> Installing packages..."
 
 brew bundle --file=/dev/stdin <<'BREWFILE'
 {{ range .packages.brews -}}
+{{ if kindIs "map" . -}}
+brew "{{ .name }}"{{ if .link }}, link: true{{ end }}
+{{ else -}}
 brew "{{ . }}"
+{{ end -}}
 {{ end -}}
 {{ if eq .chezmoi.os "darwin" -}}
 {{ range .packages.darwin.brews -}}
