@@ -1,9 +1,16 @@
-# Preserve the compact left prompt; show contextual details on the right.
-# Reference: https://starship.rs/config/
+# ~/.config/starship.toml
+# Managed by chezmoi
+#
+# Compact left prompt with contextual details on the right.
+
 add_newline = false
+
 format = '$directory$git_branch$git_status$git_state$direnv$jobs$character '
-right_format = '($username$hostname )${custom.agents}${custom.limits}$cmd_duration$status'
+right_format = '($username$hostname )$cmd_duration$status'
+
 palette = 'froppa'
+
+# ── Palette ───────────────────────────────────────────────────
 
 [palettes.froppa]
 blue = '#5f87d7'
@@ -14,10 +21,14 @@ green = '#5faf5f'
 red = '#d75f5f'
 grey = '#767676'
 
+# ── Prompt ────────────────────────────────────────────────────
+
 [character]
 success_symbol = '[\$](bold green)'
 error_symbol = '[\$](bold red)'
 format = ' $symbol'
+
+# ── Directory ─────────────────────────────────────────────────
 
 [directory]
 style = 'bold blue'
@@ -26,13 +37,16 @@ format = '[$path]($style)[$read_only]($read_only_style)'
 read_only = ' ro'
 read_only_style = 'red'
 
+# ── Git ───────────────────────────────────────────────────────
+
 [git_branch]
 style = 'bold purple'
-format = '[\($branch\)]($style)'
+format = '[($branch)]($style)'
 
 [git_status]
 style = 'bold yellow'
 format = '([$all_status$ahead_behind]($style))'
+
 conflicted = '⚔'
 ahead = '⇡${count}'
 behind = '⇣${count}'
@@ -48,13 +62,18 @@ deleted = 'X'
 style = 'yellow'
 format = ' [$state( $progress_current/$progress_total)]($style)'
 
+# ── Environment ───────────────────────────────────────────────
+
 [direnv]
 disabled = false
 style = 'grey'
 format = ' [$allowed]($style)'
+
 allowed_msg = 'env'
 not_allowed_msg = 'env!'
 denied_msg = 'env✗'
+
+# ── Jobs ──────────────────────────────────────────────────────
 
 [jobs]
 style = 'yellow'
@@ -62,24 +81,33 @@ symbol = '⚙'
 number_threshold = 1
 format = ' [$symbol$number]($style)'
 
-# Available when explicitly added to format or right_format; hidden otherwise.
+# ── Runtime modules ───────────────────────────────────────────
+#
+# Available if later added to `format`.
+# Intentionally hidden from the default prompt.
+
 [python]
 style = 'grey'
 symbol = 'py '
 format = ' [$symbol$version( $virtualenv)]($style)'
 
-[status]
-disabled = false
-style = 'red'
-format = '[$status]($style) '
+# ── Command result ────────────────────────────────────────────
 
 [cmd_duration]
 min_time = 2000
 style = 'grey'
 format = '[$duration]($style) '
 
-# The top-level conditional group supplies spacing for both modules together.
-# This avoids a dangling @ when username is displayed locally without hostname.
+[status]
+disabled = false
+style = 'red'
+format = '[$status]($style) '
+
+# ── Remote identity ───────────────────────────────────────────
+#
+# The conditional group in `right_format` means spacing appears only when
+# username/hostname actually render.
+
 [username]
 style_user = 'green'
 style_root = 'red'
@@ -90,20 +118,3 @@ format = '[$user]($style)'
 ssh_only = true
 style = 'bold green'
 format = '[@$hostname]($style)'
-
-# Retain existing cache paths. Their producer must run independently of tmux.
-# No TMUX guard: these modules display whenever their cache files are nonempty.
-# These commands only read the caches; they do not update them.
-[custom.agents]
-command = 'cat "$HOME/.cache/tmux/agents.txt"'
-when = 'test -s "$HOME/.cache/tmux/agents.txt"'
-shell = ['sh']
-style = 'grey'
-format = '[$output]($style) '
-
-[custom.limits]
-command = 'cat "$HOME/.cache/tmux/limits.txt"'
-when = 'test -s "$HOME/.cache/tmux/limits.txt"'
-shell = ['sh']
-style = 'grey'
-format = '[$output]($style) '

@@ -1,27 +1,28 @@
 # ~/.aliases
 # Managed by chezmoi
-export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
 
-# =======================================
-# Base aliases
-# =======================================
-if command -v grep >/dev/null 2>&1; then
-  alias grep='grep --color=auto'
-  alias egrep='egrep --color=auto'
-fi
+# ── Base ─────────────────────────────────────────────────────
 
 alias cls='clear'
 alias d='dirs -v'
 alias g='git'
 alias dc='docker compose'
 alias py='python3'
+
 alias gitalias='git config --global --get-regexp "^alias\."'
 
-if command -v highlight >/dev/null 2>&1; then
+if (( $+commands[grep] )); then
+  alias grep='grep --color=auto'
+  alias egrep='grep -E --color=auto'
+fi
+
+if (( $+commands[highlight] )); then
   alias ccat='highlight -O ansi'
 fi
 
-if command -v nvim >/dev/null 2>&1; then
+# ── Editor ───────────────────────────────────────────────────
+
+if (( $+commands[nvim] )); then
   alias vi='nvim'
   alias vim='nvim'
   alias nano='nvim'
@@ -30,119 +31,84 @@ else
   alias nano='vim'
 fi
 
-if command -v eza >/dev/null 2>&1; then
+# ── ls ───────────────────────────────────────────────────────
+
+if (( $+commands[eza] )); then
   alias ls='eza'
   alias la='eza -a'
   alias ll='eza -lahH'
-elif ls --color=auto -d . >/dev/null 2>&1; then
-  # GNU ls: -G means --no-group, colors come from --color
-  alias la='ls -a --color=auto'
-  alias ll='ls -lah --color=auto'
-else
-  # BSD ls: -G enables colors
+elif [[ "$OSTYPE" == darwin* ]]; then
+  export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
+
+  alias ls='ls -G'
   alias la='ls -aG'
   alias ll='ls -lahG'
+else
+  alias ls='ls --color=auto'
+  alias la='ls -a --color=auto'
+  alias ll='ls -lah --color=auto'
 fi
 
-# Safer rm default is subjective. Verbose only.
+# Verbose, but don't change rm semantics.
 alias rm='rm -v'
 
-# =======================================
-# Chezmoi / dotfiles helpers
-# =======================================
-alias reloadzsh='source ~/.zshrc'
+# ── Cross-platform open ──────────────────────────────────────
+
+if [[ "$OSTYPE" != darwin* ]]; then
+  if [[ -r /proc/version ]] &&
+     grep -qi microsoft /proc/version 2>/dev/null; then
+    alias open='explorer.exe'
+  elif (( $+commands[xdg-open] )); then
+    alias open='xdg-open'
+  fi
+fi
+
+# ── Dotfiles / chezmoi ───────────────────────────────────────
+
+alias reloadzsh='exec zsh'
+
 alias dotapply='chezmoi apply -v'
 alias dotdiff='chezmoi diff'
 alias dotstatus='chezmoi status'
 
+alias confzshenv='chezmoi edit --apply ~/.zshenv'
+alias confzprofile='chezmoi edit --apply ~/.zprofile'
 alias confzsh='chezmoi edit --apply ~/.zshrc'
-alias confzshl='${EDITOR:-nvim} ~/.zshrc.local'
+
 alias confalias='chezmoi edit --apply ~/.aliases'
-alias confaliasl='${EDITOR:-nvim} ~/.aliases.local'
 alias confexports='chezmoi edit --apply ~/.exports'
-alias confexportsl='${EDITOR:-nvim} ~/.exports.local'
-alias conffunctionsl='${EDITOR:-nvim} ~/.functions.local'
-alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'
-alias confgitl='${EDITOR:-nvim} ~/.gitconfig.local'
+alias conffunctions='chezmoi edit --apply ~/.functions'
 alias confzcompl='chezmoi edit --apply ~/.zsh_completions'
-alias confzcompll='${EDITOR:-nvim} ~/.zsh_completions.local'
-alias conftmux='chezmoi edit --apply ~/.config/tmux/tmux.conf'
-# Persistent local session for work that must outlive the Ghostty window.
-alias tm='tmux new-session -A -s main'
 
-# =======================================
-# Navigation
-# =======================================
+alias confstarship='chezmoi edit --apply ~/.config/starship.toml'
+alias confterminal='chezmoi edit --apply ~/.config/zsh/terminal.zsh'
+
+alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'
+
+# ── Navigation ────────────────────────────────────────────────
+
 alias gocode='cd ~/code'
-
-pu() {
-  pushd "$1" >/dev/null || return 1
-  dirs -v
-}
-
-po() {
-  popd >/dev/null || return 1
-  dirs -v
-}
 
 for i in {1..9}; do
   alias "$i"="pushd -$i >/dev/null && dirs -v"
 done
 
-# =======================================
-# IP / network helpers
-# =======================================
-# Named publicip (not ip) so it never shadows the real ip(8) binary.
-publicip() {
-  if command -v dig >/dev/null 2>&1; then
-    dig +short myip.opendns.com @resolver1.opendns.com
-  elif command -v curl >/dev/null 2>&1; then
-    curl -fsSL https://api.ipify.org
-  else
-    echo "No dig or curl available" >&2
-    return 1
-  fi
-}
+unset i
 
-ips() {
-  if command -v ip >/dev/null 2>&1; then
-    ip -o addr show | awk '{print $4}'
-  else
-    ifconfig -a | awk '/inet /{print $2} /inet6 /{print $2}'
-  fi
-}
+# ── Updates ──────────────────────────────────────────────────
 
 if [[ "$OSTYPE" == darwin* ]]; then
-  localip() {
-    ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null
-  }
-
-  ifactive() {
-    ifconfig | awk '
-      /^[a-z0-9]/ { iface=$1; sub(":","",iface) }
-      /status: active/ { print iface }
-    '
-  }
-  flush() {
-    dscacheutil -flushcache
-    killall -HUP mDNSResponder
-  }
-
-  lscleanup() {
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
-      -r -domain local -domain system -domain user && killall Finder
-  }
+  if (( $+commands[brew] )); then
+    alias brewup='brew update && brew upgrade && brew cleanup'
+  fi
 
   alias update='sudo softwareupdate -i -a && brew update && brew upgrade && brew cleanup && npm install -g npm && npm update -g'
-  alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
-fi
 
-if [[ "$OSTYPE" == linux* ]] && command -v apt-get >/dev/null 2>&1; then
+  alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
+elif [[ "$OSTYPE" == linux* ]] && (( $+commands[apt-get] )); then
   alias update='sudo apt-get update && sudo apt-get upgrade'
 fi
-if [[ "$OSTYPE" == darwin* ]]; then
-  alias brewup='brew update && brew upgrade && brew cleanup'
-fi
-alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 
-[[ -f "$HOME/.aliases.local" ]] && source "$HOME/.aliases.local"
+# ── Cleanup ──────────────────────────────────────────────────
+
+alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"

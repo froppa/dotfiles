@@ -1,22 +1,16 @@
 # ~/.zprofile
 # Managed by chezmoi
-# Login shell initialization only
 
-# Homebrew is the macOS package manager; Ubuntu uses apt.
-if [[ "$OSTYPE" == darwin* ]]; then
-  if [[ -x /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  elif [[ -x /usr/local/bin/brew ]]; then
-    eval "$(/usr/local/bin/brew shellenv)"
+# Homebrew: Apple Silicon, Intel macOS, Linuxbrew.
+for brew in \
+  /opt/homebrew/bin/brew \
+  /usr/local/bin/brew \
+  /home/linuxbrew/.linuxbrew/bin/brew
+do
+  if [[ -x "$brew" ]]; then
+    eval "$("$brew" shellenv)"
+    break
   fi
+done
 
-  # Homebrew zsh completions
-  if (( $+commands[brew] )); then
-    brew_prefix="$(brew --prefix 2>/dev/null)"
-    if [[ -n "$brew_prefix" && -d "$brew_prefix/share/zsh/site-functions" ]]; then
-      fpath=("$brew_prefix/share/zsh/site-functions" $fpath)
-    fi
-  fi
-fi
-
-[[ -f "$HOME/.zprofile.local" ]] && source "$HOME/.zprofile.local"
+unset brew
