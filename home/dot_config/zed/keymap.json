@@ -14,7 +14,7 @@
     "bindings": {
       "cmd-d": "editor::SelectNext",
       "cmd-shift-d": "editor::SelectAllMatches",
-      "cmd-shift-/": "editor::ToggleComments"
+      "cmd-/": "editor::ToggleComments"
     }
   },
   {

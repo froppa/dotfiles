@@ -1,3 +1,8 @@
+{{- /* Colima prepends this absolute line itself when missing; managing it keeps the file stable. */ -}}
+{{ if eq .chezmoi.os "darwin" -}}
+Include {{ .chezmoi.homeDir }}/.colima/ssh_config
+
+{{ end -}}
 # Managed by chezmoi. Machine-specific hosts belong in the unmanaged
 # ~/.ssh/config.local; it is included first so its Host blocks win.
 Include ~/.ssh/config.local
