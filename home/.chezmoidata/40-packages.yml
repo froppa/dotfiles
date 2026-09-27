@@ -50,17 +50,16 @@ packages:
     - rtk
     - worktrunk
     - uv
+    - tree
 
     # Programming (language runtimes live in ~/.config/mise/config.toml)
     - mise
-    - vim
     - neovim
     - gopls
     - goimports
     - lua-language-server
     - eslint
     - yamllint
-    - bazel
     # keg-only, but linked so psql is on PATH; brew bundle would unlink it otherwise
     - name: libpq
       link: true
@@ -157,7 +156,6 @@ packages:
     - font-powerline-symbols
     - hammerspoon
     - scroll-reverser
-    - karabiner-elements
     - dockdoor
     - 1password-cli
     - db-browser-for-sqlite
@@ -173,9 +171,9 @@ packages:
       - age-plugin-se
       - libimobiledevice
       # Serial and embedded hardware
-      - minicom
-      - libftdi
-      - e2fsprogs
+      # - minicom
+      # - libftdi
+      # - e2fsprogs
 
   personal:
     brews:
