@@ -16,7 +16,10 @@ packages:
     - starship
     - tmux
     - fzf
-    - z
+    - fzf-tab
+    - zsh-autosuggestions
+    - zsh-syntax-highlighting
+    - zoxide
     - direnv
     - ncdu
 
@@ -85,6 +88,11 @@ packages:
       # run_once_after_24-install-ghostty-terminfo.sh derives xterm-ghostty from.
       - ncurses-term
       - fzf
+      # fzf-tab has no apt package; .chezmoiexternal.toml drops it in
+      # ~/.local/share/zsh/plugins where .zshrc looks last.
+      - zsh-autosuggestions
+      - zsh-syntax-highlighting
+      - zoxide
       - direnv
       - ncdu
       - gnupg

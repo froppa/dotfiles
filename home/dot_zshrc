@@ -127,7 +127,8 @@ _source_plugin() {
     "${HOMEBREW_PREFIX:-}/share/$plugin/$plugin.plugin.zsh" \
     "${HOMEBREW_PREFIX:-}/share/$plugin/$plugin.zsh" \
     "/usr/share/$plugin/$plugin.plugin.zsh" \
-    "/usr/share/$plugin/$plugin.zsh"
+    "/usr/share/$plugin/$plugin.zsh" \
+    "${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins/$plugin/$plugin.plugin.zsh"
   do
     [[ -n "$file" && -r "$file" ]] || continue
     source "$file"
@@ -147,6 +148,11 @@ _source_plugin zsh-autosuggestions
 
 [[ -r "$HOME/.config/zsh/terminal.zsh" ]] &&
   source "$HOME/.config/zsh/terminal.zsh"
+
+# ── Prompt status caches ──────────────────────────────────────
+
+[[ -r "$HOME/.config/zsh/status.zsh" ]] &&
+  source "$HOME/.config/zsh/status.zsh"
 
 # ── Machine-local ─────────────────────────────────────────────
 
