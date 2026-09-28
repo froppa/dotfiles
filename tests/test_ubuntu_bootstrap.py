@@ -150,7 +150,7 @@ class PackageBootstrapTests(unittest.TestCase):
                             ".config/raycast/scripts/quick-capture.sh"):
                     self.assertEqual(app in paths, system == "darwin", app)
                 self.assertIn(".config/nvim/init.lua", paths)
-                self.assertIn(".config/ghostty/config.ghostty", paths)
+                self.assertIn(".config/ghostty/config", paths)
 
     def test_mise_preserves_mac_and_scopes_runtime_changes_to_ubuntu(self):
         original = '# ~/.config/mise/config.toml\n# Managed by chezmoi — global default runtimes (replaces nvm/pyenv/brew runtimes)\n[tools]\nnode = "lts"\npython = "3.12"\ngo = "latest"\nruby = "latest"\npnpm = "latest"\nyarn = "latest"\njava = "temurin-21"\n\n[settings.ruby]\ncompile = false\n'
