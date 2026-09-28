@@ -139,6 +139,30 @@ _source_plugin() {
 _source_plugin fzf-tab
 _source_plugin zsh-autosuggestions
 
+# ── Herdr ────────────────────────────────────────────────────
+
+# Ghostty binds the same Hyper chords as Herdr. While Herdr runs, switch
+# this surface to Ghostty's `herdr` key table so the chords reach Herdr.
+# Skipped inside Herdr panes: a nested client must not reset the table.
+if [[ $OSTYPE == darwin* && $TERM_PROGRAM == ghostty ]] &&
+  (( $+commands[herdr] && $+commands[osascript] )); then
+  herdr() {
+    [[ -n $HERDR_ENV ]] && { command herdr "$@"; return }
+    local id rc
+    id=$(osascript -e 'tell application "Ghostty"
+      set t to focused terminal of selected tab of front window
+      perform action "activate_key_table:herdr" on t
+      return id of t
+    end tell' 2>/dev/null)
+    command herdr "$@"
+    rc=$?
+    [[ -n $id ]] && osascript -e 'on run argv
+      tell application "Ghostty" to perform action "deactivate_all_key_tables" on terminal id (item 1 of argv)
+    end run' "$id" >/dev/null 2>&1
+    return rc
+  }
+fi
+
 # ── Prompt ───────────────────────────────────────────────────
 
 (( $+commands[starship] )) &&
