@@ -37,6 +37,12 @@ if [[ ${#shell_files[@]} -gt 0 ]]; then
   shellcheck "${shell_files[@]}"
 fi
 
+# Hammerspoon embeds Lua 5.4; LuaJIT (nvim -l) rejects its bitwise operators.
+if command -v luac >/dev/null 2>&1; then
+  section "Checking Hammerspoon Lua syntax"
+  luac -p home/dot_hammerspoon/init.lua
+fi
+
 section "Checking executable scripts"
 
 [[ -x ./init.sh ]] || fail "init.sh must be executable"
