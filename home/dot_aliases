@@ -67,6 +67,7 @@ fi
 
 alias reloadzsh='exec zsh'
 
+alias ch='chezmoi'
 alias dotapply='chezmoi apply -v'
 alias dotdiff='chezmoi diff'
 alias dotstatus='chezmoi status'

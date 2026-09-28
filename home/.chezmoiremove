@@ -1,0 +1,3 @@
+# Ghostty 1.2+ reads config.ghostty as well as config; the managed file is
+# config (the path older Ghostty reads), so a stale copy must not load twice.
+.config/ghostty/config.ghostty

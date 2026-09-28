@@ -1,0 +1,19 @@
+{{ if and (eq .chezmoi.os "darwin") .personal -}}
+#!/bin/sh
+set -eu
+
+# Keep evo-dev in herdr's sidebar as a saved SSH machine. herdr stores
+# machines in its own catalog, not config.toml, so apply registers it.
+# froppa/evo installs the herdr it attaches to; without that, machine add
+# would ask to install a self-updating copy there instead.
+
+command -v herdr >/dev/null 2>&1 || exit 0
+herdr machine list | cut -f3 | grep -qx evo-dev && exit 0
+
+if ! ssh -o BatchMode=yes -o ConnectTimeout=5 evo-dev 'command -v herdr' >/dev/null 2>&1; then
+  echo "=> herdr: evo-dev unreachable or without herdr (froppa/evo installs it); skipping" >&2
+  exit 0
+fi
+herdr machine add evo-dev --label evo-dev ||
+  echo "=> herdr: could not add evo-dev; run: herdr machine add evo-dev --label evo-dev" >&2
+{{ end -}}
