@@ -111,30 +111,11 @@ shell-integration-features = cursor,title,ssh-env,path
 
 
 # =======================================
-# Herdr
-# =======================================
-
-# Herdr is NOT Ghostty's shell.
-# These Hyper chords are handled externally by Herdr.
-# Unknown chords are swallowed instead of reaching zsh
-# as escape/control sequences.
-
-keybind = ctrl+alt+super+w=ignore
-keybind = ctrl+alt+super+Digit0=ignore
-keybind = ctrl+alt+super+tab=ignore
-keybind = ctrl+alt+super+b=ignore
-keybind = ctrl+alt+super+j=ignore
-keybind = ctrl+alt+super+m=ignore
-keybind = ctrl+alt+super+u=ignore
-
-
-# =======================================
 # Native panes and tabs (Hyper = Caps)
 # =======================================
 
 # Same chords as Herdr's [keys], so muscle memory carries over.
-# Ghostty consumes these before the pty; inside Herdr use its
-# prefix (Hyper-Space) for the ones it also binds.
+# While Herdr runs, the `herdr` key table below hands them to it.
 
 keybind = ctrl+alt+super+i=new_split:right
 keybind = ctrl+alt+super+slash=new_split:down
@@ -167,6 +148,62 @@ keybind = ctrl+alt+super+digit_6=goto_tab:6
 keybind = ctrl+alt+super+digit_7=goto_tab:7
 keybind = ctrl+alt+super+digit_8=goto_tab:8
 keybind = ctrl+alt+super+digit_9=goto_tab:9
+
+# Herdr-only chords: swallowed outside Herdr instead of reaching zsh
+# as escape/control sequences.
+keybind = ctrl+alt+super+w=ignore
+keybind = ctrl+alt+super+digit_0=ignore
+keybind = ctrl+alt+super+tab=ignore
+keybind = ctrl+alt+super+b=ignore
+keybind = ctrl+alt+super+j=ignore
+keybind = ctrl+alt+super+m=ignore
+keybind = ctrl+alt+super+u=ignore
+
+
+# =======================================
+# Herdr key table
+# =======================================
+
+# Herdr is NOT Ghostty's shell. The zsh `herdr` wrapper activates this
+# table on its surface through Ghostty's AppleScript `perform action`
+# and deactivates it when Herdr exits. Unbinding here sends the chord
+# to the pty, so Herdr handles it; Hyper-= still equalizes Ghostty splits.
+
+keybind = herdr/
+keybind = herdr/ctrl+alt+super+i=unbind
+keybind = herdr/ctrl+alt+super+slash=unbind
+keybind = herdr/ctrl+alt+super+z=unbind
+keybind = herdr/ctrl+alt+super+x=unbind
+keybind = herdr/ctrl+alt+super+arrow_left=unbind
+keybind = herdr/ctrl+alt+super+arrow_down=unbind
+keybind = herdr/ctrl+alt+super+arrow_up=unbind
+keybind = herdr/ctrl+alt+super+arrow_right=unbind
+keybind = herdr/ctrl+alt+super+shift+arrow_left=unbind
+keybind = herdr/ctrl+alt+super+shift+arrow_down=unbind
+keybind = herdr/ctrl+alt+super+shift+arrow_up=unbind
+keybind = herdr/ctrl+alt+super+shift+arrow_right=unbind
+keybind = herdr/ctrl+alt+super+c=unbind
+keybind = herdr/ctrl+alt+super+p=unbind
+keybind = herdr/ctrl+alt+super+n=unbind
+keybind = herdr/ctrl+alt+super+comma=unbind
+keybind = herdr/ctrl+alt+super+shift+comma=unbind
+keybind = herdr/ctrl+alt+super+shift+period=unbind
+keybind = herdr/ctrl+alt+super+digit_1=unbind
+keybind = herdr/ctrl+alt+super+digit_2=unbind
+keybind = herdr/ctrl+alt+super+digit_3=unbind
+keybind = herdr/ctrl+alt+super+digit_4=unbind
+keybind = herdr/ctrl+alt+super+digit_5=unbind
+keybind = herdr/ctrl+alt+super+digit_6=unbind
+keybind = herdr/ctrl+alt+super+digit_7=unbind
+keybind = herdr/ctrl+alt+super+digit_8=unbind
+keybind = herdr/ctrl+alt+super+digit_9=unbind
+keybind = herdr/ctrl+alt+super+w=unbind
+keybind = herdr/ctrl+alt+super+digit_0=unbind
+keybind = herdr/ctrl+alt+super+tab=unbind
+keybind = herdr/ctrl+alt+super+b=unbind
+keybind = herdr/ctrl+alt+super+j=unbind
+keybind = herdr/ctrl+alt+super+m=unbind
+keybind = herdr/ctrl+alt+super+u=unbind
 
 
 # =======================================
