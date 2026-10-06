@@ -113,6 +113,8 @@ grep -Fq '{{ if and (eq .chezmoi.os "darwin") .personal -}}' home/.chezmoiscript
 grep -Fq 'command = /bin/zsh' home/dot_config/ghostty/config || fail "Ghostty must launch zsh; herdr is started on demand"
 grep -Fq 'config-file = ?config.local' home/dot_config/ghostty/config || fail "Ghostty must load the optional machine-local override last"
 ! grep -qE '^keybind = ctrl\+alt\+super\+[^=]+=text:' home/dot_config/ghostty/config || fail "Hyper chords must reach herdr, not be rewritten into tmux prefix bytes"
+grep -q 'activate_key_table:herdr' home/dot_zshrc || fail "the herdr wrapper must hand Ghostty's Hyper chords to herdr"
+[[ "$(grep -oE '^keybind = ctrl\+alt\+super\+[^=]+' home/dot_config/ghostty/config | sed 's/^keybind = //' | grep -v '+equal$')" == "$(grep -E '^keybind = herdr/.+=unbind$' home/dot_config/ghostty/config | sed 's/^keybind = herdr\///; s/=unbind$//')" ]] || fail "the herdr key table must unbind every Hyper chord Ghostty binds"
 [[ ! -e home/dot_config/ghostty/herdr.ghostty ]] || fail "herdr is the default; the herdr.ghostty overlay is gone"
 grep -Fq "bind -n M-C-a if -F '#{@ssht}' 'send-keys M-C-a' 'switch-client -T prefix'" home/dot_config/tmux/tmux.conf || fail "Hyper chords must drive the remote tmux in an ssht pane"
 grep -Fq 'tmux*:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "a remote tmux nested by ssht must get extended keys for Claude Code's Shift-Enter"

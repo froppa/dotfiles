@@ -153,7 +153,12 @@ if [[ $OSTYPE == darwin* && $TERM_PROGRAM == ghostty ]] &&
       set t to focused terminal of selected tab of front window
       perform action "activate_key_table:herdr" on t
       return id of t
-    end tell' 2>/dev/null)
+    end tell' 2>&1) || {
+      # Usually Automation denied (-1743); macOS then never asks again.
+      print -u2 "herdr: Ghostty keeps the Hyper chords: ${id##*: }"
+      print -u2 "herdr: run 'tccutil reset AppleEvents com.mitchellh.ghostty', then herdr again and allow"
+      id=
+    }
     command herdr "$@"
     rc=$?
     [[ -n $id ]] && osascript -e 'on run argv
