@@ -168,44 +168,47 @@ keybind = ctrl+alt+super+u=ignore
 
 # Herdr is NOT Ghostty's shell. The zsh `herdr` wrapper activates this
 # table on its surface through Ghostty's AppleScript `perform action`
-# and deactivates it when Herdr exits. Unbinding here sends the chord
-# to the pty, so Herdr handles it; Hyper-= still equalizes Ghostty splits.
+# and deactivates it when Herdr exits. `unbind` cannot work here: it
+# empties the table entry and the lookup falls through to the default
+# bindings. Re-activating the already-innermost table is a no-op, so the
+# performable binding matches, does nothing, and Ghostty sends the chord
+# to the pty for Herdr. Hyper-= still equalizes Ghostty splits.
 
 keybind = herdr/
-keybind = herdr/ctrl+alt+super+i=unbind
-keybind = herdr/ctrl+alt+super+slash=unbind
-keybind = herdr/ctrl+alt+super+z=unbind
-keybind = herdr/ctrl+alt+super+x=unbind
-keybind = herdr/ctrl+alt+super+arrow_left=unbind
-keybind = herdr/ctrl+alt+super+arrow_down=unbind
-keybind = herdr/ctrl+alt+super+arrow_up=unbind
-keybind = herdr/ctrl+alt+super+arrow_right=unbind
-keybind = herdr/ctrl+alt+super+shift+arrow_left=unbind
-keybind = herdr/ctrl+alt+super+shift+arrow_down=unbind
-keybind = herdr/ctrl+alt+super+shift+arrow_up=unbind
-keybind = herdr/ctrl+alt+super+shift+arrow_right=unbind
-keybind = herdr/ctrl+alt+super+c=unbind
-keybind = herdr/ctrl+alt+super+p=unbind
-keybind = herdr/ctrl+alt+super+n=unbind
-keybind = herdr/ctrl+alt+super+comma=unbind
-keybind = herdr/ctrl+alt+super+shift+comma=unbind
-keybind = herdr/ctrl+alt+super+shift+period=unbind
-keybind = herdr/ctrl+alt+super+digit_1=unbind
-keybind = herdr/ctrl+alt+super+digit_2=unbind
-keybind = herdr/ctrl+alt+super+digit_3=unbind
-keybind = herdr/ctrl+alt+super+digit_4=unbind
-keybind = herdr/ctrl+alt+super+digit_5=unbind
-keybind = herdr/ctrl+alt+super+digit_6=unbind
-keybind = herdr/ctrl+alt+super+digit_7=unbind
-keybind = herdr/ctrl+alt+super+digit_8=unbind
-keybind = herdr/ctrl+alt+super+digit_9=unbind
-keybind = herdr/ctrl+alt+super+w=unbind
-keybind = herdr/ctrl+alt+super+digit_0=unbind
-keybind = herdr/ctrl+alt+super+tab=unbind
-keybind = herdr/ctrl+alt+super+b=unbind
-keybind = herdr/ctrl+alt+super+j=unbind
-keybind = herdr/ctrl+alt+super+m=unbind
-keybind = herdr/ctrl+alt+super+u=unbind
+keybind = herdr/performable:ctrl+alt+super+i=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+slash=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+z=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+x=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+arrow_left=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+arrow_down=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+arrow_up=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+arrow_right=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+shift+arrow_left=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+shift+arrow_down=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+shift+arrow_up=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+shift+arrow_right=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+c=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+p=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+n=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+comma=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+shift+comma=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+shift+period=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_1=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_2=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_3=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_4=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_5=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_6=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_7=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_8=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_9=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+w=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+digit_0=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+tab=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+b=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+j=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+m=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+u=activate_key_table:herdr
 
 
 # =======================================
