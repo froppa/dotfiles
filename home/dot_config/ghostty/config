@@ -120,7 +120,7 @@ shell-integration-features = cursor,title,ssh-env,path
 # any key table, so the table could never hand it to Herdr.
 
 keybind = performable:ctrl+alt+super+i=new_split:right
-keybind = performable:ctrl+alt+super+slash=new_split:down
+keybind = performable:ctrl+alt+super+-=new_split:down
 keybind = performable:ctrl+alt+super+z=toggle_split_zoom
 keybind = performable:ctrl+alt+super+x=close_surface
 keybind = performable:ctrl+alt+super+equal=equalize_splits
@@ -176,7 +176,7 @@ keybind = ctrl+alt+super+u=ignore
 
 keybind = herdr/
 keybind = herdr/performable:ctrl+alt+super+i=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+slash=activate_key_table:herdr
+keybind = herdr/performable:ctrl+alt+super+-=activate_key_table:herdr
 keybind = herdr/performable:ctrl+alt+super+z=activate_key_table:herdr
 keybind = herdr/performable:ctrl+alt+super+x=activate_key_table:herdr
 keybind = herdr/performable:ctrl+alt+super+arrow_left=activate_key_table:herdr
