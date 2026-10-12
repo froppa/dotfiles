@@ -15,7 +15,7 @@ CONFIG_APPS = {
 MANAGED_COMMANDS = {"clip-serve", "follow-main.sh", "wl-paste"}
 PATTERNS = {
     "machine home path": r"/(?:Users|home)/(?!linuxbrew(?:/|\b))[A-Za-z0-9_.-]+/",
-    "password-manager item": r"op://[^\s\"']+",
+    "password-manager item": r"\bop[:][/]{2}[^\s\"']+",
     "private key": r"-----BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY-----",
     "credential value": r"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{20,}|AKIA[A-Z0-9]{16})\b",
 }
