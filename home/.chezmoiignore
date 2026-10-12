@@ -22,7 +22,7 @@
 {{ if ne .chezmoi.os "darwin" -}}
 .hammerspoon
 .config/raycast
-Library/LaunchAgents/local.dotfiles.clip-serve.plist
+Library/LaunchAgents/com.froppa.clip-serve.plist
 .local/bin/clip-serve
 {{ end -}}
 

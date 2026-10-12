@@ -27,7 +27,7 @@ map("i", "<C-a>", "<C-o>^", { desc = "Line Start" })
 map("i", "<C-e>", "<End>", { desc = "Line End" })
 map("c", "<C-a>", "<Home>", { desc = "Line Start" })
 
--- Command shortcuts for terminals that support the kitty keyboard protocol.
+-- Cmd chords reach Nvim inside herdr (kitty keyboard protocol); tmux drops Cmd.
 map("n", "<D-p>", "<C-p>", { remap = true, desc = "Find Files" })
 map({ "n", "i", "x" }, "<D-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
 map("n", "<D-/>", "gcc", { remap = true, desc = "Toggle Comment" })

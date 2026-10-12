@@ -1,14 +1,12 @@
 {{ $name := promptStringOnce . "name" "name" }}
 {{ $email := promptStringOnce . "email" "email" }}
-{{/* WORK=true selects the work machine setup; anything else (incl. PERSONAL=true) is personal. */}}
+{{/* WORK=true selects the work package set. */}}
 {{ $work := eq (env "WORK" | lower) "true" }}
 
 [data]
 name = {{ $name | quote }}
 email = {{ $email | quote }}
-profile = {{ ternary "work" "personal" $work | quote }}
 work = {{ $work }}
-personal = {{ not $work }}
 
 [github]
 refreshPeriod = "12h"

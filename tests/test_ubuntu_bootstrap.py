@@ -43,7 +43,7 @@ class PackageBootstrapTests(unittest.TestCase):
 
     def render(self, name, system="linux", distro="ubuntu", work=False):
         data = {"chezmoi": {"os": system, "osRelease": {"id": distro}},
-                "personal": not work, "work": work}
+                "work": work}
         return subprocess.check_output([
             CHEZMOI, "--source", str(ROOT), "--config", str(self.config),
             "--override-data", json.dumps(data), "execute-template", "--file",
@@ -86,37 +86,6 @@ class PackageBootstrapTests(unittest.TestCase):
         result = self.execute((ROOT / "home/.chezmoiscripts/run_once_10-install-homebrew.sh").read_text())
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self.commands(), "")
-
-    def test_clipboard_reload_retires_only_its_previous_service(self):
-        agents = self.base / "Library/LaunchAgents"
-        agents.mkdir(parents=True)
-        previous = agents / "local.previous.clip-serve.plist"
-        current = agents / "local.dotfiles.clip-serve.plist"
-        unrelated = agents / "local.example.plist"
-        for path in (previous, current, unrelated):
-            path.touch()
-        self.stub("plutil", '''
-case "$6" in
-  */local.previous.clip-serve.plist) label=local.previous.clip-serve ;;
-  */local.dotfiles.clip-serve.plist) label=local.dotfiles.clip-serve ;;
-  *) exit 1 ;;
-esac
-case "$2" in
-  ProgramArguments.0) printf '%s\\n' "$HOME/.local/bin/clip-serve" ;;
-  Label) printf '%s\\n' "$label" ;;
-esac
-''')
-        self.stub("launchctl", 'printf "launchctl %s\\n" "$*" >> "$TEST_LOG"\n')
-        result = self.execute(self.render(
-            "home/.chezmoiscripts/run_onchange_after_45-load-clip-serve.sh.tmpl", system="darwin"))
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertFalse(previous.exists())
-        self.assertTrue(current.exists())
-        self.assertTrue(unrelated.exists())
-        commands = self.commands()
-        self.assertIn("/local.previous.clip-serve", commands)
-        self.assertIn("launchctl bootstrap", commands)
-        self.assertNotIn("local.example", commands)
 
     def test_darwin_preserves_brew_profiles(self):
         for work in (False, True):
@@ -171,7 +140,7 @@ esac
         for system in ("darwin", "linux"):
             with self.subTest(system=system):
                 data = {"chezmoi": {"os": system, "osRelease": {"id": "ubuntu"}},
-                        "name": "CI", "email": "ci@example.invalid", "personal": True, "work": False}
+                        "name": "CI", "email": "ci@example.invalid", "work": False}
                 output = subprocess.check_output([
                     CHEZMOI, "--source", str(ROOT), "--config", str(self.config),
                     "--destination", str(self.base), "--override-data", json.dumps(data),

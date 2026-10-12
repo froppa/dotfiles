@@ -1,0 +1,16 @@
+#!/bin/sh
+# Sign the latest commit, or the latest N commits, using this repository's key.
+set -eu
+count=${1:-1}
+case $count in ''|*[!0-9]*|0) echo 'usage: git signlast [count]' >&2; exit 2 ;; esac
+[ "$#" -le 1 ] || { echo 'usage: git signlast [count]' >&2; exit 2; }
+[ -z "$(git status --porcelain)" ] || { echo 'Commit or stash local changes first.' >&2; exit 1; }
+if [ "$count" -eq 1 ]; then
+  exec git commit --amend --no-edit -S
+fi
+total=$(git rev-list --count HEAD)
+[ "$count" -le "$total" ] || { echo 'Count exceeds the available commits.' >&2; exit 2; }
+if [ "$count" -eq "$total" ]; then
+  exec git rebase --force-rebase --root --exec 'git commit --amend --no-edit -S'
+fi
+exec git rebase --force-rebase --exec 'git commit --amend --no-edit -S' "HEAD~$count"

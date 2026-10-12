@@ -25,7 +25,7 @@ brew "{{ . }}"
 cask "{{ . }}"
 {{ end -}}
 {{ end -}}
-{{ if .personal -}}
+{{ if not .work -}}
 {{ range .packages.personal.brews -}}
 brew "{{ . }}"
 {{ end -}}

@@ -1,6 +1,6 @@
 #!/bin/sh
 # launchd starts one copy per connection to ~/.cache/clip.sock (see
-# local.dotfiles.clip-serve.plist) with the socket as stdin, stdout and stderr.
+# com.froppa.clip-serve.plist) with the socket as stdin, stdout and stderr.
 # It writes the clipboard image as PNG, or nothing when there is none; text
 # never leaves this way. ssht forwards the socket, and the wl-paste shim on
 # the far side reads it for Claude Code's Ctrl-V image paste.
