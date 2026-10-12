@@ -13,11 +13,7 @@
 # read as a file to delete on the next apply.
 **/.DS_Store
 
-{{ if eq .chezmoi.os "darwin" -}}
-# User timers are available only on Linux.
-.config/systemd
-.local/bin/follow-main.sh
-{{ end -}}
+
 
 {{ if ne .chezmoi.os "darwin" -}}
 .hammerspoon

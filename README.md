@@ -236,9 +236,6 @@ Machine-specific overrides use unmanaged `*.local` files such as
 `.zshrc.local`, `.exports.local`, `.aliases.local`, `.functions.local`, and
 `.gitconfig.local`.
 
-The Linux `follow-main.timer` updates only this repository's managed
-configuration through Chezmoi.
-
 ## Where things live
 
 | Path | Purpose |
