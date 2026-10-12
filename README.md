@@ -196,8 +196,8 @@ connection dropped, a crashed TUI), the next prompt switches mouse, focus, and
 extended-key reporting off again, so clicks stop typing escape sequences.
 
 The hooks also record each session's state under
-`~/.cache/agents/claude-<session id>`, which Verk reads to list a waiting
-terminal session in Today and in its menu bar. Outside tmux, the same hooks
+`~/.cache/agents/claude-<session id>` for terminal status consumers.
+Outside tmux, the same hooks
 retitle the Ghostty tab with the session's state and directory (`⟳ repo` working, `? repo` waiting for you,
 `· repo` idle), Claude Code rings the terminal bell when it needs attention,
 and Ghostty marks the tab. Starship's right prompt shows the
@@ -247,9 +247,13 @@ Machine-specific overrides use unmanaged `*.local` files such as
 `.gitconfig.local`.
 
 Depot is installed separately with Cargo from `struktly/tools`. The managed
-`~/.local/bin/depot` link points to `~/.cargo/bin/depot`, replacing the legacy
-Verk entry point. Zsh loads completion from the installed Depot version after
-completion initialization; no generated completion file needs updating.
+`~/.local/bin/depot` link points to `~/.cargo/bin/depot`. Zsh loads completion
+from the installed Depot version after completion initialization; no generated
+completion file needs updating.
+
+The Linux `follow-main.timer` updates only this repository's managed
+configuration through Chezmoi. Application installation and deployment belong
+to their own repositories and machine setup.
 
 ## Where things live
 

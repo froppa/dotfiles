@@ -5,7 +5,7 @@
 # off (session ended).
 #
 # The state lands in a per-session file under ~/.cache/agents, named by the
-# Claude session id so Verk can join it to the transcript it already lists:
+# Claude session id so consumers can correlate it with their own state:
 # line 1 the state, line 2 the CLI's pid (the hook runs as a child of the
 # claude process, so $PPID is the session), line 3 the working directory. It also goes on the tmux pane as
 # @agent_state when inside tmux, and into the terminal tab title through the

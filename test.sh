@@ -94,7 +94,7 @@ grep -q '^personal = false$' "${rendered_work_config}" || fail "WORK=true should
 section "Checking safe adoption defaults"
 
 [[ -f home/dot_local/bin/symlink_depot.tmpl ]] || fail "Depot must resolve to the standalone Cargo installation"
-grep -Fq '".cargo/bin/depot"' home/dot_local/bin/symlink_depot.tmpl || fail "Depot link must not target the legacy Verk binary"
+grep -Fq '".cargo/bin/depot"' home/dot_local/bin/symlink_depot.tmpl || fail "Depot link must target the standalone installation"
 grep -Fq 'source <(depot completions zsh 2>/dev/null)' home/dot_zsh_completions || fail "Depot completion must follow the installed version"
 
 [[ -f home/create_dot_gitconfig.tmpl ]] || fail "Git defaults must be create-only"

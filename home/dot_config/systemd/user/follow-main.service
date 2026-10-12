@@ -1,5 +1,5 @@
 [Unit]
-Description=Follow main: dotfiles through chezmoi, then Verk through its installer
+Description=Update managed configuration through chezmoi
 After=network-online.target
 
 [Service]
