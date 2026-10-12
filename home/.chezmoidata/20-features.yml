@@ -1,5 +1,4 @@
 ---
 features:
-  # Gates the Homebrew env block (incl. 1Password token lookup) in dot_exports.tmpl.
-  # Requires a working `op` CLI session when enabled.
+  # Gates optional Homebrew environment preferences in dot_exports.tmpl.
   brew: false

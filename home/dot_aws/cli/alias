@@ -32,7 +32,7 @@ start = start-query --log-group-name
 query = get-query-results --query-id
 
 # Example:
-# aws logs insights "/ecs/ch-prod-my-service" "fields @timestamp, @message | sort @timestamp desc | limit 50"
+# aws logs insights "/ecs/example-service" "fields @timestamp, @message | sort @timestamp desc | limit 50"
 # Every continuation line MUST be indented. This is an INI file: a line at
 # column 0 is a new key, not part of the value above it, and the whole
 # file fails to parse. The parser strips the indentation before the shell

@@ -133,12 +133,4 @@ Keep.ghostty = hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(eve
   return true
 end):start()
 
--- ── VS Code: open ~/work ─────────────────────────────────────
-
-hs.hotkey.bind({ "cmd", "shift" }, "´", function()
-  hs.osascript.applescript('tell application "System Events" to keystroke "o" using {command down}')
-  hs.osascript.applescript('tell application "System Events" to keystroke "~/work"')
-  hs.osascript.applescript('tell application "System Events" to key code 36') -- Enter
-end)
-
 hs.alert.show("Hammerspoon config reloaded")

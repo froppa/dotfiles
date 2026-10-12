@@ -170,7 +170,6 @@ packages:
       - cocoapods
       - age-plugin-se
       - libimobiledevice
-      - herdr
       # Serial and embedded hardware
       # - minicom
       # - libftdi

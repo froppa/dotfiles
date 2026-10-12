@@ -87,6 +87,37 @@ class PackageBootstrapTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self.commands(), "")
 
+    def test_clipboard_reload_retires_only_its_previous_service(self):
+        agents = self.base / "Library/LaunchAgents"
+        agents.mkdir(parents=True)
+        previous = agents / "local.previous.clip-serve.plist"
+        current = agents / "local.dotfiles.clip-serve.plist"
+        unrelated = agents / "local.example.plist"
+        for path in (previous, current, unrelated):
+            path.touch()
+        self.stub("plutil", '''
+case "$6" in
+  */local.previous.clip-serve.plist) label=local.previous.clip-serve ;;
+  */local.dotfiles.clip-serve.plist) label=local.dotfiles.clip-serve ;;
+  *) exit 1 ;;
+esac
+case "$2" in
+  ProgramArguments.0) printf '%s\\n' "$HOME/.local/bin/clip-serve" ;;
+  Label) printf '%s\\n' "$label" ;;
+esac
+''')
+        self.stub("launchctl", 'printf "launchctl %s\\n" "$*" >> "$TEST_LOG"\n')
+        result = self.execute(self.render(
+            "home/.chezmoiscripts/run_onchange_after_45-load-clip-serve.sh.tmpl", system="darwin"))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(previous.exists())
+        self.assertTrue(current.exists())
+        self.assertTrue(unrelated.exists())
+        commands = self.commands()
+        self.assertIn("/local.previous.clip-serve", commands)
+        self.assertIn("launchctl bootstrap", commands)
+        self.assertNotIn("local.example", commands)
+
     def test_darwin_preserves_brew_profiles(self):
         for work in (False, True):
             with self.subTest(work=work):
@@ -146,7 +177,7 @@ class PackageBootstrapTests(unittest.TestCase):
                     "--destination", str(self.base), "--override-data", json.dumps(data),
                     "managed", "--exclude=externals", "--path-style=relative"], text=True)
                 paths = output.splitlines()
-                for app in (".hammerspoon/init.lua", ".config/iterm2/com.googlecode.iterm2.plist"):
+                for app in (".hammerspoon/init.lua",):
                     self.assertEqual(app in paths, system == "darwin", app)
                 self.assertIn(".config/nvim/init.lua", paths)
                 self.assertIn(".config/ghostty/config", paths)

@@ -114,10 +114,7 @@ shell-integration-features = cursor,title,ssh-env,path
 # Native panes and tabs (Hyper = Caps)
 # =======================================
 
-# Same chords as Herdr's [keys], so muscle memory carries over.
-# While Herdr runs, the `herdr` key table below hands them to it.
-# performable: keeps them off the menu bar; a menu shortcut fires before
-# any key table, so the table could never hand it to Herdr.
+# Hyper chords control native panes and tabs.
 
 keybind = performable:ctrl+alt+super+i=new_split:right
 keybind = performable:ctrl+alt+super+-=new_split:down
@@ -151,70 +148,10 @@ keybind = performable:ctrl+alt+super+digit_7=goto_tab:7
 keybind = performable:ctrl+alt+super+digit_8=goto_tab:8
 keybind = performable:ctrl+alt+super+digit_9=goto_tab:9
 
-# Herdr-only chords: swallowed outside Herdr instead of reaching zsh
-# as escape/control sequences.
-keybind = ctrl+alt+super+w=ignore
-keybind = ctrl+alt+super+digit_0=ignore
-keybind = ctrl+alt+super+tab=ignore
-keybind = ctrl+alt+super+b=ignore
-keybind = ctrl+alt+super+j=ignore
-keybind = ctrl+alt+super+m=ignore
-keybind = ctrl+alt+super+u=ignore
-
-
-# =======================================
-# Herdr key table
-# =======================================
-
-# Herdr is NOT Ghostty's shell. The zsh `herdr` wrapper activates this
-# table on its surface through Ghostty's AppleScript `perform action`
-# and deactivates it when Herdr exits. `unbind` cannot work here: it
-# empties the table entry and the lookup falls through to the default
-# bindings. Re-activating the already-innermost table is a no-op, so the
-# performable binding matches, does nothing, and Ghostty sends the chord
-# to the pty for Herdr. Hyper-= still equalizes Ghostty splits.
-
-keybind = herdr/
-keybind = herdr/performable:ctrl+alt+super+i=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+-=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+z=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+x=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+arrow_left=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+arrow_down=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+arrow_up=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+arrow_right=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+shift+arrow_left=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+shift+arrow_down=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+shift+arrow_up=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+shift+arrow_right=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+c=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+p=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+n=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+comma=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+shift+comma=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+shift+period=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_1=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_2=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_3=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_4=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_5=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_6=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_7=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_8=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_9=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+w=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+digit_0=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+tab=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+b=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+j=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+m=activate_key_table:herdr
-keybind = herdr/performable:ctrl+alt+super+u=activate_key_table:herdr
-
-
 # =======================================
 # Machine-local overrides
 # =======================================
 
 # Optional. Keep command=/bin/zsh unless you explicitly
 # want a machine to launch something else.
-# config-file = ?config.local
+config-file = ?config.local
