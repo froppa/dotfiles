@@ -59,7 +59,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
 export PATH="$HOME/.local/bin:$PATH"
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-chezmoi init --source="$PWD" --promptString 'name=sdf'
+chezmoi init --source="$PWD" --promptString 'name=YOUR_NAME'
 chezmoi diff
 chezmoi apply -v
 ```
@@ -131,7 +131,6 @@ load the key on first use. Shell startup does not call `ssh-add`.
 | Component | Once per machine |
 | --- | --- |
 | Raycast | Configure Caps Lock as Hyper (`Control+Option+Command`, no Shift) |
-| Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
 | Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
 | Ghostty | Launched from the Dock or Raycast it has launchd's PATH, so name tmux's absolute path in `~/.config/ghostty/config.local`: `command = direct:/opt/homebrew/bin/tmux new-session -A -s main` |
 
@@ -262,7 +261,6 @@ to their own repositories and machine setup.
 | `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
 | `home/dot_config/tmux/` | tmux, status scripts, and plugins |
 | `home/dot_local/bin/` | `clip-serve` (Mac) and the `wl-paste` shim (Linux) behind the ssht clipboard bridge |
-| `home/dot_config/raycast/` | Raycast Script Commands |
 | `home/dot_config/zed/` | Zed settings and keybindings |
 | `home/dot_config/Code/User/` | VS Code XDG settings |
 | `home/dot_config/nvim/` | Neovim configuration |
@@ -270,7 +268,7 @@ to their own repositories and machine setup.
 | `home/.chezmoiscripts/` | Ordered and change-triggered setup |
 | `home/.chezmoiexternal.toml` | Pinned shell and TPM sources |
 | `macos-scripts/` | Auditable macOS defaults |
-| `scripts/` | Local SSH key generation, Claude Code hook install, and preference helpers |
+| `scripts/` | Local SSH key generation and Claude Code hook install |
 
 ## macOS defaults
 
@@ -288,3 +286,9 @@ macos-scripts/macos-defaults.sh --update  # apply and update macOS
 
 The same ShellCheck, template, profile, and Chezmoi dry-run checks run in CI.
 Neovim reference: [docs/nvim-cheat-sheet.md](docs/nvim-cheat-sheet.md).
+
+Machine registration, private model endpoints, saved infrastructure SSH profiles,
+and personal vault integrations are not managed here. Keep machine-specific SSH
+settings in `~/.ssh/config.local` and tmux settings in the documented `*.local`
+files. Application deployment and private infrastructure belong in their own
+repositories.

@@ -146,8 +146,7 @@ class PackageBootstrapTests(unittest.TestCase):
                     "--destination", str(self.base), "--override-data", json.dumps(data),
                     "managed", "--exclude=externals", "--path-style=relative"], text=True)
                 paths = output.splitlines()
-                for app in (".hammerspoon/init.lua", ".config/iterm2/com.googlecode.iterm2.plist",
-                            ".config/raycast/scripts/quick-capture.sh"):
+                for app in (".hammerspoon/init.lua", ".config/iterm2/com.googlecode.iterm2.plist"):
                     self.assertEqual(app in paths, system == "darwin", app)
                 self.assertIn(".config/nvim/init.lua", paths)
                 self.assertIn(".config/ghostty/config", paths)
