@@ -43,7 +43,7 @@ class PackageBootstrapTests(unittest.TestCase):
 
     def render(self, name, system="linux", distro="ubuntu", work=False):
         data = {"chezmoi": {"os": system, "osRelease": {"id": distro}},
-                "personal": not work, "work": work}
+                "work": work}
         return subprocess.check_output([
             CHEZMOI, "--source", str(ROOT), "--config", str(self.config),
             "--override-data", json.dumps(data), "execute-template", "--file",
@@ -140,14 +140,13 @@ class PackageBootstrapTests(unittest.TestCase):
         for system in ("darwin", "linux"):
             with self.subTest(system=system):
                 data = {"chezmoi": {"os": system, "osRelease": {"id": "ubuntu"}},
-                        "name": "CI", "email": "ci@example.invalid", "personal": True, "work": False}
+                        "name": "CI", "email": "ci@example.invalid", "work": False}
                 output = subprocess.check_output([
                     CHEZMOI, "--source", str(ROOT), "--config", str(self.config),
                     "--destination", str(self.base), "--override-data", json.dumps(data),
                     "managed", "--exclude=externals", "--path-style=relative"], text=True)
                 paths = output.splitlines()
-                for app in (".hammerspoon/init.lua", ".config/iterm2/com.googlecode.iterm2.plist",
-                            ".config/raycast/scripts/quick-capture.sh"):
+                for app in (".hammerspoon/init.lua",):
                     self.assertEqual(app in paths, system == "darwin", app)
                 self.assertIn(".config/nvim/init.lua", paths)
                 self.assertIn(".config/ghostty/config", paths)

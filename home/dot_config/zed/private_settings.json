@@ -1,25 +1,4 @@
 {
-  "language_models": {
-    "openai_compatible": {
-      "evo-dev": {
-        "api_url": "http://127.0.0.1:28090/v1",
-        "available_models": [
-          {
-            "name": "local-evo/qwen3-coder-30b-a3b",
-            "display_name": "Qwen3-Coder 30B (evo)",
-            "max_tokens": 32768,
-            "max_output_tokens": 4096,
-            "capabilities": {
-              "tools": true,
-              "images": false,
-              "parallel_tool_calls": true,
-              "prompt_cache_key": true
-            }
-          }
-        ]
-      }
-    }
-  },
   "markdown_preview": {
     "font_size": 14.0,
     "limit_content_width": false
@@ -256,13 +235,6 @@
     }
   },
   "agent": {
-    "favorite_models": [
-      {
-        "provider": "evo-dev",
-        "model": "local-evo/qwen3-coder-30b-a3b",
-        "enable_thinking": false
-      }
-    ],
     "tool_permissions": {
       "tools": {
         "terminal": {
@@ -274,16 +246,7 @@
     "sidebar_side": "right",
     "button": true,
     "dock": "right",
-    "inline_assistant_model": {
-      "provider": "openai",
-      "model": "gpt-5.6-terra"
-    },
-    "default_profile": "write",
-    "default_model": {
-      "enable_thinking": false,
-      "provider": "evo-dev",
-      "model": "local-evo/qwen3-coder-30b-a3b"
-    }
+    "default_profile": "write"
   },
   "inlay_hints": {
     "enabled": false,

@@ -13,22 +13,13 @@
 # read as a file to delete on the next apply.
 **/.DS_Store
 
-{{ if eq .chezmoi.os "darwin" -}}
-# The follow-main timer keeps a Linux workstation on main; the Mac has no
-# systemd and is where the changes are made.
-.config/systemd
-.local/bin/follow-main.sh
-{{ end -}}
+
 
 {{ if ne .chezmoi.os "darwin" -}}
 .hammerspoon
 .config/raycast
-.config/iterm2
 Library/LaunchAgents/com.froppa.clip-serve.plist
 .local/bin/clip-serve
-# evo-dev runs the real Linux Depot binary the evo development role installs
-# at ~/.local/bin/depot; the Cargo-install symlink must not replace it.
-.local/bin/depot
 {{ end -}}
 
 {{ if eq .chezmoi.os "darwin" -}}

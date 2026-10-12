@@ -12,10 +12,10 @@ are shared across both systems.
 
 | Area | Configuration |
 | --- | --- |
-| Terminal | Ghostty opens the persistent tmux session `main`; `ssht <host>` nests a persistent remote one; the tmux status bar shows where the active pane runs, running agents, and Claude and Codex limits |
-| Shell | Zsh, Oh My Zsh, Starship, fzf, mise, and direnv |
+| Terminal | Ghostty native panes and tabs, optional tmux sessions, and SSH helpers |
+| Shell | Zsh, Starship, fzf, mise, and direnv |
 | Editors | Zed, VS Code, Vim, and Neovim |
-| Shortcuts | Raycast Caps Lock Hyper translated by Ghostty into tmux commands |
+| Shortcuts | Hyper shortcuts for terminal panes and tabs |
 | Packages | Homebrew profiles on macOS; common native apt packages on Ubuntu |
 | SSH | Portable client config; keys stay local to each machine |
 | macOS | Dock, Finder, keyboard, Safari, and general defaults |
@@ -59,7 +59,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
 export PATH="$HOME/.local/bin:$PATH"
 git clone https://github.com/froppa/dotfiles.git ~/.local/share/chezmoi
 cd ~/.local/share/chezmoi
-chezmoi init --source="$PWD" --promptString 'name=sdf'
+chezmoi init --source="$PWD" --promptString 'name=YOUR_NAME'
 chezmoi diff
 chezmoi apply -v
 ```
@@ -68,7 +68,7 @@ If already cloned, use that checkout instead of cloning again. Ubuntu setup
 installs missing packages with apt and never installs or updates Linuxbrew.
 An existing Linuxbrew installation is left on disk, but managed Zsh startup
 no longer adds it to PATH. Personal and work profiles currently share the same
-Ubuntu package set. Raycast, Hammerspoon, and iTerm2 configuration is macOS-only.
+Ubuntu package set. Raycast and Hammerspoon configuration is macOS-only.
 
 The native set covers shell, editor, Git, and common build tools. It does not
 add third-party repositories or install mise, Codex, Claude Code, Docker,
@@ -111,8 +111,8 @@ gh auth login --web
 
 This does not authenticate automatically or copy credentials from your Mac.
 Codex is pinned to the validated CLI version in the script. Runtime installation
-is separate; do not run source-building plugin installers until the required
-Depot build wrapper is available on the machine.
+is separate; install the required runtimes and build tools before running
+source-building plugin installers.
 
 ### SSH
 
@@ -131,7 +131,6 @@ load the key on first use. Shell startup does not call `ssh-add`.
 | Component | Once per machine |
 | --- | --- |
 | Raycast | Configure Caps Lock as Hyper (`Control+Option+Command`, no Shift) |
-| Raycast scripts | Add `~/.config/raycast/scripts/` as a Script Command directory |
 | Neovim | Open once to finish Lazy, Mason, and tree-sitter setup |
 | Ghostty | Launched from the Dock or Raycast it has launchd's PATH, so name tmux's absolute path in `~/.config/ghostty/config.local`: `command = direct:/opt/homebrew/bin/tmux new-session -A -s main` |
 
@@ -143,50 +142,41 @@ session restoration.
 
 ## Terminal shortcuts
 
-Raycast owns Caps Lock and emits `Ctrl+Option+Command`. Ghostty converts the
-following chords to tmux commands. Right Option remains available for Danish
-symbols.
+Configure Caps Lock as Hyper (`Ctrl+Option+Command`) in Raycast. Ghostty uses
+these chords for native panes and tabs; Right Option remains available for
+keyboard symbols.
 
 | Shortcut | Action |
 | --- | --- |
-| `Command+K` | Clear the active application screen through tmux |
-| `Shift+Enter` | Insert a newline in Claude Code and shell prompts |
-| `Caps+C` | New window |
+| `Command+K` | Clear the active application screen |
+| `Shift+Enter` | Let the active application handle newlines |
+| `Caps+C` | New tab |
 | `Caps+I` | Side-by-side pane |
 | `Caps+-` | Stacked pane |
 | `Caps+Arrow` | Move between panes |
 | `Caps+Shift+Arrow` | Resize pane |
 | `Caps+=` | Spread the panes evenly |
-| `Caps+0…9` | Select window |
+| `Caps+1…9` | Select tab |
 | `Caps+Z` | Toggle pane zoom |
-| `Caps+R` | Reload tmux |
-| `Caps+X` / `Caps+W` | Kill pane after confirmation |
-| `Caps+,` | Rename window |
-| `Caps+Shift+,` / `Caps+Shift+.` | Move window left / right |
-| `Caps+N` / `Caps+P` / `Caps+Tab` | Next, previous, last window |
-| `Caps+F` | Pick a window from a list |
-| `Caps+B` | Break the pane out into its own window |
-| `Caps+J` / `Caps+M` | Join a pane from, or move this pane to, another window |
-| `Caps+U` | Pick a URL from the pane history and open it |
-| `Caps+H` | tmux cheat sheet; the bottom status row carries the hint |
-| `Caps+Space` | The local tmux prefix; press the key after it |
+| `Caps+X` | Close the active surface |
+| `Caps+,` | Rename tab |
+| `Caps+Shift+,` / `Caps+Shift+.` | Move tab left / right |
+| `Caps+N` / `Caps+P` | Next / previous tab |
 
-Every chord is the tmux prefix `Ctrl-a` plus the same key, so it also works
-from a plain keyboard. Windows are named after their directory or ssh host;
-rename one and the name sticks. Mouse drag, double-click, and triple-click copy
-to the clipboard without leaving copy mode; `Cmd+V` pastes; `Cmd+click` opens
-a link; hold Shift to let Ghostty select text itself. `tm` attaches the same
-session from any other terminal.
+tmux uses the prefix `Ctrl-a`. Its cheat sheet lists window, pane, and copying
+commands. Windows are named after their directory or SSH host; a manual name
+persists. Mouse drag, double-click, and triple-click copy without leaving copy
+mode. Hold Shift to let Ghostty select text itself. `tm` attaches a persistent
+session from another terminal.
 
 `ssht <host> [session]` attaches a persistent tmux session on a remote machine
-inside the current pane. While it runs there, the Caps chords drive the remote
-tmux; `Caps+Space` or `Ctrl-a` and then the key still reach the local one, as
-does a click on the local status bar. Run outside tmux, `ssht` instead tints
+inside the current pane. Use tmux's prefix commands to control its windows
+and panes. Run outside tmux, `ssht` instead tints
 Ghostty's background in the host's colour and titles the tab after it until
 the connection ends.
 
 `ssht` also forwards the Mac's clipboard socket, which the
-`com.froppa.clip-serve` LaunchAgent serves. The `wl-paste` shim on the remote
+`local.dotfiles.clip-serve` LaunchAgent serves. The `wl-paste` shim on the remote
 host reads it, so a screenshot copied on the Mac (`Cmd+Ctrl+Shift+4`) pastes
 into a remote Claude Code with `Ctrl+V`. Only images cross; text still pastes
 with `Cmd+V`. Plain `ssh` does not carry it.
@@ -196,8 +186,8 @@ connection dropped, a crashed TUI), the next prompt switches mouse, focus, and
 extended-key reporting off again, so clicks stop typing escape sequences.
 
 The hooks also record each session's state under
-`~/.cache/agents/claude-<session id>`, which Verk reads to list a waiting
-terminal session in Today and in its menu bar. Outside tmux, the same hooks
+`~/.cache/agents/claude-<session id>` for terminal status consumers.
+Outside tmux, the same hooks
 retitle the Ghostty tab with the session's state and directory (`⟳ repo` working, `? repo` waiting for you,
 `· repo` idle), Claude Code rings the terminal bell when it needs attention,
 and Ghostty marks the tab. Starship's right prompt shows the
@@ -223,8 +213,8 @@ status line keeps only model, effort, and context left.
 
 Claude Code keeps `~/.claude/settings.json` itself, so the tab-state hooks are
 installed once per machine with `scripts/claude-tmux-hooks.sh`, which merges
-them idempotently. Two unmanaged files under `~/.config/tmux/` keep host
-details out of this repository:
+them idempotently. Two local configuration files under `~/.config/tmux/`
+customize SSH status:
 
 | File | Content |
 | --- | --- |
@@ -246,11 +236,6 @@ Machine-specific overrides use unmanaged `*.local` files such as
 `.zshrc.local`, `.exports.local`, `.aliases.local`, `.functions.local`, and
 `.gitconfig.local`.
 
-Depot is installed separately with Cargo from `struktly/tools`. The managed
-`~/.local/bin/depot` link points to `~/.cargo/bin/depot`, replacing the legacy
-Verk entry point. Zsh loads completion from the installed Depot version after
-completion initialization; no generated completion file needs updating.
-
 ## Where things live
 
 | Path | Purpose |
@@ -258,7 +243,6 @@ completion initialization; no generated completion file needs updating.
 | `home/dot_config/ghostty/` | Ghostty and Hyper mappings |
 | `home/dot_config/tmux/` | tmux, status scripts, and plugins |
 | `home/dot_local/bin/` | `clip-serve` (Mac) and the `wl-paste` shim (Linux) behind the ssht clipboard bridge |
-| `home/dot_config/raycast/` | Raycast Script Commands |
 | `home/dot_config/zed/` | Zed settings and keybindings |
 | `home/dot_config/Code/User/` | VS Code XDG settings |
 | `home/dot_config/nvim/` | Neovim configuration |
@@ -266,7 +250,7 @@ completion initialization; no generated completion file needs updating.
 | `home/.chezmoiscripts/` | Ordered and change-triggered setup |
 | `home/.chezmoiexternal.toml` | Pinned shell and TPM sources |
 | `macos-scripts/` | Auditable macOS defaults |
-| `scripts/` | Local SSH key generation, Claude Code hook install, and preference helpers |
+| `scripts/` | Local SSH key generation and Claude Code hook install |
 
 ## macOS defaults
 

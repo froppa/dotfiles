@@ -72,10 +72,9 @@ chezmoi --config "${rendered_config}" data >/dev/null
 
 grep -q '^name = "CI"$' "${rendered_config}" || fail "generated config missing CI name"
 grep -q '^email = "ci@example.invalid"$' "${rendered_config}" || fail "generated config missing CI email"
-grep -q '^personal = true$' "${rendered_config}" || fail "default profile should be personal"
 grep -q '^work = false$' "${rendered_config}" || fail "work should default to false"
 
-section "Testing WORK profile selection"
+section "Testing WORK package selection"
 
 rendered_work_config="$(mktemp "${TMPDIR:-/tmp}/chezmoi-work.XXXXXX").toml"
 
@@ -87,15 +86,10 @@ WORK=true chezmoi execute-template \
   < home/.chezmoi.toml.tmpl \
   > "${rendered_work_config}"
 
-grep -q '^profile = "work"$' "${rendered_work_config}" || fail "WORK=true should select the work profile"
 grep -q '^work = true$' "${rendered_work_config}" || fail "WORK=true should set work = true"
-grep -q '^personal = false$' "${rendered_work_config}" || fail "WORK=true should set personal = false"
 
 section "Checking safe adoption defaults"
 
-[[ -f home/dot_local/bin/symlink_depot.tmpl ]] || fail "Depot must resolve to the standalone Cargo installation"
-grep -Fq '".cargo/bin/depot"' home/dot_local/bin/symlink_depot.tmpl || fail "Depot link must not target the legacy Verk binary"
-grep -Fq 'source <(depot completions zsh 2>/dev/null)' home/dot_zsh_completions || fail "Depot completion must follow the installed version"
 
 [[ -f home/create_dot_gitconfig.tmpl ]] || fail "Git defaults must be create-only"
 [[ ! -e home/dot_gitconfig.tmpl ]] || fail "Git config must not overwrite an existing setup"
@@ -108,8 +102,6 @@ grep -Fq "alias confgit='chezmoi edit --apply ~/.config/git/dotfiles.gitconfig'"
 [[ -f home/dot_config/ghostty/config ]] || fail "Ghostty config must be named config, the one path every Ghostty version reads"
 grep -Fqx '.config/ghostty/config.ghostty' home/.chezmoiremove || fail "a stale config.ghostty would load beside the managed config"
 grep -Fqx "alias ch='chezmoi'" home/dot_aliases || fail "ch must alias chezmoi"
-grep -Fq 'herdr machine add evo-dev' home/.chezmoiscripts/run_after_60-add-herdr-evo-dev.sh.tmpl || fail "apply must register evo-dev as a saved herdr machine"
-grep -Fq '{{ if and (eq .chezmoi.os "darwin") .personal -}}' home/.chezmoiscripts/run_after_60-add-herdr-evo-dev.sh.tmpl || fail "only the personal Mac may attach evo-dev"
 grep -Fq 'command = /bin/zsh' home/dot_config/ghostty/config || fail "Ghostty must launch zsh; herdr is started on demand"
 grep -Fq 'config-file = ?config.local' home/dot_config/ghostty/config || fail "Ghostty must load the optional machine-local override last"
 ! grep -qE '^keybind = (performable:)?ctrl\+alt\+super\+[^=]+=text:' home/dot_config/ghostty/config || fail "Hyper chords must reach herdr, not be rewritten into tmux prefix bytes"
@@ -129,11 +121,8 @@ grep -Fq 'xterm-ghostty:RGB:extkeys' home/dot_config/tmux/tmux.conf || fail "Gho
 grep -Fq 'set -s extended-keys on' home/dot_config/tmux/tmux.conf || fail "tmux must pass modified keys to Claude Code"
 grep -Fq 'set -g focus-events on' home/dot_config/tmux/tmux.conf || fail "tmux must pass focus events to Claude Code"
 grep -Fq 'set -g assume-paste-time 0' home/dot_config/tmux/tmux.conf || fail "tmux must disable paste timing as a global session option"
-grep -Fq '.local/bin/depot' home/.chezmoiignore || fail "the Depot symlink must not replace evo-dev's real binary on Linux"
 sed -n '/ne .chezmoi.os "darwin"/,/end/p' home/.chezmoiignore | grep -Fq 'Library/LaunchAgents/com.froppa.clip-serve.plist' || fail "the clipboard LaunchAgent is macOS-only"
 sed -n '/eq .chezmoi.os "darwin"/,/end/p' home/.chezmoiignore | grep -Fq '.local/bin/wl-paste' || fail "the wl-paste shim must not land on the Mac"
-[[ -x home/dot_local/bin/executable_follow-main.sh && -f home/dot_config/systemd/user/follow-main.timer ]] || fail "follow-main must ship its script and timer for evo-dev"
-sed -n '/eq .chezmoi.os "darwin"/,/end/p' home/.chezmoiignore | grep -Fq '.config/systemd' || fail "systemd user units must not be applied on macOS"
 grep -Fq 'MouseDragEnd1Pane send -X copy-selection' home/dot_config/tmux/tmux.conf || fail "mouse selection must not snap the view back to the bottom"
 grep -Fq 'xterm-ghostty:RGB:extkeys:hyperlinks' home/dot_config/tmux/tmux.conf || fail "tmux must pass OSC 8 hyperlinks through to Ghostty"
 ! grep -rqE '(^|[^a-z])evo(-|[^a-z]|$)|192\.168|100\.[0-9]+\.' home/dot_config/tmux || fail "host names and addresses belong in the unmanaged tmux *.local files"

@@ -217,4 +217,4 @@ keybind = herdr/performable:ctrl+alt+super+u=activate_key_table:herdr
 
 # Optional. Keep command=/bin/zsh unless you explicitly
 # want a machine to launch something else.
-# config-file = ?config.local
+config-file = ?config.local
