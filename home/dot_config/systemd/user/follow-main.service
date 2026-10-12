@@ -1,5 +1,5 @@
 [Unit]
-Description=Follow main: dotfiles through chezmoi, then Verk through its installer
+Description=Follow main: dotfiles through chezmoi, then Heldra through its installer
 After=network-online.target
 
 [Service]
